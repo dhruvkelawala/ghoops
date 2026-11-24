@@ -10,11 +10,7 @@ HOOK = Path(__file__).with_name("pre-push.sh")
 
 class PrePushTest(unittest.TestCase):
     def test_core_tests_run_for_fixture_and_ios_changes(self):
-        env = dict(os.environ)
-        for name in subprocess.check_output(
-            ["git", "rev-parse", "--local-env-vars"], text=True
-        ).splitlines():
-            env.pop(name, None)
+        env = {name: value for name, value in os.environ.items() if not name.startswith("GIT_")}
         env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
 
         for path in ("fixtures/v2/snapshot.json", "fixtures/v2/README.md", "ios/Model.swift"):

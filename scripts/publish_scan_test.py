@@ -73,11 +73,7 @@ class PublishScanTest(unittest.TestCase):
         self.assertNotIn("znq7x", result.stdout + result.stderr)
 
     def test_history_includes_old_files_other_branches_and_commit_metadata(self):
-        env = dict(os.environ)
-        for name in subprocess.check_output(
-            ["git", "rev-parse", "--local-env-vars"], text=True
-        ).splitlines():
-            env.pop(name, None)
+        env = {name: value for name, value in os.environ.items() if not name.startswith("GIT_")}
         env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
 
         def git(*args):

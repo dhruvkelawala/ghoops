@@ -108,13 +108,17 @@ class CertificateVerification(unittest.TestCase):
 
 
 class FakeBuild(FakeCodesign):
-    def __init__(self, target, mismatch=False):
+    def __init__(self, target, mismatch=False, *, go_version="go1.27.4"):
         super().__init__()
         self.target = target
         self.mismatch = mismatch
+        self.go_version = go_version
         self.signed_paths = []
 
     def __call__(self, args, **kwargs):
+        if args[1:] == ["env", "GOVERSION"]:
+            self.calls.append(args)
+            return subprocess.CompletedProcess(args, 0, self.go_version + "\n", "")
         if "build" in args:
             output = pathlib.Path(args[args.index("-o") + 1])
             output.write_bytes(b"build B")
@@ -128,6 +132,17 @@ class FakeBuild(FakeCodesign):
 
 
 class ProductionInstall(unittest.TestCase):
+    def test_old_go_is_rejected_before_building(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = pathlib.Path(folder)
+            target = root / "ghealth"
+            target.write_bytes(b"production A")
+            fake = FakeBuild(target, go_version="go1.27.1")
+            with self.assertRaisesRegex(RuntimeError, r"Go 1\.27\.4.*found go1\.27\.1"):
+                lifecycle.production_install(target, root, "Synthetic", runner=fake)
+            self.assertFalse(any(args[1:2] == ["build"] for args in fake.calls))
+            self.assertEqual(target.read_bytes(), b"production A")
+
     def test_requirement_change_is_refused_before_production_replacement(self):
         self.assertTrue(hasattr(lifecycle, "production_install"), "production helper entry point is missing")
         with tempfile.TemporaryDirectory() as folder:
@@ -232,11 +247,12 @@ class MakeInstallAdapter(unittest.TestCase):
             )
             command = ["make", "--no-print-directory", "-o", "check", "install",
                        f"PYTHON={sys.executable} {shim}", f"INSTALLED={target}"]
-            result = subprocess.run(command + ["SIGN_IDENTITY=-"], cwd=root,
+            env = {name: value for name, value in os.environ.items() if not name.startswith("GIT_")}
+            result = subprocess.run(command + ["SIGN_IDENTITY=-"], cwd=root, env=env,
                                     capture_output=True, text=True, timeout=15)
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(target.read_bytes(), b"production A")
-            result = subprocess.run(command + ["SIGN_IDENTITY=Synthetic"], cwd=root,
+            result = subprocess.run(command + ["SIGN_IDENTITY=Synthetic"], cwd=root, env=env,
                                     capture_output=True, text=True, timeout=15)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(target.read_bytes(), b"build B")

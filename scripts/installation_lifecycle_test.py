@@ -349,8 +349,9 @@ class InstallationLifecycle(unittest.TestCase):
         log = self.target.parent / "gate.log"
         shim.write_text("import pathlib, sys\n" + f"p = pathlib.Path({str(log)!r})\n"
                         + "with p.open('a') as f: f.write(sys.argv[1] + '\\n')\n")
+        env = {name: value for name, value in os.environ.items() if not name.startswith("GIT_")}
         result = subprocess.run(["make", "--no-print-directory", "signing-contract",
-                                 f"PYTHON={sys.executable} {shim}"], cwd=root,
+                                 f"PYTHON={sys.executable} {shim}"], cwd=root, env=env,
                                 capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(log.exists(), "signing gate does not route through configured test interpreter")

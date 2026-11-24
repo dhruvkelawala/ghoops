@@ -2,6 +2,7 @@ import Foundation
 
 public struct SleepSummary: Codable, Sendable {
     public var performance: Performance
+    public var performanceComposite: SleepComposite?
     public var asleepMinutes: Int?
     public var timeInBedMinutes: Int?
     public var need: SleepNeed
@@ -30,6 +31,7 @@ public struct Sleep: Codable, Sendable {
     public var freshness: Freshness
     public var date: String
     public var performance: Performance
+    public var performanceComposite: SleepComposite?
     public var asleepMinutes: Int?
     public var timeInBedMinutes: Int?
     public var need: SleepNeed
@@ -48,6 +50,27 @@ public struct Sleep: Codable, Sendable {
     public var hypnogram: Hypnogram?
     @DefaultEmpty public var overnightHr: [HeartRatePoint]
     @DefaultEmpty public var overnightHrv: [HRVPoint]
+}
+
+public struct SleepComposite: Codable, Sendable {
+    public var value: Int?
+    public var band: Band3?
+    public var status: ScoreStatus
+    public var reason: Reason?
+    public var weights: SleepCompositeWeights?
+    public var parts: SleepCompositeParts?
+}
+
+public struct SleepCompositeWeights: Codable, Sendable, Equatable {
+    public var sufficiency: Double
+    public var consistency: Double
+    public var efficiency: Double
+}
+
+public struct SleepCompositeParts: Codable, Sendable {
+    public var sufficiency: Int
+    public var consistency: Int?
+    public var efficiency: Double?
 }
 
 public struct SleepNeed: Codable, Sendable {

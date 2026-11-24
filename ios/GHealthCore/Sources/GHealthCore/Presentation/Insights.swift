@@ -68,21 +68,7 @@ public enum Insights {
 
     /// While a sleep edit waits for the Mac, only the phone's projected hours are shown.
     public static func sleep(_ sleep: Sleep, pending: Bool = false) -> String {
-        if pending {
-            let hours = sleep.asleepMinutes.map { " You slept \(GoopFormat.duration($0))." } ?? ""
-            return updating("Your Sleep Performance") + hours
-        }
-        let need = GoopFormat.duration(sleep.need.totalMinutes)
-        guard let asleep = sleep.asleepMinutes, let level = SleepLevel(sleep.performance.band) else {
-            return sentence(ReasonText.score(sleep.performance.reason, status: sleep.performance.status)) + " Tonight's need so far is \(need)."
-        }
-        var text = "Your Sleep Performance is \(level.rawValue.lowercased()). "
-        let short = sleep.need.totalMinutes - asleep
-        if level == .optimal || short <= 0 { text += "You got \(GoopFormat.duration(asleep)) of the \(need) you needed." }
-        else { text += "You were \(GoopFormat.duration(short)) short of the \(need) you needed." }
-        if sleep.need.debtExtraMinutes > 0 { text += " Recent short nights added \(GoopFormat.duration(sleep.need.debtExtraMinutes)) to your need." }
-        if sleep.need.strainExtraMinutes > 0 { text += " Yesterday's strain added \(GoopFormat.duration(sleep.need.strainExtraMinutes))." }
-        return text
+        SleepScore.insight(sleep, composite: false, pending: pending)
     }
 
     /// The Trends week view's sentence from the Mac's weekly HRV position (scores.md §5.3), or nil for any other position.
@@ -116,5 +102,5 @@ public enum Insights {
         return text
     }
 
-    private static func sentence(_ text: String) -> String { text.hasSuffix(".") ? text : text + "." }
+    static func sentence(_ text: String) -> String { text.hasSuffix(".") ? text : text + "." }
 }

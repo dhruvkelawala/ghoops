@@ -7,7 +7,7 @@ ghoops collects Fitbit and Pixel Watch data through the Google Health API and st
 ## Requirements
 
 - A Mac with an unlocked login Keychain, Xcode 27.2 and Apple's command-line tools.
-- Go 1.27.1 with CGO, Python 3 and XcodeGen. Put `go`, `python3` and `xcodegen` on your PATH.
+- Go 1.27.4 or later with CGO, Python 3 and XcodeGen. Put `go`, `python3` and `xcodegen` on your PATH.
 - A Fitbit or Pixel Watch linked to a personal Google account that you can use with Google Cloud.
 - An iPhone on iOS 26 or later and an Apple ID for signing. A free Apple ID works with a rebuild and reinstall every 7 days.
 - Tailscale on the Mac and iPhone, signed in to the same tailnet.

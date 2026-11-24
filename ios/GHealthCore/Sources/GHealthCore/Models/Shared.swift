@@ -209,7 +209,8 @@ public struct ScoreConfig: Codable, Sendable {
     public var sportAliases: [String: String]
     public var strainIntent: String?
     public var wakeTarget: String?
-    private enum CodingKeys: String, CodingKey { case maxHrOverrideBpm, sleepBaseNeedMinutes, trimpProfile, sportAliases, strainIntent, wakeTarget }
+    public var sleepScoreMode: String?
+    private enum CodingKeys: String, CodingKey { case maxHrOverrideBpm, sleepBaseNeedMinutes, trimpProfile, sportAliases, strainIntent, wakeTarget, sleepScoreMode }
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         maxHrOverrideBpm = try c.decodeIfPresent(Int.self, forKey: .maxHrOverrideBpm)
@@ -218,6 +219,7 @@ public struct ScoreConfig: Codable, Sendable {
         sportAliases = try c.decodeIfPresent([String: String].self, forKey: .sportAliases) ?? [:]
         strainIntent = try c.decodeIfPresent(String.self, forKey: .strainIntent)
         wakeTarget = try c.decodeIfPresent(String.self, forKey: .wakeTarget)
+        sleepScoreMode = try c.decodeIfPresent(String.self, forKey: .sleepScoreMode)
     }
 }
 

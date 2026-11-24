@@ -61,6 +61,13 @@ public struct SleepConstants: Codable, Sendable, Equatable {
     public var performanceBands: Band3Edges
     public var consistencyBands: Band3Edges
     public var efficiencyBands: Band3Edges
+    public var composite: SleepCompositeConstants?
+}
+
+public struct SleepCompositeConstants: Codable, Sendable, Equatable {
+    public var weights: SleepCompositeWeights
+    public var efficiencyZeroPct: Int
+    public var efficiencyFullPct: Int
 }
 
 public struct WorkoutOverlap: Codable, Sendable, Equatable {

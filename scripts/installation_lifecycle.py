@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 CODESIGN = "/usr/bin/codesign"
 IDENTIFIER = "io.ghealth.cli"
+MINIMUM_GO_VERSION = (1, 27, 4)
 
 
 def run(args, *, runner=subprocess.run, **kwargs):
@@ -223,9 +224,17 @@ def compatible_requirement(previous, candidate, path, *, runner=subprocess.run):
 
 
 def build_candidate(owner, root, identity, *, go="go", ldflags="", runner=subprocess.run):
+    build_env = {**os.environ, "CGO_ENABLED": "1", "GOTOOLCHAIN": "local"}
+    version = run([go, "env", "GOVERSION"], runner=runner, cwd=root, env=build_env).stdout.strip()
+    release = re.fullmatch(r"go([0-9]+)\.([0-9]+)(?:\.([0-9]+))?", version)
+    if release is None:
+        raise RuntimeError("could not determine the Go release from go env GOVERSION")
+    if tuple(int(part or "0") for part in release.groups()) < MINIMUM_GO_VERSION:
+        minimum = ".".join(map(str, MINIMUM_GO_VERSION))
+        raise RuntimeError(f"Go {minimum} or newer is required to build the install candidate (found {version})")
     candidate = owner.directory / "signed-candidate"
     run([go, "build", "-trimpath", "-ldflags", ldflags, "-o", candidate, "./cmd/ghoops"],
-        runner=runner, cwd=root, env={**os.environ, "CGO_ENABLED": "1", "GOTOOLCHAIN": "local"})
+        runner=runner, cwd=root, env=build_env)
     candidate.chmod(0o755)
     signature = sign_candidate(candidate, identity, runner=runner)
     return candidate, signature

@@ -275,3 +275,5 @@ Sleep info sheet, HOW THIS WORKS:
 2. **The weights.** 70/15/15 with efficiency counted from 70% to 90% (recommended), or another set from §2.
 
 What the lead decides before the build: D5 (present only in composite mode), D9 (rows and comparison), D10 (`brief` unchanged) and D11 (flag scope includes widgets).
+
+**Owner decision (2026-11-24): turn it on, with weights 70/15/15.** This follows [sleep-model-research.md](../v2/sleep-model-research.md): stages and sleeping heart rate stay out, and a wake-ups part (`composite.2`) is a later lead call. Sol builds CS4, CS5 and the flag-removal step (CS6 in the plan). After the owner's next install, the lead runs `config set sleep_score_mode composite` on the owner's Mac with the owner present, and the owner checks the phone.

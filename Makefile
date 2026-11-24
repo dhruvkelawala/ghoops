@@ -9,7 +9,7 @@ LDFLAGS := -X main.version=$(VERSION) -X main.revision=$(REVISION)$(DIRTY)
 BIN := .build/ghoops
 INSTALLED := $(HOME)/.local/bin/ghealth
 
-.PHONY: check fmt fmt-check vet test race signing-contract adapter-check goop-lint build smoke install keychain-check keychain-update-check live clean
+.PHONY: check fmt fmt-check vet test race vulncheck signing-contract adapter-check goop-lint build smoke install keychain-check keychain-update-check live clean
 
 check: fmt-check vet test race signing-contract adapter-check build smoke goop-lint
 
@@ -27,6 +27,9 @@ test:
 
 race:
 	CGO_ENABLED=1 GOTOOLCHAIN=local $(GO) test -race -count=1 -timeout=600s ./...
+
+vulncheck:
+	GOOS=darwin GOARCH=arm64 CGO_ENABLED=1 GOTOOLCHAIN=local $(GO) run golang.org/x/vuln/cmd/govulncheck@v1.10.0 ./cmd/ghoops
 
 signing-contract:
 	$(PYTHON) scripts/signing_contract_test.py

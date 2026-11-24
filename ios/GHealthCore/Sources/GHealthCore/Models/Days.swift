@@ -48,6 +48,7 @@ public struct DayRow: Codable, Sendable {
     public var strengthMinutes: Int?
     public var restorativeMinutes: Int?
     public var sleepConsistency: Int?
+    public var sleepPerformanceComposite: Int?
     public var vitalsAdverse: Int
 }
 

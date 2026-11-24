@@ -40,9 +40,13 @@ Explicit `data export` produces plaintext. Its output is private health data and
 
 ## Local HTTP server and pairing
 
-`ghoops serve` binds only IPv4 `127.0.0.1`, default port 8787. Tailscale Serve terminates HTTPS for tailnet access. Every endpoint requires the pairing bearer token; its SHA-256 hash is compared in constant time. The random token lives in the `<Service>.serve-token` Keychain item and appears in the private pairing link and QR. Rotation or revocation takes effect within five seconds. Never share pairing output or put it in a log.
+`ghoops serve` binds only IPv4 `127.0.0.1`, default port 8787. Tailscale Serve provides HTTPS within your tailnet. Keep Funnel off. Every endpoint requires the pairing bearer token. The server compares its SHA-256 hash in constant time. The random token lives in the `<Service>.serve-token` Keychain item and appears in the pairing link and QR code. Rotation or revocation takes effect within five seconds.
 
-The server accepts GET requests only, bounds headers and timeouts, accepts no request body and sends `Cache-Control: no-store`. Logs contain time, method, path, HTTP status and duration only. They contain no query strings, authorization headers or response bodies. Responses remain private health data, even though the server only reads the local encrypted store. Tailscale access uses port 8787 without Funnel.
+A paired iPhone can read the health history available from your Mac, including scores, heart rate, workouts, sleep and journal answers. It can add and edit workouts, save sleep edits, rate effort and save journal answers on the Mac. Anyone with the pairing link who can reach the Mac over Tailscale has the same access until you revoke pairing. Treat the link and QR code like a password.
+
+Tap **Unpair** to remove the saved pairing from that iPhone. Run `ghoops pair revoke` on the Mac to invalidate the link for everyone using it. `ghoops auth logout` removes the Mac's Google credentials and stops new imports. Paired devices can still use the data already on the Mac.
+
+The server caps request sizes, uses timeouts and sends `Cache-Control: no-store`. Logs contain only time, method, path, HTTP status and duration.
 
 ## LaunchAgents and logs
 
