@@ -1,0 +1,3017 @@
+{
+  "kind": "score_vectors",
+  "score_version": "2.4.1",
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "within_all",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "within",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [],
+        "adverse": [],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "within",
+        "flags": []
+      }
+    },
+    {
+      "name": "one_night_two_adverse",
+      "input": {
+        "tonight": {
+          "hrv_ms": 47,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.05,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "two_nights_same_two",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 47,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.05,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "2 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          }
+        ]
+      }
+    },
+    {
+      "name": "two_nights_three",
+      "input": {
+        "tonight": {
+          "hrv_ms": 40,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 40,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "below",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "hrv_rmssd",
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "hrv_rmssd",
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [
+          "hrv_rmssd",
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "3 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          }
+        ]
+      }
+    },
+    {
+      "name": "two_nights_different_vitals",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 40,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.3,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "one_vital_two_nights",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "respiratory_rate"
+        ],
+        "persistent": [
+          "respiratory_rate"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "gap_last_night",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": null
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "last_night_no_baseline",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9
+          ],
+          "skin_temp": {
+            "nightly_c": 0.05,
+            "baseline_c": 0,
+            "stddev_30d_c": null
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "exact_edge",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.5,
+          "rr_baseline_bpm": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": null
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "within",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [],
+        "adverse": [],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "within",
+        "flags": []
+      }
+    },
+    {
+      "name": "just_past_edge",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": null
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "respiratory_rate"
+        ],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "sd_floor_active",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 47,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.05,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "adverse": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "persistent": [
+          "resting_hr",
+          "respiratory_rate"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "2 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          }
+        ]
+      }
+    },
+    {
+      "name": "hrv_log_range",
+      "input": {
+        "tonight": {
+          "hrv_ms": 40,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 40,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "below",
+          "resting_hr": "above",
+          "respiratory_rate": "within",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "hrv_rmssd",
+          "resting_hr"
+        ],
+        "adverse": [
+          "hrv_rmssd",
+          "resting_hr"
+        ],
+        "persistent": [
+          "hrv_rmssd",
+          "resting_hr"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "2 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          }
+        ]
+      }
+    },
+    {
+      "name": "favourable_both_nights",
+      "input": {
+        "tonight": {
+          "hrv_ms": 65,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 50,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 65,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 50,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "above",
+          "resting_hr": "below",
+          "respiratory_rate": "within",
+          "spo2": "within",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "hrv_rmssd",
+          "resting_hr"
+        ],
+        "adverse": [],
+        "persistent": [],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "skin_cool_both_nights",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": -0.3,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": -0.3,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "above",
+          "spo2": "within",
+          "skin_temp_deviation": "below"
+        },
+        "outside_range": [
+          "respiratory_rate",
+          "skin_temp_deviation"
+        ],
+        "adverse": [
+          "respiratory_rate"
+        ],
+        "persistent": [
+          "respiratory_rate"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "outside",
+        "flags": []
+      }
+    },
+    {
+      "name": "skin_warm_both_nights",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 59,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.3,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 58,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.3,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "above",
+          "respiratory_rate": "within",
+          "spo2": "within",
+          "skin_temp_deviation": "above"
+        },
+        "outside_range": [
+          "resting_hr",
+          "skin_temp_deviation"
+        ],
+        "adverse": [
+          "resting_hr",
+          "skin_temp_deviation"
+        ],
+        "persistent": [
+          "resting_hr",
+          "skin_temp_deviation"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "2 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          }
+        ]
+      }
+    },
+    {
+      "name": "spo2_and_attention",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.8,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 94,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        },
+        "last_night": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4,
+            51,
+            49.6,
+            54.2,
+            50.8,
+            52.7,
+            48.1,
+            51.5,
+            53
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56,
+            54,
+            55,
+            56,
+            55,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15.6,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3,
+            15,
+            14.8,
+            15.2,
+            15.1,
+            14.9,
+            15,
+            15.1,
+            14.9
+          ],
+          "spo2_pct": 95,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9,
+            96.1,
+            96.3,
+            95.7,
+            96,
+            96.2,
+            96.5,
+            95.9,
+            96.1
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": 0.08
+          }
+        }
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": [
+            45.2,
+            58.1
+          ],
+          "resting_hr": [
+            52.9,
+            57.9
+          ],
+          "respiratory_rate": [
+            14.5,
+            15.5
+          ],
+          "spo2": [
+            95.5,
+            96.7
+          ],
+          "skin_temp_deviation": [
+            -0.13,
+            0.13
+          ]
+        },
+        "positions": {
+          "hrv_rmssd": "within",
+          "resting_hr": "within",
+          "respiratory_rate": "above",
+          "spo2": "below",
+          "skin_temp_deviation": "within"
+        },
+        "outside_range": [
+          "respiratory_rate",
+          "spo2"
+        ],
+        "adverse": [
+          "respiratory_rate",
+          "spo2"
+        ],
+        "persistent": [
+          "respiratory_rate",
+          "spo2"
+        ],
+        "metrics_with_range": 5,
+        "monitor_state": "attention",
+        "flags": [
+          {
+            "code": "vitals_outside_range",
+            "message": "2 overnight vitals have been outside your usual range for 2 nights in a row, in the less favourable direction."
+          },
+          {
+            "code": "spo2_below_usual",
+            "message": "Overnight SpO2 is well below your usual range."
+          }
+        ]
+      }
+    },
+    {
+      "name": "building",
+      "input": {
+        "tonight": {
+          "hrv_ms": 50,
+          "hrv_baseline_ms": [
+            52,
+            48.5,
+            55.1,
+            50.2,
+            47.9,
+            53.4
+          ],
+          "rhr_bpm": 55,
+          "rhr_baseline_bpm": [
+            55,
+            56,
+            54,
+            57,
+            55,
+            56
+          ],
+          "rr_bpm": 15,
+          "rr_baseline_bpm": [
+            15,
+            15.2,
+            14.8,
+            15.1,
+            14.9,
+            15.3
+          ],
+          "spo2_pct": 96.1,
+          "spo2_baseline_pct": [
+            96,
+            96.4,
+            95.8,
+            96.2,
+            96.6,
+            95.9
+          ],
+          "skin_temp": {
+            "nightly_c": 0.1,
+            "baseline_c": 0,
+            "stddev_30d_c": null
+          }
+        },
+        "last_night": null
+      },
+      "expected": {
+        "ranges": {
+          "hrv_rmssd": null,
+          "resting_hr": null,
+          "respiratory_rate": null,
+          "spo2": null,
+          "skin_temp_deviation": null
+        },
+        "positions": {
+          "hrv_rmssd": "no_baseline",
+          "resting_hr": "no_baseline",
+          "respiratory_rate": "no_baseline",
+          "spo2": "no_baseline",
+          "skin_temp_deviation": "no_baseline"
+        },
+        "outside_range": [],
+        "adverse": [],
+        "persistent": [],
+        "metrics_with_range": 0,
+        "monitor_state": "building",
+        "flags": []
+      }
+    }
+  ]
+}

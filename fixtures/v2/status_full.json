@@ -1,0 +1,295 @@
+{
+  "schema_version": 2,
+  "kind": "status",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "score_config": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null
+  },
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 34,
+        "high": 67
+      },
+      "penalty_max": 10
+    },
+    "strain": {
+      "bands": {
+        "moderate": 10,
+        "strenuous": 14,
+        "all_out": 18
+      },
+      "zones_hrr": {
+        "z1": 0.3,
+        "z2": 0.5,
+        "z3": 0.6,
+        "z4": 0.7,
+        "z5": 0.85
+      },
+      "trimp": {
+        "a": 0.64,
+        "b": 1.92
+      },
+      "scale": {
+        "k": 10,
+        "trimp_cap": 700
+      },
+      "coverage": {
+        "medium": 0.5,
+        "high": 0.8
+      }
+    },
+    "sleep": {
+      "unstaged_counts_as": "asleep",
+      "performance_bands": {
+        "medium": 70,
+        "high": 85
+      },
+      "consistency_bands": {
+        "medium": 60,
+        "high": 80
+      },
+      "efficiency_bands": {
+        "medium": 85,
+        "high": 90
+      }
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.5,
+      "effort_hidden_overlap": 0.5
+    },
+    "vitals": {
+      "range_sd": 1.25,
+      "attention_nights": 2,
+      "attention_min_vitals": 2
+    },
+    "hrv_trend": {
+      "days": 7,
+      "min_nights": 4,
+      "band_sd": 1,
+      "min_baseline": 14
+    },
+    "journal": {
+      "window_days": 90,
+      "min_answers": 5
+    }
+  },
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collect_age_minutes": 13,
+    "last_collect_status": "ok",
+    "collector_stale": false,
+    "device_last_sync_at": "2026-03-10T14:08:00Z",
+    "device_sync_age_minutes": 22,
+    "device_stale": false,
+    "device_sync_source": "paired_devices"
+  },
+  "default_date": "2026-03-10",
+  "auth": {
+    "authorized": true,
+    "state": "authorized",
+    "refreshable": true,
+    "missing_scopes": [],
+    "partial_permissions": false
+  },
+  "collector": {
+    "schedule_installed": true,
+    "interval_minutes": 30,
+    "last_run": {
+      "started_at": "2026-03-10T14:15:30Z",
+      "finished_at": "2026-03-10T14:16:02Z",
+      "pass": "hot",
+      "status": "ok",
+      "core_complete": true,
+      "requests": 21,
+      "failed_streams": []
+    },
+    "last_core_success_at": "2026-03-10T14:16:02Z",
+    "streams": [
+      {
+        "stream": "sleep/reconcile",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-heart-rate-variability/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-resting-heart-rate/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-respiratory-rate/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-oxygen-saturation/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-sleep-temperature-derivations/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-heart-rate-zones/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "daily-vo2-max/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "respiratory-rate-sleep-summary/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "heart-rate-variability/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "exercise/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "irregular-rhythm-notification/list",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "heart-rate/rollUp",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "steps/dailyRollUp",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "active-zone-minutes/dailyRollUp",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "total-calories/dailyRollUp",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      },
+      {
+        "stream": "distance/dailyRollUp",
+        "last_date": "2026-03-10",
+        "status": "ok",
+        "last_success_at": "2026-03-10T14:15:58Z",
+        "error": null
+      }
+    ]
+  },
+  "device": {
+    "status": "ok",
+    "name": "Synthetic band",
+    "battery_level": 64,
+    "battery_status": "Medium",
+    "last_sync_at": "2026-03-10T14:08:00Z"
+  },
+  "store": {
+    "oldest_date": "2026-01-27",
+    "newest_date": "2026-03-10",
+    "heart_rate_days": 2
+  },
+  "calibration": {
+    "status": "ready",
+    "values_needed": 7,
+    "values_for_full_confidence": 14,
+    "hrv_values": 28,
+    "resting_hr_values": 28
+  },
+  "user_resources": {
+    "irn_profile": {
+      "status": "ok",
+      "fetched_at": "2026-03-10T14:15:40Z",
+      "onboarded": false,
+      "enrolled": false
+    },
+    "paired_devices": {
+      "status": "ok",
+      "fetched_at": "2026-03-10T14:15:40Z"
+    },
+    "profile": {
+      "status": "ok",
+      "fetched_at": "2026-03-10T14:15:40Z"
+    },
+    "settings": {
+      "status": "ok",
+      "fetched_at": "2026-03-10T14:15:40Z"
+    }
+  },
+  "provider_timezone": "Europe/London",
+  "server": {
+    "version": "0.2.0",
+    "revision": "synthetic"
+  },
+  "edit_limits": {
+    "sleep_min_minutes": 60,
+    "horizon_days": 30,
+    "shift_minutes": 180,
+    "merge_gap_minutes": 15,
+    "merge_max_ids": 4,
+    "notes_max_chars": 500,
+    "active_min_minutes": 1,
+    "active_max_minutes": 720,
+    "heart_rate_span_max_minutes": 1080,
+    "rpe_scale": "cr10"
+  }
+}

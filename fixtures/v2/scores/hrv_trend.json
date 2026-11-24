@@ -1,0 +1,474 @@
+{
+  "kind": "score_vectors",
+  "score_version": "2.4.1",
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "within",
+      "input": {
+        "week_hrv_ms": [
+          55.0,
+          52.3,
+          57.9,
+          null,
+          53.6,
+          56.2,
+          54.8
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 54.9,
+        "status": "available",
+        "nights": 6,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "within"
+      }
+    },
+    {
+      "name": "below",
+      "input": {
+        "week_hrv_ms": [
+          44.1,
+          47.8,
+          43.6,
+          49.2,
+          null,
+          45.9,
+          46.3
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 46.1,
+        "status": "available",
+        "nights": 6,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "below"
+      }
+    },
+    {
+      "name": "above",
+      "input": {
+        "week_hrv_ms": [
+          68.0,
+          66.2,
+          null,
+          70.1,
+          67.5,
+          65.8,
+          69.3
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 67.8,
+        "status": "available",
+        "nights": 6,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "above"
+      }
+    },
+    {
+      "name": "four_nights",
+      "input": {
+        "week_hrv_ms": [
+          44.1,
+          null,
+          43.6,
+          null,
+          null,
+          45.9,
+          46.3
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 45.0,
+        "status": "available",
+        "nights": 4,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "below"
+      }
+    },
+    {
+      "name": "three_nights",
+      "input": {
+        "week_hrv_ms": [
+          44.1,
+          null,
+          43.6,
+          null,
+          null,
+          null,
+          46.3
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": null,
+        "status": "missing",
+        "nights": 3,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": null
+      }
+    },
+    {
+      "name": "no_nights",
+      "input": {
+        "week_hrv_ms": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": null,
+        "status": "missing",
+        "nights": 0,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": null
+      }
+    },
+    {
+      "name": "baseline_13",
+      "input": {
+        "week_hrv_ms": [
+          55.0,
+          52.3,
+          57.9,
+          null,
+          53.6,
+          56.2,
+          54.8
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9
+        ]
+      },
+      "expected": {
+        "value": 54.9,
+        "status": "available",
+        "nights": 6,
+        "range_low": null,
+        "range_high": null,
+        "baseline_values": 13,
+        "position": "no_baseline"
+      }
+    },
+    {
+      "name": "baseline_14",
+      "input": {
+        "week_hrv_ms": [
+          55.0,
+          52.3,
+          57.9,
+          null,
+          53.6,
+          56.2,
+          54.8
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 54.9,
+        "status": "available",
+        "nights": 6,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "within"
+      }
+    },
+    {
+      "name": "sd_floor",
+      "input": {
+        "week_hrv_ms": [
+          50.0,
+          51.0,
+          49.5,
+          50.5,
+          null,
+          50.2,
+          49.8
+        ],
+        "baseline_hrv_ms": [
+          55.0,
+          55.4,
+          54.8,
+          55.2,
+          54.9,
+          55.1,
+          55.3,
+          54.7,
+          55.0,
+          55.2,
+          54.9,
+          55.1,
+          55.0,
+          54.8
+        ]
+      },
+      "expected": {
+        "value": 50.2,
+        "status": "available",
+        "nights": 6,
+        "range_low": 49.8,
+        "range_high": 60.8,
+        "baseline_values": 14,
+        "position": "within"
+      }
+    },
+    {
+      "name": "just_inside",
+      "input": {
+        "week_hrv_ms": [
+          48.56,
+          48.56,
+          48.56,
+          48.56,
+          48.56,
+          48.56,
+          48.56
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 48.6,
+        "status": "available",
+        "nights": 7,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "within"
+      }
+    },
+    {
+      "name": "just_outside",
+      "input": {
+        "week_hrv_ms": [
+          48.46,
+          48.46,
+          48.46,
+          48.46,
+          48.46,
+          48.46,
+          48.46
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 48.5,
+        "status": "available",
+        "nights": 7,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "below"
+      }
+    },
+    {
+      "name": "range_asymmetric",
+      "input": {
+        "week_hrv_ms": [
+          44.1,
+          47.8,
+          43.6,
+          49.2,
+          null,
+          45.9,
+          46.3
+        ],
+        "baseline_hrv_ms": [
+          60.2,
+          47.6,
+          64.3,
+          52.0,
+          45.8,
+          66.5,
+          55.1,
+          50.4,
+          61.7,
+          48.3,
+          58.8,
+          63.1,
+          46.9,
+          57.4
+        ]
+      },
+      "expected": {
+        "value": 46.1,
+        "status": "available",
+        "nights": 6,
+        "range_low": 48.5,
+        "range_high": 62.7,
+        "baseline_values": 14,
+        "position": "below"
+      }
+    }
+  ]
+}

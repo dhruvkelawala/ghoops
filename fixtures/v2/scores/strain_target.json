@@ -1,0 +1,269 @@
+{
+  "kind": "score_vectors",
+  "score_version": "2.4.1",
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "medium_maintain",
+      "input": {
+        "recovery": {
+          "value": 59,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 12.8,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 11.6,
+        "high": 14.6,
+        "intent": "maintain",
+        "position": "within",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "medium_restore",
+      "input": {
+        "recovery": {
+          "value": 59,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 12.8,
+        "intent": "restore"
+      },
+      "expected": {
+        "low": 8.6,
+        "high": 11.6,
+        "intent": "restore",
+        "position": "above",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "medium_overreach",
+      "input": {
+        "recovery": {
+          "value": 59,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 12.8,
+        "intent": "overreach"
+      },
+      "expected": {
+        "low": 13.6,
+        "high": 16.6,
+        "intent": "overreach",
+        "position": "below",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "low_edge_inclusive",
+      "input": {
+        "recovery": {
+          "value": 34,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 8.6,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 8.6,
+        "high": 11.6,
+        "intent": "maintain",
+        "position": "within",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "high_edge_inclusive",
+      "input": {
+        "recovery": {
+          "value": 67,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 15.5,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 12.5,
+        "high": 15.5,
+        "intent": "maintain",
+        "position": "within",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "just_above",
+      "input": {
+        "recovery": {
+          "value": 67,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 15.6,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 12.5,
+        "high": 15.5,
+        "intent": "maintain",
+        "position": "above",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "clamped_at_21",
+      "input": {
+        "recovery": {
+          "value": 100,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 21.0,
+        "intent": "overreach"
+      },
+      "expected": {
+        "low": 18.5,
+        "high": 21.0,
+        "intent": "overreach",
+        "position": "within",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "zero_restore_no_strain",
+      "input": {
+        "recovery": {
+          "value": 0,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": null,
+        "intent": "restore"
+      },
+      "expected": {
+        "low": 1.5,
+        "high": 4.5,
+        "intent": "restore",
+        "position": null,
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "day_full",
+      "input": {
+        "recovery": {
+          "value": 73,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 12.8,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 13.3,
+        "high": 16.3,
+        "intent": "maintain",
+        "position": "below",
+        "status": "ok",
+        "reason": null
+      }
+    },
+    {
+      "name": "no_recovery",
+      "input": {
+        "recovery": {
+          "value": null,
+          "status": "pending",
+          "reason": "no_sleep"
+        },
+        "strain_value": 5.0,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": null,
+        "high": null,
+        "intent": "maintain",
+        "position": null,
+        "status": "pending",
+        "reason": "no_sleep"
+      }
+    },
+    {
+      "name": "unavailable_recovery",
+      "input": {
+        "recovery": {
+          "value": null,
+          "status": "unavailable",
+          "reason": "insufficient_baseline"
+        },
+        "strain_value": 5.0,
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": null,
+        "high": null,
+        "intent": "maintain",
+        "position": null,
+        "status": "unavailable",
+        "reason": "insufficient_baseline"
+      }
+    },
+    {
+      "name": "one_covered_minute",
+      "input": {
+        "recovery": {
+          "value": 74,
+          "status": "ok",
+          "reason": null
+        },
+        "strain_value": 0.2,
+        "strain_confidence": "low",
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": 13.4,
+        "high": 16.4,
+        "intent": "maintain",
+        "position": null,
+        "status": "ok",
+        "reason": "low_coverage"
+      }
+    },
+    {
+      "name": "low_coverage_without_recovery",
+      "input": {
+        "recovery": {
+          "value": null,
+          "status": "pending",
+          "reason": "no_sleep"
+        },
+        "strain_value": 0.2,
+        "strain_confidence": "low",
+        "intent": "maintain"
+      },
+      "expected": {
+        "low": null,
+        "high": null,
+        "intent": "maintain",
+        "position": null,
+        "status": "pending",
+        "reason": "low_coverage"
+      }
+    }
+  ]
+}

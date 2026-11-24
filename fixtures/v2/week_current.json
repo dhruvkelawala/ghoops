@@ -1,0 +1,154 @@
+{
+  "schema_version": 2,
+  "kind": "week",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collect_age_minutes": 13,
+    "last_collect_status": "ok",
+    "collector_stale": false,
+    "device_last_sync_at": "2026-03-10T14:08:00Z",
+    "device_sync_age_minutes": 22,
+    "device_stale": false,
+    "device_sync_source": "paired_devices"
+  },
+  "date": "2026-03-10",
+  "from": "2026-03-09",
+  "to": "2026-03-10",
+  "week_end": "2026-03-15",
+  "days_counted": 2,
+  "complete": false,
+  "last_week": {
+    "from": "2026-03-02",
+    "to": "2026-03-03"
+  },
+  "usual": {
+    "from": "2026-02-09",
+    "to": "2026-03-08",
+    "min_days": 7
+  },
+  "metrics": {
+    "recovery": {
+      "value": 75,
+      "available_days": 2,
+      "last_week": 56.5,
+      "change": 18.5,
+      "usual": 61.3
+    },
+    "strain": {
+      "value": 12,
+      "available_days": 2,
+      "last_week": null,
+      "change": null,
+      "usual": null
+    },
+    "sleep_performance": {
+      "value": 92.5,
+      "available_days": 2,
+      "last_week": 91,
+      "change": 1.5,
+      "usual": 93.5
+    },
+    "asleep_minutes": {
+      "value": 421,
+      "available_days": 2,
+      "last_week": 421.5,
+      "change": -0.5,
+      "usual": 433.1
+    },
+    "sleep_consistency": {
+      "value": 88.5,
+      "available_days": 2,
+      "last_week": 90.5,
+      "change": -2,
+      "usual": 90.1
+    },
+    "hrv_rmssd_ms": {
+      "value": 58.1,
+      "available_days": 2,
+      "last_week": 52,
+      "change": 6.1,
+      "usual": 51.9
+    },
+    "resting_hr_bpm": {
+      "value": 57,
+      "available_days": 2,
+      "last_week": 57,
+      "change": 0,
+      "usual": 56
+    },
+    "zones_1_3_minutes": {
+      "value": 107,
+      "available_days": 2,
+      "last_week": null,
+      "change": null,
+      "usual": null
+    },
+    "zones_4_5_minutes": {
+      "value": 33,
+      "available_days": 2,
+      "last_week": null,
+      "change": null,
+      "usual": null
+    },
+    "strength_minutes": {
+      "value": 0,
+      "available_days": 2,
+      "last_week": 0,
+      "change": 0,
+      "usual": 0
+    },
+    "steps": {
+      "value": 18777,
+      "available_days": 2,
+      "last_week": null,
+      "change": null,
+      "usual": null
+    }
+  },
+  "workouts": {
+    "total": 2,
+    "last_week_total": 0,
+    "detected_efforts": 1,
+    "by_sport": [
+      {
+        "exercise_type": "KICKBOXING",
+        "display_name": "Kickboxing",
+        "category": "combat",
+        "count": 1
+      },
+      {
+        "exercise_type": "WALKING",
+        "display_name": "Walking",
+        "category": "walking",
+        "count": 1
+      }
+    ]
+  },
+  "targets": {
+    "sleep": {
+      "status": "open",
+      "min_minutes": 420,
+      "nights": 5,
+      "met_nights": 1,
+      "missing_nights": 0
+    },
+    "activity": {
+      "status": "met",
+      "minutes": 150,
+      "vigorous_weight": 2,
+      "credit_minutes": 173,
+      "missing_days": 0
+    },
+    "strength": {
+      "status": "open",
+      "days": 2,
+      "met_days": 0,
+      "missing_days": 0
+    }
+  }
+}

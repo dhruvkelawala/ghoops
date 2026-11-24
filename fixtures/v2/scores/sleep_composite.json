@@ -1,0 +1,327 @@
+{
+  "kind": "score_vectors",
+  "score_version": "2.3.3+composite.1",
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "full_night",
+      "input": {
+        "performance": {
+          "value": 100,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 90,
+        "efficiency_pct": 94
+      },
+      "expected": {
+        "value": 99,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 100,
+          "consistency": 90,
+          "efficiency": 100
+        }
+      }
+    },
+    {
+      "name": "short_night_usual_time",
+      "input": {
+        "performance": {
+          "value": 72,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 92,
+        "efficiency_pct": 93
+      },
+      "expected": {
+        "value": 79,
+        "band": "medium",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 72,
+          "consistency": 92,
+          "efficiency": 100
+        }
+      }
+    },
+    {
+      "name": "full_night_odd_time",
+      "input": {
+        "performance": {
+          "value": 100,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 35,
+        "efficiency_pct": 92
+      },
+      "expected": {
+        "value": 90,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 100,
+          "consistency": 35,
+          "efficiency": 100
+        }
+      }
+    },
+    {
+      "name": "odd_time_poor_efficiency",
+      "input": {
+        "performance": {
+          "value": 94,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 52,
+        "efficiency_pct": 84
+      },
+      "expected": {
+        "value": 84,
+        "band": "medium",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 94,
+          "consistency": 52,
+          "efficiency": 70.0
+        }
+      }
+    },
+    {
+      "name": "no_consistency",
+      "input": {
+        "performance": {
+          "value": 94,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": null,
+        "efficiency_pct": 88
+      },
+      "expected": {
+        "value": 93,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.85,
+          "consistency": 0.0,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 94,
+          "consistency": null,
+          "efficiency": 90.0
+        }
+      }
+    },
+    {
+      "name": "efficiency_at_zero_edge",
+      "input": {
+        "performance": {
+          "value": 90,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 80,
+        "efficiency_pct": 70
+      },
+      "expected": {
+        "value": 75,
+        "band": "medium",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 90,
+          "consistency": 80,
+          "efficiency": 0
+        }
+      }
+    },
+    {
+      "name": "efficiency_below_zero_edge",
+      "input": {
+        "performance": {
+          "value": 90,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 80,
+        "efficiency_pct": 62
+      },
+      "expected": {
+        "value": 75,
+        "band": "medium",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 90,
+          "consistency": 80,
+          "efficiency": 0
+        }
+      }
+    },
+    {
+      "name": "efficiency_at_full_edge",
+      "input": {
+        "performance": {
+          "value": 90,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 80,
+        "efficiency_pct": 90
+      },
+      "expected": {
+        "value": 90,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 90,
+          "consistency": 80,
+          "efficiency": 100
+        }
+      }
+    },
+    {
+      "name": "efficiency_above_full_edge",
+      "input": {
+        "performance": {
+          "value": 90,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 80,
+        "efficiency_pct": 97
+      },
+      "expected": {
+        "value": 90,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.7,
+          "consistency": 0.15,
+          "efficiency": 0.15
+        },
+        "parts": {
+          "sufficiency": 90,
+          "consistency": 80,
+          "efficiency": 100
+        }
+      }
+    },
+    {
+      "name": "no_efficiency",
+      "input": {
+        "performance": {
+          "value": 90,
+          "status": "ok",
+          "reason": null
+        },
+        "consistency": 80,
+        "efficiency_pct": null
+      },
+      "expected": {
+        "value": 89,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "weights": {
+          "sufficiency": 0.85,
+          "consistency": 0.15,
+          "efficiency": 0.0
+        },
+        "parts": {
+          "sufficiency": 90,
+          "consistency": 80,
+          "efficiency": null
+        }
+      }
+    },
+    {
+      "name": "no_sleep",
+      "input": {
+        "performance": {
+          "value": null,
+          "status": "unavailable",
+          "reason": "no_sleep"
+        },
+        "consistency": 80,
+        "efficiency_pct": null
+      },
+      "expected": {
+        "value": null,
+        "band": null,
+        "status": "unavailable",
+        "reason": "no_sleep",
+        "weights": null,
+        "parts": null
+      }
+    },
+    {
+      "name": "no_sleep_today",
+      "input": {
+        "performance": {
+          "value": null,
+          "status": "pending",
+          "reason": "no_sleep"
+        },
+        "consistency": 80,
+        "efficiency_pct": null
+      },
+      "expected": {
+        "value": null,
+        "band": null,
+        "status": "pending",
+        "reason": "no_sleep",
+        "weights": null,
+        "parts": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "sleep_edits": [],
+  "activities": [],
+  "edits": [
+    {
+      "id": "7300000000000000101",
+      "exercise_type": "BOXING",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T19:12:00Z",
+      "notes": "Sparring, 6 rounds of 3 minutes.",
+      "hidden": false,
+      "merge_with": [],
+      "updated_at": "2026-03-12T20:30:00Z"
+    }
+  ],
+  "ratings": []
+}

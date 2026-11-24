@@ -1,0 +1,12 @@
+{
+  "name": "start_invalid",
+  "body": {
+    "start": "bad",
+    "end": "2026-03-10T07:41:00Z"
+  },
+  "status": 400,
+  "field": "start",
+  "date": "2026-03-10",
+  "store": "full",
+  "book": ""
+}

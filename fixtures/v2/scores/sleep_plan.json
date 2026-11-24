@@ -1,0 +1,210 @@
+{
+  "kind": "score_vectors",
+  "synthetic_fixture": true,
+  "goals": [
+    {
+      "name": "mockup",
+      "input": {
+        "need_minutes": 470,
+        "efficiency_pct_used": 90,
+        "wake_target": "2026-03-11T06:45:00Z"
+      },
+      "expected": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 522,
+          "bedtime": "2026-03-10T22:03:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 444,
+          "bedtime": "2026-03-10T23:21:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 366,
+          "bedtime": "2026-03-11T00:39:00Z"
+        }
+      ]
+    },
+    {
+      "name": "day_full",
+      "input": {
+        "need_minutes": 483,
+        "efficiency_pct_used": 92.5,
+        "wake_target": "2026-03-11T07:07:00Z"
+      },
+      "expected": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 522,
+          "bedtime": "2026-03-10T22:25:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 444,
+          "bedtime": "2026-03-10T23:43:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 366,
+          "bedtime": "2026-03-11T01:01:00Z"
+        }
+      ]
+    },
+    {
+      "name": "need_floor",
+      "input": {
+        "need_minutes": 300,
+        "efficiency_pct_used": 100,
+        "wake_target": "2026-03-11T05:00:00Z"
+      },
+      "expected": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 300,
+          "bedtime": "2026-03-11T00:00:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 255,
+          "bedtime": "2026-03-11T00:45:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 210,
+          "bedtime": "2026-03-11T01:30:00Z"
+        }
+      ]
+    },
+    {
+      "name": "half_rounds_up",
+      "input": {
+        "need_minutes": 455,
+        "efficiency_pct_used": 100,
+        "wake_target": "2026-03-11T07:00:00Z"
+      },
+      "expected": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 455,
+          "bedtime": "2026-03-10T23:25:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 387,
+          "bedtime": "2026-03-11T00:33:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 319,
+          "bedtime": "2026-03-11T01:41:00Z"
+        }
+      ]
+    },
+    {
+      "name": "spring_forward",
+      "input": {
+        "need_minutes": 480,
+        "efficiency_pct_used": 96,
+        "wake_target": "2026-03-29T06:00:00Z"
+      },
+      "expected": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 500,
+          "bedtime": "2026-03-28T21:40:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 425,
+          "bedtime": "2026-03-28T22:55:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 350,
+          "bedtime": "2026-03-29T00:10:00Z"
+        }
+      ]
+    },
+    {
+      "name": "zero_efficiency",
+      "input": {
+        "need_minutes": 470,
+        "efficiency_pct_used": 0,
+        "wake_target": "2026-03-11T06:45:00Z"
+      },
+      "expected": []
+    }
+  ],
+  "need": [
+    {
+      "name": "day_full",
+      "input": {
+        "nap": false
+      },
+      "expected": {
+        "need_minutes": 483,
+        "need_parts": {
+          "baseline_minutes": 450,
+          "strain_extra_minutes": 11,
+          "debt_extra_minutes": 22,
+          "nap_credit_minutes": 0,
+          "cycle_strain": 12.8,
+          "debt_nights_used": 3
+        }
+      }
+    },
+    {
+      "name": "nap_40",
+      "input": {
+        "nap": true
+      },
+      "expected": {
+        "need_minutes": 443,
+        "need_parts": {
+          "baseline_minutes": 450,
+          "strain_extra_minutes": 11,
+          "debt_extra_minutes": 22,
+          "nap_credit_minutes": 40,
+          "cycle_strain": 12.8,
+          "debt_nights_used": 3
+        }
+      }
+    }
+  ],
+  "nights": [
+    {
+      "name": "two_nights",
+      "input": {
+        "wake_target": null
+      },
+      "expected": {
+        "status": "unavailable",
+        "reason": "insufficient_nights",
+        "efficiency_pct_used": null,
+        "latency_minutes_used": null,
+        "wake_target": null,
+        "wake_source": "typical",
+        "nights_used": 2,
+        "goals": []
+      }
+    },
+    {
+      "name": "config_wake_with_two_nights",
+      "input": {
+        "wake_target": "06:45"
+      },
+      "expected": {
+        "status": "unavailable",
+        "reason": "insufficient_nights",
+        "efficiency_pct_used": null,
+        "latency_minutes_used": null,
+        "wake_target": "2026-03-11T06:45:00Z",
+        "wake_source": "config",
+        "nights_used": 2,
+        "goals": []
+      }
+    }
+  ]
+}

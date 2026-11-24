@@ -1,0 +1,218 @@
+{
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "u1",
+      "state": "unedited",
+      "start": "2026-03-10T15:05:00Z",
+      "end": "2026-03-10T19:02:00Z",
+      "merge_with": [],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "u2",
+      "state": "unedited",
+      "start": "2026-03-10T15:04:00Z",
+      "end": "2026-03-10T19:02:00Z",
+      "merge_with": [],
+      "accepted": false,
+      "field": "start"
+    },
+    {
+      "name": "u3",
+      "state": "unedited",
+      "start": "2026-03-10T18:05:00Z",
+      "end": "2026-03-10T22:02:00Z",
+      "merge_with": [],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "u4",
+      "state": "unedited",
+      "start": "2026-03-10T18:05:00Z",
+      "end": "2026-03-10T22:03:00Z",
+      "merge_with": [],
+      "accepted": false,
+      "field": "end"
+    },
+    {
+      "name": "u5",
+      "state": "unedited",
+      "start": "2026-03-10T19:01:00Z",
+      "end": "2026-03-10T19:30:00Z",
+      "merge_with": [],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "u6",
+      "state": "unedited",
+      "start": "2026-03-10T19:02:00Z",
+      "end": "2026-03-10T19:30:00Z",
+      "merge_with": [],
+      "accepted": false,
+      "field": "start"
+    },
+    {
+      "name": "u7",
+      "state": "unedited",
+      "start": "2026-03-10T17:00:00Z",
+      "end": "2026-03-10T18:06:00Z",
+      "merge_with": [],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "u8",
+      "state": "unedited",
+      "start": "2026-03-10T17:00:00Z",
+      "end": "2026-03-10T18:05:00Z",
+      "merge_with": [],
+      "accepted": false,
+      "field": "start"
+    },
+    {
+      "name": "u9",
+      "state": "unedited",
+      "start": "2026-03-10T18:05:00Z",
+      "end": "2026-03-10T18:06:00Z",
+      "merge_with": [],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "m1",
+      "state": "merged",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "m2",
+      "state": "merged",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T19:37:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "merge_with"
+    },
+    {
+      "name": "m3",
+      "state": "merged",
+      "start": "2026-03-10T19:16:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "m4",
+      "state": "merged",
+      "start": "2026-03-10T19:17:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "merge_with"
+    },
+    {
+      "name": "m5",
+      "state": "merged",
+      "start": "2026-03-10T15:05:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "m6",
+      "state": "merged",
+      "start": "2026-03-10T15:04:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "start"
+    },
+    {
+      "name": "m7",
+      "state": "merged",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T22:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "m8",
+      "state": "merged",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T22:39:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "end"
+    },
+    {
+      "name": "n1",
+      "state": "unedited",
+      "start": "2026-03-10T18:05:00Z",
+      "end": "2026-03-10T19:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "n2",
+      "state": "unedited",
+      "start": "2026-03-10T18:05:00Z",
+      "end": "2026-03-10T19:37:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "merge_with"
+    },
+    {
+      "name": "n3",
+      "state": "unedited",
+      "start": "2026-03-10T15:05:00Z",
+      "end": "2026-03-10T22:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": true,
+      "field": null
+    },
+    {
+      "name": "n4",
+      "state": "unedited",
+      "start": "2026-03-10T15:04:00Z",
+      "end": "2026-03-10T22:38:00Z",
+      "merge_with": [
+        "7300000000000000102"
+      ],
+      "accepted": false,
+      "field": "start"
+    }
+  ]
+}

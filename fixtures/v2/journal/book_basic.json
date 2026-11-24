@@ -1,0 +1,264 @@
+{
+  "synthetic_fixture": true,
+  "version": 1,
+  "behaviours": null,
+  "entries": [
+    {
+      "date": "2026-01-30",
+      "answers": {
+        "screen_in_bed": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-01-31",
+      "answers": {
+        "screen_in_bed": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-02",
+      "answers": {
+        "alcohol": false,
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-03",
+      "answers": {
+        "late_caffeine": true,
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-04",
+      "answers": {
+        "alcohol": true,
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-05",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-06",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-07",
+      "answers": {
+        "late_caffeine": true,
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-08",
+      "answers": {
+        "alcohol": false,
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-09",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-10",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-11",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-12",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-13",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-14",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-15",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-17",
+      "answers": {
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-18",
+      "answers": {
+        "alcohol": true,
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-19",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-21",
+      "answers": {
+        "alcohol": false,
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-22",
+      "answers": {
+        "alcohol": false,
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-23",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-24",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-25",
+      "answers": {
+        "alcohol": true,
+        "screen_in_bed": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-26",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-27",
+      "answers": {
+        "alcohol": false,
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-28",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-01",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-02",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-03",
+      "answers": {
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-04",
+      "answers": {
+        "alcohol": false,
+        "screen_in_bed": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-05",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-07",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-08",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-09",
+      "answers": {
+        "alcohol": false,
+        "sauna": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    }
+  ]
+}

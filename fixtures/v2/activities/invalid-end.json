@@ -1,0 +1,14 @@
+{
+  "id": "3f0c0000-0000-4000-8000-000000000001",
+  "exercise_type": "BOXING",
+  "display_name": "Boxing",
+  "start": "2026-03-10T12:00:00Z",
+  "end": "2026-03-11T00:00:00Z",
+  "pauses": [],
+  "live": {
+    "strain_estimate": 11.6,
+    "avg_hr_bpm": 151,
+    "max_hr_bpm": 176,
+    "samples": 3600
+  }
+}

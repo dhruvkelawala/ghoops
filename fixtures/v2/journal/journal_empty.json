@@ -1,0 +1,96 @@
+{
+  "schema_version": 2,
+  "kind": "journal",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "default_date": "2026-03-10",
+  "from": "2026-02-09",
+  "to": "2026-03-10",
+  "behaviours": [
+    {
+      "key": "alcohol",
+      "name": "Alcohol",
+      "question": "Did you drink any alcohol?"
+    },
+    {
+      "key": "late_caffeine",
+      "name": "Late caffeine",
+      "question": "Any caffeine after 14:00?"
+    },
+    {
+      "key": "late_meal",
+      "name": "Late meal",
+      "question": "A large meal close to bedtime?"
+    },
+    {
+      "key": "screen_in_bed",
+      "name": "Screen in bed",
+      "question": "Used a phone or screen in bed?"
+    },
+    {
+      "key": "stress",
+      "name": "Stress",
+      "question": "Did you feel stressed?"
+    }
+  ],
+  "entries": [],
+  "impact": {
+    "from": "2025-12-11",
+    "to": "2026-03-10",
+    "behaviours": [
+      {
+        "key": "alcohol",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "late_caffeine",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "late_meal",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "screen_in_bed",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "stress",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      }
+    ]
+  }
+}

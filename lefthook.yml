@@ -1,0 +1,6 @@
+# Trunk-based development: nothing reaches main unless it builds here first.
+# Run `lefthook install` once in the checkout to use it.
+pre-push:
+  commands:
+    trunk-gate:
+      run: scripts/pre-push.sh

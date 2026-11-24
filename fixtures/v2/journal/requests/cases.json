@@ -1,0 +1,121 @@
+{
+  "synthetic_fixture": true,
+  "now": "2026-03-10T14:30:00Z",
+  "default_date": "2026-03-10",
+  "horizon_days": 30,
+  "note": "Each case is one PUT /v2/journal/<date> on a store without a journal file. status is the HTTP status; field is the name in 'Invalid journal field: <field>.'.",
+  "cases": [
+    {
+      "name": "future_date",
+      "date": "2026-03-11",
+      "body": "{\"answers\":{\"alcohol\":true}}",
+      "status": 404,
+      "field": null
+    },
+    {
+      "name": "oldest_allowed",
+      "date": "2026-02-08",
+      "body": "{\"answers\":{\"alcohol\":true}}",
+      "status": 200,
+      "field": null
+    },
+    {
+      "name": "past_horizon",
+      "date": "2026-02-07",
+      "body": "{\"answers\":{\"alcohol\":true}}",
+      "status": 404,
+      "field": null
+    },
+    {
+      "name": "default_date",
+      "date": "2026-03-10",
+      "body": "{\"answers\":{\"stress\":false}}",
+      "status": 200,
+      "field": null
+    },
+    {
+      "name": "malformed_date",
+      "date": "2026-3-9",
+      "body": "{\"answers\":{\"alcohol\":true}}",
+      "status": 404,
+      "field": null
+    },
+    {
+      "name": "impossible_date",
+      "date": "2026-02-30",
+      "body": "{\"answers\":{\"alcohol\":true}}",
+      "status": 404,
+      "field": null
+    },
+    {
+      "name": "body_not_object",
+      "date": "2026-03-09",
+      "body": "[]",
+      "status": 400,
+      "field": "body"
+    },
+    {
+      "name": "answers_missing",
+      "date": "2026-03-09",
+      "body": "{}",
+      "status": 400,
+      "field": "answers"
+    },
+    {
+      "name": "answers_not_object",
+      "date": "2026-03-09",
+      "body": "{\"answers\":[]}",
+      "status": 400,
+      "field": "answers"
+    },
+    {
+      "name": "answer_string",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"alcohol\":\"yes\"}}",
+      "status": 400,
+      "field": "answers"
+    },
+    {
+      "name": "answer_null",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"alcohol\":null}}",
+      "status": 400,
+      "field": "answers"
+    },
+    {
+      "name": "unknown_key",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"coffee\":true}}",
+      "status": 400,
+      "field": "answers"
+    },
+    {
+      "name": "precondition_not_time",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"alcohol\":true},\"if_updated_at\":\"soon\"}",
+      "status": 400,
+      "field": "if_updated_at"
+    },
+    {
+      "name": "disabled_catalogue_key",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"sauna\":true}}",
+      "status": 200,
+      "field": null
+    },
+    {
+      "name": "unknown_top_level_key_ignored",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{\"alcohol\":false},\"note\":\"x\"}",
+      "status": 200,
+      "field": null
+    },
+    {
+      "name": "empty_answers_remove",
+      "date": "2026-03-09",
+      "body": "{\"answers\":{}}",
+      "status": 200,
+      "field": null
+    }
+  ]
+}

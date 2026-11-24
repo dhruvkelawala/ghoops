@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "kind": "export",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "exported": "tcx",
+  "id": "7000000000000000002",
+  "path": "/Users/example/Downloads/kickboxing.tcx",
+  "bytes": 48213,
+  "plaintext_export": true
+}

@@ -1,0 +1,286 @@
+{
+  "schema_version": 2,
+  "kind": "journal",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "default_date": "2026-03-10",
+  "from": "2026-02-09",
+  "to": "2026-03-10",
+  "behaviours": [
+    {
+      "key": "alcohol",
+      "name": "Alcohol",
+      "question": "Did you drink any alcohol?"
+    },
+    {
+      "key": "late_caffeine",
+      "name": "Late caffeine",
+      "question": "Any caffeine after 14:00?"
+    },
+    {
+      "key": "late_meal",
+      "name": "Late meal",
+      "question": "A large meal close to bedtime?"
+    },
+    {
+      "key": "screen_in_bed",
+      "name": "Screen in bed",
+      "question": "Used a phone or screen in bed?"
+    },
+    {
+      "key": "stress",
+      "name": "Stress",
+      "question": "Did you feel stressed?"
+    }
+  ],
+  "entries": [
+    {
+      "date": "2026-02-09",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-10",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-11",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-12",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-13",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-14",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-15",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-17",
+      "answers": {
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-18",
+      "answers": {
+        "alcohol": true,
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-19",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-21",
+      "answers": {
+        "alcohol": false,
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-22",
+      "answers": {
+        "alcohol": false,
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-23",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-24",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-25",
+      "answers": {
+        "alcohol": true,
+        "screen_in_bed": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-26",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-27",
+      "answers": {
+        "alcohol": false,
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-02-28",
+      "answers": {
+        "late_caffeine": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-01",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-02",
+      "answers": {
+        "alcohol": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-03",
+      "answers": {
+        "late_caffeine": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-04",
+      "answers": {
+        "alcohol": false,
+        "screen_in_bed": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-05",
+      "answers": {
+        "late_meal": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-07",
+      "answers": {
+        "alcohol": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-08",
+      "answers": {
+        "late_meal": false
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    },
+    {
+      "date": "2026-03-09",
+      "answers": {
+        "alcohol": false,
+        "sauna": true
+      },
+      "updated_at": "2026-03-10T08:00:00Z"
+    }
+  ],
+  "impact": {
+    "from": "2025-12-11",
+    "to": "2026-03-10",
+    "behaviours": [
+      {
+        "key": "alcohol",
+        "status": "ok",
+        "yes_mornings": 6,
+        "no_mornings": 10,
+        "yes_mean": 51.8,
+        "no_mean": 69.6,
+        "difference": -17.8,
+        "direction": "lower"
+      },
+      {
+        "key": "late_caffeine",
+        "status": "ok",
+        "yes_mornings": 5,
+        "no_mornings": 7,
+        "yes_mean": 78.6,
+        "no_mean": 49.1,
+        "difference": 29.5,
+        "direction": "higher"
+      },
+      {
+        "key": "late_meal",
+        "status": "insufficient",
+        "yes_mornings": 4,
+        "no_mornings": 8,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "screen_in_bed",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      },
+      {
+        "key": "stress",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      }
+    ]
+  }
+}

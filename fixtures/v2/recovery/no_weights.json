@@ -1,0 +1,58 @@
+{
+  "synthetic_fixture": true,
+  "value": 73,
+  "band": "high",
+  "status": "ok",
+  "reason": null,
+  "missing_inputs": [],
+  "confidence": "high",
+  "calibrating": false,
+  "calibration": {
+    "values_needed": 7,
+    "values_for_full_confidence": 14,
+    "hrv_values": 28,
+    "resting_hr_values": 28
+  },
+  "inputs": {
+    "hrv_rmssd_ms": 56.0,
+    "resting_hr_bpm": 56,
+    "respiratory_rate_bpm": 15.2,
+    "skin_temp_deviation_c": 0.15,
+    "sleep_performance": 93
+  },
+  "baseline": {
+    "window_days": 42,
+    "hrv": {
+      "values_used": 28,
+      "ln_mean": 3.9531,
+      "ln_sd": 0.1,
+      "sd_floor_applied": true,
+      "mean_ms": 52.1
+    },
+    "resting_hr": {
+      "values_used": 28,
+      "mean": 56.04,
+      "sd": 2.0,
+      "sd_floor_applied": true
+    },
+    "respiratory_rate": {
+      "values_used": 28,
+      "mean": 14.62,
+      "sd": 0.4,
+      "sd_floor_applied": true
+    }
+  },
+  "components": {
+    "hrv_z": 0.72,
+    "hrv_score": 76.5,
+    "resting_hr_z": -0.02,
+    "resting_hr_score": 50.7,
+    "sleep_score": 93,
+    "weighted_base": 75.5,
+    "respiratory_rate_z": 1.46,
+    "respiratory_rate_penalty": 2.3,
+    "skin_temp_z": 0.75,
+    "skin_temp_penalty": 0.0,
+    "optional_missing": []
+  }
+}

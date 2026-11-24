@@ -1,0 +1,389 @@
+{
+  "schema_version": 2,
+  "source": "google_health_v4",
+  "account": "synthetic-account",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "records": [
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Box",
+          "interval": {
+            "startTime": "2026-03-10T08:00:00Z",
+            "endTime": "2026-03-10T08:10:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "BOXING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000001"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Kickbox",
+          "interval": {
+            "startTime": "2026-03-10T08:20:00Z",
+            "endTime": "2026-03-10T08:30:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "KICKBOXING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000002"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Martial arts",
+          "interval": {
+            "startTime": "2026-03-10T08:40:00Z",
+            "endTime": "2026-03-10T08:50:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "MARTIAL_ARTS"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000003"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Walk",
+          "interval": {
+            "startTime": "2026-03-10T09:00:00Z",
+            "endTime": "2026-03-10T09:10:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "WALKING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000004"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Run",
+          "interval": {
+            "startTime": "2026-03-10T09:20:00Z",
+            "endTime": "2026-03-10T09:30:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "RUNNING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000005"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Weights",
+          "interval": {
+            "startTime": "2026-03-10T09:40:00Z",
+            "endTime": "2026-03-10T09:50:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "WEIGHTLIFTING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000006"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Bike",
+          "interval": {
+            "startTime": "2026-03-10T10:00:00Z",
+            "endTime": "2026-03-10T10:10:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "BIKING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000007"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Intervals",
+          "interval": {
+            "startTime": "2026-03-10T10:20:00Z",
+            "endTime": "2026-03-10T10:30:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "HIIT"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000008"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Flow",
+          "interval": {
+            "startTime": "2026-03-10T10:40:00Z",
+            "endTime": "2026-03-10T10:50:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "YOGA"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000009"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Pool",
+          "interval": {
+            "startTime": "2026-03-10T11:00:00Z",
+            "endTime": "2026-03-10T11:10:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "SWIMMING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000010"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Hike",
+          "interval": {
+            "startTime": "2026-03-10T11:20:00Z",
+            "endTime": "2026-03-10T11:30:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "HIKING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000011"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Workout",
+          "interval": {
+            "startTime": "2026-03-10T11:40:00Z",
+            "endTime": "2026-03-10T11:50:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "OTHER"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000012"
+      },
+      "synthetic_fixture": true
+    },
+    {
+      "data_type": "exercise",
+      "stream": "raw",
+      "date": "2026-03-10",
+      "data_point": {
+        "dataSource": {
+          "recordingMethod": "ACTIVELY_RECORDED",
+          "platform": "FITBIT",
+          "device": {
+            "formFactor": "FITNESS_BAND",
+            "displayName": "Synthetic band"
+          }
+        },
+        "exercise": {
+          "displayName": "Downhill Ski",
+          "interval": {
+            "startTime": "2026-03-10T12:00:00Z",
+            "endTime": "2026-03-10T12:10:00Z"
+          },
+          "activeDuration": "600s",
+          "exerciseType": "SKIING"
+        },
+        "name": "users/synthetic/dataTypes/exercise/dataPoints/7500000000000000013"
+      },
+      "synthetic_fixture": true
+    }
+  ],
+  "hr_minutes": [
+    {
+      "date": "2026-03-10",
+      "windows": [
+        [
+          1773126000,
+          60,
+          60,
+          60
+        ]
+      ]
+    }
+  ],
+  "daily_rollups": [],
+  "user": {
+    "profile": {
+      "status": "never",
+      "fetched_at": null,
+      "error": null,
+      "body": null
+    },
+    "settings": {
+      "status": "never",
+      "fetched_at": null,
+      "error": null,
+      "body": null
+    },
+    "paired_devices": {
+      "status": "never",
+      "fetched_at": null,
+      "error": null,
+      "body": null
+    },
+    "irn_profile": {
+      "status": "never",
+      "fetched_at": null,
+      "error": null,
+      "body": null
+    }
+  },
+  "coverage": [],
+  "runs": []
+}

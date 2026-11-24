@@ -1,0 +1,217 @@
+{
+  "schema_version": 2,
+  "kind": "brief",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "disclosure": "values",
+  "part": "week",
+  "date": "2026-03-08",
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collector_stale": false,
+    "device_stale": false
+  },
+  "recovery": {
+    "status": "ok",
+    "reason": null,
+    "band": "high",
+    "calibrating": false,
+    "value": 69
+  },
+  "strain": {
+    "status": "ok",
+    "reason": null,
+    "band": "light",
+    "confidence": "low",
+    "value": 0,
+    "hr_coverage": 0.3
+  },
+  "strain_target": {
+    "status": "ok",
+    "reason": "low_coverage",
+    "intent": "maintain",
+    "position": null,
+    "low": 12.8,
+    "high": 15.8
+  },
+  "sleep": {
+    "status": "ok",
+    "reason": null,
+    "band": "high",
+    "performance": 91,
+    "asleep_minutes": 419,
+    "need_minutes": 460
+  },
+  "sleep_plan": null,
+  "trend": {
+    "recovery": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 57.8,
+      "mean_30": 61.6
+    },
+    "hrv_rmssd_ms": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 51.1,
+      "mean_30": 52.1
+    },
+    "resting_hr_bpm": {
+      "direction": "near",
+      "days_7": 7,
+      "days_30": 30,
+      "mean_7": 56,
+      "mean_30": 56.1
+    },
+    "sleep_performance": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 93.5,
+      "mean_30": 93.3
+    },
+    "asleep_minutes": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 431.8,
+      "mean_30": 431.9
+    },
+    "strain": {
+      "direction": null,
+      "days_7": 1,
+      "days_30": 1,
+      "mean_7": null,
+      "mean_30": null
+    }
+  },
+  "vitals_adverse": [],
+  "hrv_trend": {
+    "position": "within",
+    "nights": 6,
+    "baseline_values": 28,
+    "value": 50.8,
+    "range_low": 47,
+    "range_high": 57.5
+  },
+  "workouts": [],
+  "health_flags": [],
+  "week": {
+    "from": "2026-03-02",
+    "to": "2026-03-08",
+    "days_counted": 7,
+    "complete": true,
+    "targets": {
+      "sleep": {
+        "status": "no_data",
+        "min_minutes": 420,
+        "nights": 5,
+        "met_nights": 4,
+        "missing_nights": 1
+      },
+      "activity": {
+        "status": "no_data",
+        "minutes": 150,
+        "vigorous_weight": 2,
+        "credit_minutes": 0,
+        "missing_days": 6
+      },
+      "strength": {
+        "status": "not_met",
+        "days": 2,
+        "met_days": 0,
+        "missing_days": 0
+      }
+    },
+    "workouts": {
+      "total": 0,
+      "detected_efforts": 0,
+      "by_sport": []
+    },
+    "metrics": {
+      "recovery": {
+        "value": 57.8,
+        "available_days": 6,
+        "last_week": 59.5,
+        "change": -1.7,
+        "usual": 62.5
+      },
+      "strain": {
+        "value": 0,
+        "available_days": 1,
+        "last_week": null,
+        "change": null,
+        "usual": null
+      },
+      "sleep_performance": {
+        "value": 93.5,
+        "available_days": 6,
+        "last_week": 94,
+        "change": -0.5,
+        "usual": 93.3
+      },
+      "asleep_minutes": {
+        "value": 431.8,
+        "available_days": 6,
+        "last_week": 432.7,
+        "change": -0.9,
+        "usual": 433
+      },
+      "sleep_consistency": {
+        "value": 90.3,
+        "available_days": 7,
+        "last_week": 90.3,
+        "change": 0,
+        "usual": 90
+      },
+      "hrv_rmssd_ms": {
+        "value": 51.1,
+        "available_days": 6,
+        "last_week": 51.5,
+        "change": -0.4,
+        "usual": 52.3
+      },
+      "resting_hr_bpm": {
+        "value": 56,
+        "available_days": 7,
+        "last_week": 56,
+        "change": 0,
+        "usual": 56.1
+      },
+      "zones_1_3_minutes": {
+        "value": 0,
+        "available_days": 1,
+        "last_week": null,
+        "change": null,
+        "usual": null
+      },
+      "zones_4_5_minutes": {
+        "value": 0,
+        "available_days": 1,
+        "last_week": null,
+        "change": null,
+        "usual": null
+      },
+      "strength_minutes": {
+        "value": 0,
+        "available_days": 7,
+        "last_week": 0,
+        "change": 0,
+        "usual": 0
+      },
+      "steps": {
+        "value": null,
+        "available_days": 0,
+        "last_week": null,
+        "change": null,
+        "usual": null
+      }
+    }
+  },
+  "note": "ghoops estimates from documented formulas; not medical advice. Strain uses Banister's published heart-rate formula on a scale ghoops set from public examples; it is not WHOOP's Strain."
+}

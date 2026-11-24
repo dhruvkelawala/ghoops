@@ -1,0 +1,12 @@
+{
+  "name": "walk_overlap",
+  "body": {
+    "start": "2026-03-09T23:12:00Z",
+    "end": "2026-03-10T07:45:00Z"
+  },
+  "status": 400,
+  "field": "end",
+  "date": "2026-03-10",
+  "store": "sleep_neighbours",
+  "book": "neighbours"
+}

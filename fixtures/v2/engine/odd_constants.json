@@ -1,0 +1,85 @@
+{
+  "synthetic_fixture": true,
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 40,
+        "high": 70
+      },
+      "penalty_max": 8
+    },
+    "strain": {
+      "bands": {
+        "moderate": 11,
+        "strenuous": 15.5,
+        "all_out": 19
+      },
+      "zones_hrr": {
+        "z1": 0.35,
+        "z2": 0.55,
+        "z3": 0.65,
+        "z4": 0.75,
+        "z5": 0.9
+      },
+      "trimp": {
+        "a": 0.7,
+        "b": 2.0
+      },
+      "scale": {
+        "k": 12,
+        "trimp_cap": 800
+      },
+      "coverage": {
+        "medium": 0.6,
+        "high": 0.9
+      }
+    },
+    "sleep": {
+      "performance_bands": {
+        "medium": 75,
+        "high": 90
+      },
+      "consistency_bands": {
+        "medium": 65,
+        "high": 85
+      },
+      "efficiency_bands": {
+        "medium": 88,
+        "high": 93
+      },
+      "unstaged_counts_as": "asleep"
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.6,
+      "effort_hidden_overlap": 0.4
+    },
+    "vitals": {
+      "range_sd": 1.5,
+      "attention_nights": 3,
+      "attention_min_vitals": 3
+    },
+    "hrv_trend": {
+      "days": 10,
+      "min_nights": 6,
+      "band_sd": 1.5,
+      "min_baseline": 21
+    }
+  },
+  "calibration": {
+    "values_needed": 4,
+    "values_for_full_confidence": 12
+  },
+  "vitals_values_needed": 9,
+  "sleep_plan": {
+    "nights_needed": 4,
+    "window_nights": 21
+  },
+  "stage_typical": {
+    "window_nights": 28,
+    "nights_needed": 6,
+    "low_percentile": 20,
+    "high_percentile": 80
+  },
+  "comparison_window_days": 28,
+  "collector_interval_minutes": 20
+}

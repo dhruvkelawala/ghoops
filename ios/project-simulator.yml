@@ -1,0 +1,7 @@
+include:
+  - project.yml
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""
+    GHOOPS_BUNDLE_ID_PREFIX: io.ghealth
+    GHOOPS_APP_GROUP: group.io.ghealth.app

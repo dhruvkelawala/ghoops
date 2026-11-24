@@ -1,0 +1,168 @@
+{
+  "schema_version": 2,
+  "kind": "sleep",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "score_config": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null
+  },
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 34,
+        "high": 67
+      },
+      "penalty_max": 10
+    },
+    "strain": {
+      "bands": {
+        "moderate": 10,
+        "strenuous": 14,
+        "all_out": 18
+      },
+      "zones_hrr": {
+        "z1": 0.3,
+        "z2": 0.5,
+        "z3": 0.6,
+        "z4": 0.7,
+        "z5": 0.85
+      },
+      "trimp": {
+        "a": 0.64,
+        "b": 1.92
+      },
+      "scale": {
+        "k": 10,
+        "trimp_cap": 700
+      },
+      "coverage": {
+        "medium": 0.5,
+        "high": 0.8
+      }
+    },
+    "sleep": {
+      "unstaged_counts_as": "asleep",
+      "performance_bands": {
+        "medium": 70,
+        "high": 85
+      },
+      "consistency_bands": {
+        "medium": 60,
+        "high": 80
+      },
+      "efficiency_bands": {
+        "medium": 85,
+        "high": 90
+      }
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.5,
+      "effort_hidden_overlap": 0.5
+    },
+    "vitals": {
+      "range_sd": 1.25,
+      "attention_nights": 2,
+      "attention_min_vitals": 2
+    },
+    "hrv_trend": {
+      "days": 7,
+      "min_nights": 4,
+      "band_sd": 1,
+      "min_baseline": 14
+    },
+    "journal": {
+      "window_days": 90,
+      "min_answers": 5
+    }
+  },
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collect_age_minutes": 13,
+    "last_collect_status": "ok",
+    "collector_stale": false,
+    "device_last_sync_at": "2026-03-10T14:08:00Z",
+    "device_sync_age_minutes": 22,
+    "device_stale": false,
+    "device_sync_source": "paired_devices"
+  },
+  "date": "2026-03-10",
+  "stage_typical": {
+    "window_nights": 30,
+    "nights_used": 28,
+    "nights_needed": 7,
+    "low_percentile": 25,
+    "high_percentile": 75,
+    "light": {
+      "low_minutes": 256,
+      "high_minutes": 273,
+      "nights_used": 28
+    },
+    "deep": {
+      "low_minutes": 71,
+      "high_minutes": 76,
+      "nights_used": 28
+    },
+    "rem": {
+      "low_minutes": 92,
+      "high_minutes": 99,
+      "nights_used": 28
+    },
+    "awake": {
+      "low_minutes": 31,
+      "high_minutes": 45,
+      "nights_used": 28
+    },
+    "restorative": {
+      "low_minutes": 163,
+      "high_minutes": 175,
+      "nights_used": 28
+    }
+  },
+  "performance": {
+    "value": null,
+    "band": null,
+    "status": "pending",
+    "reason": "no_sleep"
+  },
+  "asleep_minutes": null,
+  "time_in_bed_minutes": null,
+  "need": {
+    "total_minutes": 471,
+    "baseline_minutes": 450,
+    "strain_extra_minutes": 5,
+    "debt_extra_minutes": 16,
+    "nap_credit_minutes": 0,
+    "previous_cycle_strain": 11.2,
+    "debt_nights_used": 3
+  },
+  "efficiency_pct": null,
+  "efficiency_band": null,
+  "consistency": {
+    "value": 89,
+    "band": "high",
+    "status": "ok",
+    "reason": null,
+    "nights_used": 5,
+    "bedtime_sd_minutes": 14.8,
+    "wake_sd_minutes": 10.9
+  },
+  "stages": null,
+  "disturbances": null,
+  "minutes_to_fall_asleep": null,
+  "bedtime": null,
+  "wake_time": null,
+  "naps": [],
+  "session": null,
+  "respiratory_rate": null,
+  "hypnogram": null,
+  "overnight_hr": [],
+  "overnight_hrv": []
+}

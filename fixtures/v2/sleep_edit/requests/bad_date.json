@@ -1,0 +1,12 @@
+{
+  "name": "bad_date",
+  "body": {
+    "start": "2026-03-09T23:12:00Z",
+    "end": "2026-03-10T07:41:00Z"
+  },
+  "status": 404,
+  "field": "",
+  "date": "bad",
+  "store": "full",
+  "book": ""
+}

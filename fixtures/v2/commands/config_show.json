@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "kind": "config",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "values": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null,
+    "week_targets": {
+      "sleep_minutes": 420,
+      "sleep_nights": 5,
+      "activity_minutes": 150,
+      "strength_days": 2
+    }
+  },
+  "defaults": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null,
+    "week_targets": {
+      "sleep_minutes": 420,
+      "sleep_nights": 5,
+      "activity_minutes": 150,
+      "strength_days": 2
+    }
+  },
+  "path": "/Users/example/.config/ghealth/config.json"
+}

@@ -1,0 +1,16 @@
+.build/
+.auth-test-runtime/
+__pycache__/
+*.pyc
+.DS_Store
+client*.json
+*token*.json
+*.enc
+*.db
+*.sqlite*
+coverage.out
+ios/build/
+ios/*.xcodeproj/
+ios/**/DerivedData/
+ios/**/.build/
+ios/**/.swiftpm/

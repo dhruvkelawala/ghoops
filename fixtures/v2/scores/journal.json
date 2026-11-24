@@ -1,0 +1,209 @@
+{
+  "kind": "score_vectors",
+  "synthetic_fixture": true,
+  "note": "journal-spec \u00a74: inputs are reported Recovery integers on mornings after yes and after no; JournalMinAnswers is 5.",
+  "cases": [
+    {
+      "name": "no_answers",
+      "input": {
+        "key": "alcohol",
+        "yes": [],
+        "no": []
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "insufficient",
+        "yes_mornings": 0,
+        "no_mornings": 0,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      }
+    },
+    {
+      "name": "four_yes",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          60,
+          61,
+          62,
+          63
+        ],
+        "no": [
+          70,
+          71,
+          72,
+          73,
+          74
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "insufficient",
+        "yes_mornings": 4,
+        "no_mornings": 5,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      }
+    },
+    {
+      "name": "four_no",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          60,
+          61,
+          62,
+          63,
+          64
+        ],
+        "no": [
+          70,
+          71,
+          72,
+          73
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "insufficient",
+        "yes_mornings": 5,
+        "no_mornings": 4,
+        "yes_mean": null,
+        "no_mean": null,
+        "difference": null,
+        "direction": null
+      }
+    },
+    {
+      "name": "five_and_five_lower",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          60,
+          61,
+          62,
+          63,
+          64
+        ],
+        "no": [
+          70,
+          71,
+          72,
+          73,
+          74
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "ok",
+        "yes_mornings": 5,
+        "no_mornings": 5,
+        "yes_mean": 62.0,
+        "no_mean": 72.0,
+        "difference": -10.0,
+        "direction": "lower"
+      }
+    },
+    {
+      "name": "higher_with_uneven_counts",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          80,
+          81,
+          79,
+          90,
+          70,
+          75
+        ],
+        "no": [
+          60,
+          65,
+          70,
+          55,
+          50,
+          66,
+          64
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "ok",
+        "yes_mornings": 6,
+        "no_mornings": 7,
+        "yes_mean": 79.2,
+        "no_mean": 61.4,
+        "difference": 17.7,
+        "direction": "higher"
+      }
+    },
+    {
+      "name": "same",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          50,
+          60,
+          70,
+          80,
+          90
+        ],
+        "no": [
+          90,
+          80,
+          70,
+          60,
+          50
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "ok",
+        "yes_mornings": 5,
+        "no_mornings": 5,
+        "yes_mean": 70.0,
+        "no_mean": 70.0,
+        "difference": 0.0,
+        "direction": "same"
+      }
+    },
+    {
+      "name": "rounds_half_away_from_zero",
+      "input": {
+        "key": "alcohol",
+        "yes": [
+          51,
+          51,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ],
+        "no": [
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "expected": {
+        "key": "alcohol",
+        "status": "ok",
+        "yes_mornings": 8,
+        "no_mornings": 5,
+        "yes_mean": 50.3,
+        "no_mean": 50.0,
+        "difference": 0.3,
+        "direction": "higher"
+      }
+    }
+  ]
+}

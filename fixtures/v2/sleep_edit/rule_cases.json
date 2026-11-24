@@ -1,0 +1,2277 @@
+{
+  "schema_version": 2,
+  "score_version": "2.3.1",
+  "synthetic_fixture": true,
+  "cases": [
+    {
+      "name": "untouched",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 437,
+        "asleep_minutes": 415,
+        "efficiency_pct": 95,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 51.6
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 20.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 28.0
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 3
+      }
+    },
+    {
+      "name": "no_segments",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 437,
+        "asleep_minutes": 415,
+        "efficiency_pct": 95,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 51.6
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 20.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 28.0
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 0
+      }
+    },
+    {
+      "name": "google_extended_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T07:41:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T07:41:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 509,
+        "asleep_minutes": 487,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 43.9
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 17.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 23.8
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 72,
+            "segments": 1,
+            "pct_of_asleep": 14.8
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T06:29:00Z",
+            "end": "2026-03-10T07:41:00Z"
+          }
+        ],
+        "awake_segments": 4
+      }
+    },
+    {
+      "name": "ghoops_extended_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T07:41:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 509,
+        "asleep_minutes": 487,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 43.9
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 17.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 23.8
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 72,
+            "segments": 1,
+            "pct_of_asleep": 14.8
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T06:29:00Z",
+            "end": "2026-03-10T07:41:00Z"
+          }
+        ],
+        "awake_segments": 4
+      }
+    },
+    {
+      "name": "ghoops_shortened_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T05:59:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 407,
+        "asleep_minutes": 391,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 190,
+            "segments": 8,
+            "pct_of_asleep": 48.6
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 21.7
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 29.7
+          },
+          "awake": {
+            "minutes": 16,
+            "segments": 4,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 3
+      }
+    },
+    {
+      "name": "ghoops_earlier_start",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T22:40:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 469,
+        "asleep_minutes": 447,
+        "efficiency_pct": 95,
+        "minutes_to_fall_asleep": null,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 47.9
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 19.0
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 26.0
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 32,
+            "segments": 1,
+            "pct_of_asleep": 7.2
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-09T22:40:00Z",
+            "end": "2026-03-09T23:12:00Z"
+          }
+        ],
+        "awake_segments": 4
+      }
+    },
+    {
+      "name": "ghoops_later_start_extended_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:42:00Z",
+          "end": "2026-03-10T07:41:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 479,
+        "asleep_minutes": 461,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": null,
+        "stages": {
+          "light": {
+            "minutes": 188,
+            "segments": 9,
+            "pct_of_asleep": 40.8
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 18.4
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 25.2
+          },
+          "awake": {
+            "minutes": 18,
+            "segments": 4,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 72,
+            "segments": 1,
+            "pct_of_asleep": 15.6
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T06:29:00Z",
+            "end": "2026-03-10T07:41:00Z"
+          }
+        ],
+        "awake_segments": 4
+      }
+    },
+    {
+      "name": "middle_gap",
+      "input": {
+        "google": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z",
+          "asleep_minutes": 100,
+          "stage_minutes": {
+            "light": 60,
+            "deep": 40
+          },
+          "stage_segments": {
+            "light": 1,
+            "deep": 1
+          },
+          "minutes_to_fall_asleep": 0
+        },
+        "segments": [
+          {
+            "start": "2026-03-10T00:00:00Z",
+            "end": "2026-03-10T01:00:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:20:00Z",
+            "end": "2026-03-10T02:00:00Z",
+            "stage": "deep"
+          }
+        ],
+        "window": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 120,
+        "asleep_minutes": 100,
+        "efficiency_pct": 83,
+        "minutes_to_fall_asleep": 0,
+        "stages": {
+          "light": {
+            "minutes": 60,
+            "segments": 1,
+            "pct_of_asleep": 60.0
+          },
+          "deep": {
+            "minutes": 40,
+            "segments": 1,
+            "pct_of_asleep": 40.0
+          },
+          "rem": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "awake": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 0
+      }
+    },
+    {
+      "name": "internal_gap_counted",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 437,
+        "asleep_minutes": 415,
+        "efficiency_pct": 95,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 51.6
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 20.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 28.0
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 3
+      }
+    },
+    {
+      "name": "internal_gap_counted_extended_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T07:41:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 509,
+        "asleep_minutes": 487,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 43.9
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 17.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 23.8
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 72,
+            "segments": 1,
+            "pct_of_asleep": 14.8
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T06:29:00Z",
+            "end": "2026-03-10T07:41:00Z"
+          }
+        ],
+        "awake_segments": 4
+      }
+    },
+    {
+      "name": "internal_gap_counted_shortened_end",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T05:59:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 407,
+        "asleep_minutes": 391,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 162,
+            "segments": 7,
+            "pct_of_asleep": 41.4
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 21.7
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 29.7
+          },
+          "awake": {
+            "minutes": 16,
+            "segments": 4,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 3
+      }
+    },
+    {
+      "name": "edge_gap_partly_counted",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 437,
+        "asleep_minutes": 421,
+        "efficiency_pct": 96,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 50.8
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 20.2
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 27.6
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 6,
+            "segments": 1,
+            "pct_of_asleep": 1.4
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:29:00Z"
+          }
+        ],
+        "awake_segments": 3
+      }
+    },
+    {
+      "name": "summary_exceeds_window",
+      "input": {
+        "google": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z",
+          "asleep_minutes": 130,
+          "stage_minutes": {
+            "light": 130
+          },
+          "stage_segments": {
+            "light": 1
+          },
+          "minutes_to_fall_asleep": 0
+        },
+        "segments": [
+          {
+            "start": "2026-03-10T00:00:00Z",
+            "end": "2026-03-10T02:00:00Z",
+            "stage": "light"
+          }
+        ],
+        "window": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 120,
+        "asleep_minutes": null,
+        "efficiency_pct": null,
+        "minutes_to_fall_asleep": 0,
+        "stages": {
+          "light": {
+            "minutes": 130,
+            "segments": 1,
+            "pct_of_asleep": null
+          },
+          "deep": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "rem": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "awake": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": null
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 0
+      }
+    },
+    {
+      "name": "classic_end_gap",
+      "input": {
+        "google": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z",
+          "asleep_minutes": 80,
+          "stage_minutes": {
+            "asleep": 80,
+            "restless": 5,
+            "awake": 5
+          },
+          "stage_segments": {
+            "asleep": 2,
+            "restless": 1,
+            "awake": 1
+          },
+          "minutes_to_fall_asleep": 0
+        },
+        "segments": [
+          {
+            "start": "2026-03-10T00:00:00Z",
+            "end": "2026-03-10T01:00:00Z",
+            "stage": "asleep"
+          },
+          {
+            "start": "2026-03-10T01:00:00Z",
+            "end": "2026-03-10T01:05:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:05:00Z",
+            "end": "2026-03-10T01:10:00Z",
+            "stage": "restless"
+          },
+          {
+            "start": "2026-03-10T01:10:00Z",
+            "end": "2026-03-10T01:30:00Z",
+            "stage": "asleep"
+          }
+        ],
+        "window": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T02:00:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 120,
+        "asleep_minutes": 110,
+        "efficiency_pct": 92,
+        "minutes_to_fall_asleep": 0,
+        "stages": {
+          "light": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "deep": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "rem": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "awake": {
+            "minutes": 5,
+            "segments": 1,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 30,
+            "segments": 1,
+            "pct_of_asleep": 27.3
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T01:30:00Z",
+            "end": "2026-03-10T02:00:00Z"
+          }
+        ],
+        "awake_segments": 1
+      }
+    },
+    {
+      "name": "nap_end_gap",
+      "input": {
+        "google": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T01:00:00Z",
+          "asleep_minutes": 40,
+          "stage_minutes": {
+            "light": 40
+          },
+          "stage_segments": {
+            "light": 1
+          },
+          "minutes_to_fall_asleep": 0
+        },
+        "segments": [
+          {
+            "start": "2026-03-10T00:00:00Z",
+            "end": "2026-03-10T00:40:00Z",
+            "stage": "light"
+          }
+        ],
+        "window": {
+          "start": "2026-03-10T00:00:00Z",
+          "end": "2026-03-10T01:00:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 60,
+        "asleep_minutes": 60,
+        "efficiency_pct": 100,
+        "minutes_to_fall_asleep": 0,
+        "stages": {
+          "light": {
+            "minutes": 40,
+            "segments": 1,
+            "pct_of_asleep": 66.7
+          },
+          "deep": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "rem": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "awake": {
+            "minutes": null,
+            "segments": null,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 20,
+            "segments": 1,
+            "pct_of_asleep": 33.3
+          }
+        },
+        "unstaged": [
+          {
+            "start": "2026-03-10T00:40:00Z",
+            "end": "2026-03-10T01:00:00Z"
+          }
+        ],
+        "awake_segments": 0
+      }
+    },
+    {
+      "name": "no_op_edit",
+      "input": {
+        "google": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "asleep_minutes": 415,
+          "stage_minutes": {
+            "awake": 22,
+            "deep": 85,
+            "light": 214,
+            "rem": 116
+          },
+          "stage_segments": {
+            "awake": 5,
+            "deep": 3,
+            "light": 9,
+            "rem": 5
+          },
+          "minutes_to_fall_asleep": 4
+        },
+        "segments": [
+          {
+            "start": "2026-03-09T23:12:00Z",
+            "end": "2026-03-09T23:16:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-09T23:16:00Z",
+            "end": "2026-03-09T23:44:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-09T23:44:00Z",
+            "end": "2026-03-10T00:26:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T00:26:00Z",
+            "end": "2026-03-10T00:46:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T00:46:00Z",
+            "end": "2026-03-10T01:04:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T01:04:00Z",
+            "end": "2026-03-10T01:07:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T01:07:00Z",
+            "end": "2026-03-10T01:32:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T01:32:00Z",
+            "end": "2026-03-10T01:57:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T01:57:00Z",
+            "end": "2026-03-10T02:22:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T02:22:00Z",
+            "end": "2026-03-10T02:48:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T02:48:00Z",
+            "end": "2026-03-10T03:18:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:18:00Z",
+            "end": "2026-03-10T03:23:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T03:23:00Z",
+            "end": "2026-03-10T03:45:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T03:45:00Z",
+            "end": "2026-03-10T04:03:00Z",
+            "stage": "deep"
+          },
+          {
+            "start": "2026-03-10T04:03:00Z",
+            "end": "2026-03-10T04:35:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T04:35:00Z",
+            "end": "2026-03-10T04:55:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T04:55:00Z",
+            "end": "2026-03-10T05:13:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:13:00Z",
+            "end": "2026-03-10T05:17:00Z",
+            "stage": "awake"
+          },
+          {
+            "start": "2026-03-10T05:17:00Z",
+            "end": "2026-03-10T05:37:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T05:37:00Z",
+            "end": "2026-03-10T05:59:00Z",
+            "stage": "rem"
+          },
+          {
+            "start": "2026-03-10T05:59:00Z",
+            "end": "2026-03-10T06:23:00Z",
+            "stage": "light"
+          },
+          {
+            "start": "2026-03-10T06:23:00Z",
+            "end": "2026-03-10T06:29:00Z",
+            "stage": "awake"
+          }
+        ],
+        "window": {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-10T06:29:00Z"
+        }
+      },
+      "expected": {
+        "time_in_bed_minutes": 437,
+        "asleep_minutes": 415,
+        "efficiency_pct": 95,
+        "minutes_to_fall_asleep": 4,
+        "stages": {
+          "light": {
+            "minutes": 214,
+            "segments": 9,
+            "pct_of_asleep": 51.6
+          },
+          "deep": {
+            "minutes": 85,
+            "segments": 3,
+            "pct_of_asleep": 20.5
+          },
+          "rem": {
+            "minutes": 116,
+            "segments": 5,
+            "pct_of_asleep": 28.0
+          },
+          "awake": {
+            "minutes": 22,
+            "segments": 5,
+            "pct_of_asleep": null
+          },
+          "unstaged": {
+            "minutes": 0,
+            "segments": 0,
+            "pct_of_asleep": 0
+          }
+        },
+        "unstaged": [],
+        "awake_segments": 3
+      }
+    }
+  ]
+}

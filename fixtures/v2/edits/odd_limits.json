@@ -1,0 +1,13 @@
+{
+  "synthetic_fixture": true,
+  "edit_limits": {
+    "horizon_days": 3,
+    "shift_minutes": 60,
+    "merge_gap_minutes": 3,
+    "merge_max_ids": 2,
+    "notes_max_chars": 40,
+    "active_min_minutes": 5,
+    "active_max_minutes": 150,
+    "heart_rate_span_max_minutes": 600
+  }
+}

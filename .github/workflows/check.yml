@@ -1,0 +1,41 @@
+name: Checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  # Trunk-based development: every push is checked on both platforms.
+  # - check: Linux Go checks. The repo variable CI_RUNS_ON picks the runner;
+  #   without it the job runs on ubuntu-latest.
+  # - mac: macOS Go checks, GHealthCore tests and the iPhone app build. It runs
+  #   only when the repo variable CI_MAC_RUNS_ON names a macOS runner, and is
+  #   skipped otherwise.
+  # The pre-push hook (lefthook.yml -> scripts/pre-push.sh) runs the fast subset
+  # before code reaches main.
+  check:
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '["ubuntu-latest"]') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.1'
+          cache: false
+      - name: Local checks with synthetic data only
+        run: make check
+  mac:
+    if: ${{ vars.CI_MAC_RUNS_ON != '' }}
+    runs-on: ${{ fromJSON(vars.CI_MAC_RUNS_ON || '["ghoops-mac"]') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.1'
+          cache: false
+      - name: macOS checks with synthetic data only
+        run: make check
+      - name: GHealthCore tests
+        run: make ios-core-test
+      - name: iPhone app build
+        run: make ios-build

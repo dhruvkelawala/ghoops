@@ -1,0 +1,97 @@
+name: GHealth
+options:
+  deploymentTarget:
+    iOS: '26.0'
+packages:
+  GHealthCore:
+    path: GHealthCore
+settings:
+  base:
+    SWIFT_VERSION: '6.0'
+    SWIFT_STRICT_CONCURRENCY: complete
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: "${GHOOPS_IOS_TEAM_ID}"
+    GHOOPS_BUNDLE_ID_PREFIX: "${GHOOPS_IOS_BUNDLE_ID_PREFIX}"
+    GHOOPS_APP_GROUP: "${GHOOPS_IOS_APP_GROUP}"
+    MARKETING_VERSION: 2.0.0
+    CURRENT_PROJECT_VERSION: '202611120001'
+    TARGETED_DEVICE_FAMILY: '1'
+    GENERATE_INFOPLIST_FILE: NO
+targets:
+  GHealth:
+    type: application
+    platform: iOS
+    sources:
+      - path: GHealth
+      - path: Shared
+        excludes: ["**/*.txt"]
+    dependencies:
+      - package: GHealthCore
+      - target: GHealthWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "$(GHOOPS_BUNDLE_ID_PREFIX).app"
+        INFOPLIST_FILE: GHealth/Info.plist
+        CODE_SIGN_ENTITLEMENTS: GHealth/GHealth.entitlements
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    info:
+      path: GHealth/Info.plist
+      properties: {"BGTaskSchedulerPermittedIdentifiers": ["io.ghealth.app.refresh"], "CFBundleDevelopmentRegion": "en", "CFBundleDisplayName": "ghoops", "CFBundleExecutable": "$(EXECUTABLE_NAME)", "CFBundleIdentifier": "$(PRODUCT_BUNDLE_IDENTIFIER)", "CFBundleName": "$(PRODUCT_NAME)", "CFBundlePackageType": "$(PRODUCT_BUNDLE_PACKAGE_TYPE)", "CFBundleShortVersionString": "$(MARKETING_VERSION)", "CFBundleURLTypes": [{"CFBundleURLSchemes": ["ghealth"]}], "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)", "SharedAppGroup": "$(GHOOPS_APP_GROUP)", "SharedKeychainGroup": "$(AppIdentifierPrefix)io.ghealth.shared", "UIApplicationSceneManifest": {"UIApplicationSupportsMultipleScenes": false}, "UIBackgroundModes": ["fetch", "bluetooth-central"], "UILaunchScreen": {}, "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"], "UIUserInterfaceStyle": "Dark", "UIAppFonts": ["SofiaSansCondensed-Variable.ttf", "NunitoSans-Variable.ttf"], "NSSupportsLiveActivities": true, "NSBluetoothAlwaysUsageDescription": "ghoops reads your live heart rate from your Fitbit Air while you record an activity."}
+    postBuildScripts:
+      - name: Copy debug fixtures
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "$CONFIGURATION" = "Debug" ]; then
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/live"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/engine"
+            cp "$SRCROOT"/../fixtures/v2/engine/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/engine/"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/recovery"
+            cp "$SRCROOT"/../fixtures/v2/recovery/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/recovery/"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/parity"
+            cp "$SRCROOT"/../fixtures/v2/parity/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/parity/"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/edits/requests"
+            cp "$SRCROOT"/../fixtures/v2/edits/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/edits/"
+            cp "$SRCROOT"/../fixtures/v2/edits/requests/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/edits/requests/"
+            mkdir -p "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/sleep_edit"
+            cp "$SRCROOT"/../fixtures/v2/sleep_edit/sleep_*.json "$SRCROOT"/../fixtures/v2/sleep_edit/heart_rate.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/sleep_edit/"
+            cp "$SRCROOT"/../fixtures/v2/live/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/live/"
+            cp "$SRCROOT"/../fixtures/v2/preview/*.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/"
+            cp "$SRCROOT"/../fixtures/v2/day_*.json "$SRCROOT"/../fixtures/v2/sleep_*.json "$SRCROOT"/../fixtures/v2/status_new_user.json "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures/"
+          else
+            rm -rf "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Fixtures"
+          fi
+  GHealthWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: GHealthWidgets
+      - path: Shared
+        excludes: ["**/*.txt"]
+    dependencies:
+      - package: GHealthCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "$(GHOOPS_BUNDLE_ID_PREFIX).app.widgets"
+        INFOPLIST_FILE: GHealthWidgets/Info.plist
+        CODE_SIGN_ENTITLEMENTS: GHealthWidgets/GHealthWidgets.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+  GHealthUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [GHealthUITests]
+    dependencies:
+      - target: GHealth
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "$(GHOOPS_BUNDLE_ID_PREFIX).app.uitests"
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  GHealth:
+    build:
+      targets:
+        GHealth: all
+    test:
+      targets: [GHealthUITests]
+      gatherCoverageData: false

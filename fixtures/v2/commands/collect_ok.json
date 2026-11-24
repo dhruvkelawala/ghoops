@@ -1,0 +1,136 @@
+{
+  "schema_version": 2,
+  "kind": "collect",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "status": "ok",
+  "pass": "hot",
+  "from": "2026-03-08",
+  "until_exclusive": "2026-03-11",
+  "requests": 21,
+  "duration_ms": 14210,
+  "core_complete": true,
+  "streams": [
+    {
+      "stream": "sleep/reconcile",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-heart-rate-variability/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-resting-heart-rate/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-respiratory-rate/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-oxygen-saturation/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-sleep-temperature-derivations/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-heart-rate-zones/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "daily-vo2-max/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 0,
+      "error": null
+    },
+    {
+      "stream": "respiratory-rate-sleep-summary/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "heart-rate-variability/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 261,
+      "error": null
+    },
+    {
+      "stream": "exercise/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 2,
+      "error": null
+    },
+    {
+      "stream": "irregular-rhythm-notification/list",
+      "dates": 3,
+      "status": "ok",
+      "records": 0,
+      "error": null
+    },
+    {
+      "stream": "heart-rate/rollUp",
+      "dates": 3,
+      "status": "ok",
+      "records": 3101,
+      "error": null
+    },
+    {
+      "stream": "steps/dailyRollUp",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "active-zone-minutes/dailyRollUp",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "total-calories/dailyRollUp",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    },
+    {
+      "stream": "distance/dailyRollUp",
+      "dates": 3,
+      "status": "ok",
+      "records": 3,
+      "error": null
+    }
+  ]
+}

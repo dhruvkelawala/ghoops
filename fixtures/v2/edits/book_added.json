@@ -1,0 +1,29 @@
+{
+  "sleep_edits": [],
+  "activities": [
+    {
+      "id": "3f0c0000-0000-4000-8000-0000000000e2",
+      "exercise_type": "BOXING",
+      "display_name": "Boxing",
+      "start": "2026-03-11T18:04:00Z",
+      "end": "2026-03-11T19:04:00Z",
+      "pauses": [],
+      "origin": "added",
+      "notes": null,
+      "created_at": "2026-03-12T20:30:00Z"
+    }
+  ],
+  "edits": [
+    {
+      "id": "7300000000000000101",
+      "exercise_type": "BOXING",
+      "start": "2026-03-10T17:56:00Z",
+      "end": "2026-03-10T19:12:00Z",
+      "notes": "Sparring, 6 rounds of 3 minutes.",
+      "hidden": false,
+      "merge_with": [],
+      "updated_at": "2026-03-12T20:30:00Z"
+    }
+  ],
+  "ratings": []
+}

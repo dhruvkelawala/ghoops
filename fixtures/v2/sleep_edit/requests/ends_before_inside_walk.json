@@ -1,0 +1,12 @@
+{
+  "name": "ends_before_inside_walk",
+  "body": {
+    "start": "2026-03-09T23:12:00Z",
+    "end": "2026-03-10T04:55:00Z"
+  },
+  "status": 200,
+  "field": "",
+  "date": "2026-03-10",
+  "store": "full",
+  "book": "inside_workout"
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "kind": "schedule",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "agents": [
+    {
+      "label": "io.ghealth.collect",
+      "installed": true,
+      "loaded": true,
+      "path": "/Users/example/Library/LaunchAgents/io.ghealth.collect.plist"
+    },
+    {
+      "label": "io.ghealth.serve",
+      "installed": true,
+      "loaded": true,
+      "path": "/Users/example/Library/LaunchAgents/io.ghealth.serve.plist"
+    }
+  ]
+}

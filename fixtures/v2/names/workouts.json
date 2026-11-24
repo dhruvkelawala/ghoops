@@ -1,0 +1,698 @@
+{
+  "schema_version": 2,
+  "kind": "workouts",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "score_config": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null
+  },
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 34,
+        "high": 67
+      },
+      "penalty_max": 10
+    },
+    "strain": {
+      "bands": {
+        "moderate": 10,
+        "strenuous": 14,
+        "all_out": 18
+      },
+      "zones_hrr": {
+        "z1": 0.3,
+        "z2": 0.5,
+        "z3": 0.6,
+        "z4": 0.7,
+        "z5": 0.85
+      },
+      "trimp": {
+        "a": 0.64,
+        "b": 1.92
+      },
+      "scale": {
+        "k": 10,
+        "trimp_cap": 700
+      },
+      "coverage": {
+        "medium": 0.5,
+        "high": 0.8
+      }
+    },
+    "sleep": {
+      "unstaged_counts_as": "asleep",
+      "performance_bands": {
+        "medium": 70,
+        "high": 85
+      },
+      "consistency_bands": {
+        "medium": 60,
+        "high": 80
+      },
+      "efficiency_bands": {
+        "medium": 85,
+        "high": 90
+      }
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.5,
+      "effort_hidden_overlap": 0.5
+    },
+    "vitals": {
+      "range_sd": 1.25,
+      "attention_nights": 2,
+      "attention_min_vitals": 2
+    },
+    "hrv_trend": {
+      "days": 7,
+      "min_nights": 4,
+      "band_sd": 1,
+      "min_baseline": 14
+    },
+    "journal": {
+      "window_days": 90,
+      "min_answers": 5
+    }
+  },
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": null,
+    "collect_age_minutes": null,
+    "last_collect_status": "never",
+    "collector_stale": true,
+    "device_last_sync_at": null,
+    "device_sync_age_minutes": null,
+    "device_stale": null,
+    "device_sync_source": "error"
+  },
+  "from": "2026-03-10",
+  "to": "2026-03-10",
+  "workouts": [
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "BOXING",
+        "display_name": "Boxing",
+        "start": "2026-03-10T08:00:00Z",
+        "end": "2026-03-10T08:10:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000001",
+      "exercise_type": "BOXING",
+      "display_name": "Boxing",
+      "category": "combat",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T08:00:00Z",
+      "end": "2026-03-10T08:10:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "KICKBOXING",
+        "display_name": "Kickboxing",
+        "start": "2026-03-10T08:20:00Z",
+        "end": "2026-03-10T08:30:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000002",
+      "exercise_type": "KICKBOXING",
+      "display_name": "Kickboxing",
+      "category": "combat",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T08:20:00Z",
+      "end": "2026-03-10T08:30:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "MARTIAL_ARTS",
+        "display_name": "Martial Arts",
+        "start": "2026-03-10T08:40:00Z",
+        "end": "2026-03-10T08:50:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000003",
+      "exercise_type": "MARTIAL_ARTS",
+      "display_name": "Martial Arts",
+      "category": "combat",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T08:40:00Z",
+      "end": "2026-03-10T08:50:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "WALKING",
+        "display_name": "Walking",
+        "start": "2026-03-10T09:00:00Z",
+        "end": "2026-03-10T09:10:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000004",
+      "exercise_type": "WALKING",
+      "display_name": "Walking",
+      "category": "walking",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T09:00:00Z",
+      "end": "2026-03-10T09:10:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "RUNNING",
+        "display_name": "Running",
+        "start": "2026-03-10T09:20:00Z",
+        "end": "2026-03-10T09:30:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000005",
+      "exercise_type": "RUNNING",
+      "display_name": "Running",
+      "category": "cardio",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T09:20:00Z",
+      "end": "2026-03-10T09:30:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "WEIGHTLIFTING",
+        "display_name": "Weightlifting",
+        "start": "2026-03-10T09:40:00Z",
+        "end": "2026-03-10T09:50:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000006",
+      "exercise_type": "WEIGHTLIFTING",
+      "display_name": "Weightlifting",
+      "category": "strength",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T09:40:00Z",
+      "end": "2026-03-10T09:50:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "BIKING",
+        "display_name": "Cycling",
+        "start": "2026-03-10T10:00:00Z",
+        "end": "2026-03-10T10:10:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000007",
+      "exercise_type": "BIKING",
+      "display_name": "Cycling",
+      "category": "cardio",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T10:00:00Z",
+      "end": "2026-03-10T10:10:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "HIIT",
+        "display_name": "HIIT",
+        "start": "2026-03-10T10:20:00Z",
+        "end": "2026-03-10T10:30:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000008",
+      "exercise_type": "HIIT",
+      "display_name": "HIIT",
+      "category": "cardio",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T10:20:00Z",
+      "end": "2026-03-10T10:30:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "YOGA",
+        "display_name": "Yoga",
+        "start": "2026-03-10T10:40:00Z",
+        "end": "2026-03-10T10:50:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000009",
+      "exercise_type": "YOGA",
+      "display_name": "Yoga",
+      "category": "other",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T10:40:00Z",
+      "end": "2026-03-10T10:50:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "SWIMMING",
+        "display_name": "Swimming",
+        "start": "2026-03-10T11:00:00Z",
+        "end": "2026-03-10T11:10:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000010",
+      "exercise_type": "SWIMMING",
+      "display_name": "Swimming",
+      "category": "cardio",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T11:00:00Z",
+      "end": "2026-03-10T11:10:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "HIKING",
+        "display_name": "Hiking",
+        "start": "2026-03-10T11:20:00Z",
+        "end": "2026-03-10T11:30:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000011",
+      "exercise_type": "HIKING",
+      "display_name": "Hiking",
+      "category": "walking",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T11:20:00Z",
+      "end": "2026-03-10T11:30:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "OTHER",
+        "display_name": "Other",
+        "start": "2026-03-10T11:40:00Z",
+        "end": "2026-03-10T11:50:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000012",
+      "exercise_type": "OTHER",
+      "display_name": "Other",
+      "category": "other",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T11:40:00Z",
+      "end": "2026-03-10T11:50:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    },
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "SKIING",
+        "display_name": "Downhill Ski",
+        "start": "2026-03-10T12:00:00Z",
+        "end": "2026-03-10T12:10:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7500000000000000013",
+      "exercise_type": "SKIING",
+      "display_name": "Downhill Ski",
+      "category": "other",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T12:00:00Z",
+      "end": "2026-03-10T12:10:00Z",
+      "elapsed_minutes": 10,
+      "active_minutes": 10,
+      "strain": null,
+      "trimp": null,
+      "hr_coverage": 0,
+      "confidence": null,
+      "avg_hr_bpm": null,
+      "peak_hr_bpm": null,
+      "zones_minutes": null,
+      "provider": {
+        "avg_hr_bpm": null,
+        "calories_kcal": null,
+        "active_zone_minutes": null
+      },
+      "source": {
+        "recording_method": "ACTIVELY_RECORDED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false,
+      "hr_series": []
+    }
+  ]
+}

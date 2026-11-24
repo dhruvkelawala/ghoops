@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "kind": "error",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "error": {
+    "code": "date_out_of_range",
+    "message": "date range must be ordered, at most 90 days, and not in the future",
+    "http_status": 400
+  }
+}

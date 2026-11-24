@@ -1,0 +1,122 @@
+{
+  "schema_version": 2,
+  "kind": "brief",
+  "source": "google_health_v4",
+  "score_version": "2.4.1+composite.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "disclosure": "values",
+  "part": "morning",
+  "date": "2026-03-10",
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collector_stale": false,
+    "device_stale": false
+  },
+  "recovery": {
+    "status": "ok",
+    "reason": null,
+    "band": "high",
+    "calibrating": false,
+    "value": 73
+  },
+  "strain": {
+    "status": "in_progress",
+    "reason": null,
+    "band": "moderate",
+    "confidence": "high",
+    "value": 12.8,
+    "hr_coverage": 1
+  },
+  "strain_target": {
+    "status": "ok",
+    "reason": null,
+    "intent": "maintain",
+    "position": "below",
+    "low": 13.3,
+    "high": 16.3
+  },
+  "sleep": {
+    "status": "ok",
+    "reason": null,
+    "band": "high",
+    "performance": 94,
+    "asleep_minutes": 415,
+    "need_minutes": 443
+  },
+  "sleep_plan": {
+    "status": "ok",
+    "reason": null,
+    "wake_source": "typical",
+    "need_minutes": 483,
+    "bedtime": "2026-03-10T22:25:00Z"
+  },
+  "trend": {
+    "recovery": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 64,
+      "mean_30": 62.4
+    },
+    "hrv_rmssd_ms": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 53.1,
+      "mean_30": 52.3
+    },
+    "resting_hr_bpm": {
+      "direction": "near",
+      "days_7": 7,
+      "days_30": 30,
+      "mean_7": 56,
+      "mean_30": 56.1
+    },
+    "sleep_performance": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 94,
+      "mean_30": 93.4
+    },
+    "asleep_minutes": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28,
+      "mean_7": 431.7,
+      "mean_30": 432.2
+    },
+    "strain": {
+      "direction": null,
+      "days_7": 2,
+      "days_30": 2,
+      "mean_7": null,
+      "mean_30": null
+    }
+  },
+  "vitals_adverse": [
+    "respiratory_rate"
+  ],
+  "hrv_trend": {
+    "position": "within",
+    "nights": 6,
+    "baseline_values": 28,
+    "value": 52.7,
+    "range_low": 47,
+    "range_high": 57.4
+  },
+  "workouts": [
+    {
+      "kind": "recorded",
+      "category": "combat",
+      "exercise_type": "KICKBOXING",
+      "suggested_exercise_type": null,
+      "elapsed_minutes": 60,
+      "strain": 12.8
+    }
+  ],
+  "health_flags": [],
+  "note": "ghoops estimates from documented formulas; not medical advice. Strain uses Banister's published heart-rate formula on a scale ghoops set from public examples; it is not WHOOP's Strain."
+}

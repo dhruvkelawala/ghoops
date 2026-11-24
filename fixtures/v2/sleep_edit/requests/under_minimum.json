@@ -1,0 +1,12 @@
+{
+  "name": "under_minimum",
+  "body": {
+    "start": "2026-03-10T05:30:00Z",
+    "end": "2026-03-10T06:29:00Z"
+  },
+  "status": 400,
+  "field": "duration",
+  "date": "2026-03-10",
+  "store": "full",
+  "book": ""
+}

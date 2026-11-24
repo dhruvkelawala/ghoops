@@ -1,0 +1,545 @@
+{
+  "schema_version": 2,
+  "kind": "day",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "score_config": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null
+  },
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 34,
+        "high": 67
+      },
+      "penalty_max": 10
+    },
+    "strain": {
+      "bands": {
+        "moderate": 10,
+        "strenuous": 14,
+        "all_out": 18
+      },
+      "zones_hrr": {
+        "z1": 0.3,
+        "z2": 0.5,
+        "z3": 0.6,
+        "z4": 0.7,
+        "z5": 0.85
+      },
+      "trimp": {
+        "a": 0.64,
+        "b": 1.92
+      },
+      "scale": {
+        "k": 10,
+        "trimp_cap": 700
+      },
+      "coverage": {
+        "medium": 0.5,
+        "high": 0.8
+      }
+    },
+    "sleep": {
+      "unstaged_counts_as": "asleep",
+      "performance_bands": {
+        "medium": 70,
+        "high": 85
+      },
+      "consistency_bands": {
+        "medium": 60,
+        "high": 80
+      },
+      "efficiency_bands": {
+        "medium": 85,
+        "high": 90
+      }
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.5,
+      "effort_hidden_overlap": 0.5
+    },
+    "vitals": {
+      "range_sd": 1.25,
+      "attention_nights": 2,
+      "attention_min_vitals": 2
+    },
+    "hrv_trend": {
+      "days": 7,
+      "min_nights": 4,
+      "band_sd": 1,
+      "min_baseline": 14
+    },
+    "journal": {
+      "window_days": 90,
+      "min_answers": 5
+    }
+  },
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collect_age_minutes": 13,
+    "last_collect_status": "ok",
+    "collector_stale": false,
+    "device_last_sync_at": null,
+    "device_sync_age_minutes": null,
+    "device_stale": null,
+    "device_sync_source": "scope_missing"
+  },
+  "date": "2026-03-10",
+  "is_current_cycle": true,
+  "cycle": {
+    "start": "2026-03-10T06:29:00Z",
+    "end": null,
+    "status": "open",
+    "start_source": "main_sleep_wake",
+    "end_source": "now"
+  },
+  "recovery": {
+    "value": null,
+    "band": null,
+    "status": "unavailable",
+    "reason": "insufficient_baseline",
+    "missing_inputs": [
+      "insufficient_baseline"
+    ],
+    "confidence": null,
+    "calibrating": true,
+    "calibration": {
+      "values_needed": 7,
+      "values_for_full_confidence": 14,
+      "hrv_values": 3,
+      "resting_hr_values": 3
+    },
+    "inputs": {
+      "hrv_rmssd_ms": 56,
+      "resting_hr_bpm": 56,
+      "respiratory_rate_bpm": 15.2,
+      "skin_temp_deviation_c": 0.15,
+      "sleep_performance": 94
+    },
+    "baseline": {
+      "window_days": 42,
+      "hrv": {
+        "values_used": 3,
+        "ln_mean": 3.9838,
+        "ln_sd": 0.1327,
+        "sd_floor_applied": false,
+        "mean_ms": 53.7
+      },
+      "resting_hr": {
+        "values_used": 3,
+        "mean": 57.67,
+        "sd": 2,
+        "sd_floor_applied": true
+      },
+      "respiratory_rate": {
+        "values_used": 3,
+        "mean": 14.8,
+        "sd": 0.4,
+        "sd_floor_applied": true
+      }
+    },
+    "components": null
+  },
+  "strain": {
+    "value": 12.5,
+    "band": "moderate",
+    "status": "in_progress",
+    "reason": null,
+    "confidence": "high",
+    "trimp": 117.3,
+    "hr_coverage": 0.95,
+    "covered_minutes": 459,
+    "expected_minutes": 481,
+    "coverage_until": "2026-03-10T14:30:00Z",
+    "avg_hr_bpm": 80,
+    "peak_hr_bpm": 174,
+    "resting_hr_bpm": 56,
+    "resting_hr_source": "daily_resting_heart_rate",
+    "max_hr_bpm": 190,
+    "max_hr_source": "fitbit_zone_peak",
+    "zones_minutes": {
+      "below": 399,
+      "z1": 6,
+      "z2": 7,
+      "z3": 15,
+      "z4": 29,
+      "z5": 3
+    }
+  },
+  "strain_target": {
+    "low": null,
+    "high": null,
+    "intent": "maintain",
+    "position": null,
+    "status": "unavailable",
+    "reason": "insufficient_baseline"
+  },
+  "sleep": {
+    "stage_typical": {
+      "window_nights": 30,
+      "nights_used": 3,
+      "nights_needed": 7,
+      "low_percentile": 25,
+      "high_percentile": 75,
+      "light": {
+        "low_minutes": null,
+        "high_minutes": null,
+        "nights_used": 3
+      },
+      "deep": {
+        "low_minutes": null,
+        "high_minutes": null,
+        "nights_used": 3
+      },
+      "rem": {
+        "low_minutes": null,
+        "high_minutes": null,
+        "nights_used": 3
+      },
+      "awake": {
+        "low_minutes": null,
+        "high_minutes": null,
+        "nights_used": 3
+      },
+      "restorative": {
+        "low_minutes": null,
+        "high_minutes": null,
+        "nights_used": 3
+      }
+    },
+    "performance": {
+      "value": 94,
+      "band": "high",
+      "status": "ok",
+      "reason": null
+    },
+    "asleep_minutes": 415,
+    "time_in_bed_minutes": 437,
+    "need": {
+      "total_minutes": 442,
+      "baseline_minutes": 450,
+      "strain_extra_minutes": 4,
+      "debt_extra_minutes": 16,
+      "nap_credit_minutes": 28,
+      "previous_cycle_strain": 11,
+      "debt_nights_used": 3
+    },
+    "efficiency_pct": 95,
+    "efficiency_band": "high",
+    "consistency": {
+      "value": 86,
+      "band": "high",
+      "status": "ok",
+      "reason": null,
+      "nights_used": 4,
+      "bedtime_sd_minutes": 14.9,
+      "wake_sd_minutes": 19.7
+    },
+    "stages": {
+      "awake": {
+        "minutes": 22,
+        "segments": 5,
+        "pct_of_asleep": null
+      },
+      "deep": {
+        "minutes": 85,
+        "segments": 3,
+        "pct_of_asleep": 20.5
+      },
+      "light": {
+        "minutes": 214,
+        "segments": 9,
+        "pct_of_asleep": 51.6
+      },
+      "rem": {
+        "minutes": 116,
+        "segments": 5,
+        "pct_of_asleep": 28
+      },
+      "unstaged": {
+        "minutes": 0,
+        "segments": 0,
+        "pct_of_asleep": 0
+      }
+    },
+    "disturbances": {
+      "total": 9,
+      "awake_segments": 3,
+      "short_awakenings": 6
+    },
+    "minutes_to_fall_asleep": 4,
+    "bedtime": "2026-03-09T23:12:00Z",
+    "wake_time": "2026-03-10T06:29:00Z",
+    "naps": []
+  },
+  "sleep_plan": {
+    "status": "ok",
+    "reason": null,
+    "need_minutes": 482,
+    "need_parts": {
+      "baseline_minutes": 450,
+      "strain_extra_minutes": 10,
+      "debt_extra_minutes": 22,
+      "nap_credit_minutes": 0,
+      "cycle_strain": 12.5,
+      "debt_nights_used": 3
+    },
+    "wake_target": "2026-03-11T06:59:00Z",
+    "wake_source": "typical",
+    "efficiency_pct_used": 93,
+    "latency_minutes_used": null,
+    "nights_used": 4,
+    "nights_needed": 3,
+    "window_nights": 14,
+    "goals": [
+      {
+        "pct": 100,
+        "in_bed_minutes": 518,
+        "bedtime": "2026-03-10T22:21:00Z"
+      },
+      {
+        "pct": 85,
+        "in_bed_minutes": 441,
+        "bedtime": "2026-03-10T23:38:00Z"
+      },
+      {
+        "pct": 70,
+        "in_bed_minutes": 363,
+        "bedtime": "2026-03-11T00:56:00Z"
+      }
+    ]
+  },
+  "vitals": {
+    "metrics": {
+      "hrv_rmssd": {
+        "value": 56,
+        "unit": "ms",
+        "status": "available",
+        "range_low": null,
+        "range_high": null,
+        "baseline_values": 3,
+        "position": "no_baseline"
+      },
+      "respiratory_rate": {
+        "value": 15.2,
+        "unit": "breaths_per_minute",
+        "status": "available",
+        "range_low": null,
+        "range_high": null,
+        "baseline_values": 3,
+        "position": "no_baseline"
+      },
+      "resting_hr": {
+        "value": 56,
+        "unit": "bpm",
+        "status": "available",
+        "range_low": null,
+        "range_high": null,
+        "baseline_values": 3,
+        "position": "no_baseline"
+      },
+      "skin_temp_deviation": {
+        "value": 0.15,
+        "unit": "celsius_deviation",
+        "status": "available",
+        "range_low": -0.25,
+        "range_high": 0.25,
+        "baseline_values": null,
+        "position": "within"
+      },
+      "spo2": {
+        "value": 96.4,
+        "unit": "percent",
+        "status": "available",
+        "range_low": null,
+        "range_high": null,
+        "baseline_values": 3,
+        "position": "no_baseline"
+      }
+    },
+    "outside_range": [],
+    "adverse": [],
+    "persistent": [],
+    "metrics_with_range": 1,
+    "values_needed": 7,
+    "monitor_state": "within",
+    "hrv_trend": {
+      "value": 54.3,
+      "unit": "ms",
+      "status": "available",
+      "range_low": null,
+      "range_high": null,
+      "baseline_values": 0,
+      "position": "no_baseline",
+      "nights": 4
+    }
+  },
+  "activity": {
+    "active_zone_minutes": {
+      "value": 96,
+      "unit": "minutes",
+      "status": "available",
+      "reason": null
+    },
+    "calories_kcal": {
+      "value": 1988,
+      "unit": "kcal",
+      "status": "available",
+      "reason": null
+    },
+    "distance_km": {
+      "value": 5.1,
+      "unit": "km",
+      "status": "available",
+      "reason": null
+    },
+    "steps": {
+      "value": 6904,
+      "unit": "steps",
+      "status": "available",
+      "reason": null
+    }
+  },
+  "workouts": [
+    {
+      "paused_minutes": 0,
+      "pauses": [],
+      "original": {
+        "exercise_type": "KICKBOXING",
+        "display_name": "Kickboxing",
+        "start": "2026-03-10T12:00:00Z",
+        "end": "2026-03-10T13:00:00Z"
+      },
+      "edit": null,
+      "edited": false,
+      "merged": [],
+      "notes": null,
+      "rpe": null,
+      "origin": null,
+      "suggested": null,
+      "kind": "recorded",
+      "id": "7000000000000000002",
+      "exercise_type": "KICKBOXING",
+      "display_name": "Kickboxing",
+      "category": "combat",
+      "cycle_date": "2026-03-10",
+      "start": "2026-03-10T12:00:00Z",
+      "end": "2026-03-10T13:00:00Z",
+      "elapsed_minutes": 60,
+      "active_minutes": 59,
+      "strain": 12.5,
+      "trimp": 117.3,
+      "hr_coverage": 1,
+      "confidence": "high",
+      "avg_hr_bpm": 152,
+      "peak_hr_bpm": 174,
+      "zones_minutes": {
+        "below": 0,
+        "z1": 6,
+        "z2": 7,
+        "z3": 15,
+        "z4": 29,
+        "z5": 3
+      },
+      "provider": {
+        "avg_hr_bpm": 156,
+        "calories_kcal": 610,
+        "active_zone_minutes": 96
+      },
+      "source": {
+        "recording_method": "PASSIVELY_MEASURED",
+        "platform": "FITBIT",
+        "form_factor": "FITNESS_BAND"
+      },
+      "has_gps": false
+    }
+  ],
+  "strength_minutes": 0,
+  "vo2_max": {
+    "value": null,
+    "unit": "ml_per_kg_min",
+    "date": null,
+    "cardio_fitness_level": null,
+    "estimated": null,
+    "status": "missing",
+    "reason": "no_data"
+  },
+  "health_flags": [],
+  "comparison": {
+    "window_days": 30,
+    "from": "2026-02-08",
+    "to": "2026-03-09",
+    "min_days": 7,
+    "metrics": {
+      "recovery": {
+        "mean": null,
+        "available_days": 0
+      },
+      "strain": {
+        "mean": null,
+        "available_days": 2
+      },
+      "sleep_performance": {
+        "mean": null,
+        "available_days": 3
+      },
+      "asleep_minutes": {
+        "mean": null,
+        "available_days": 3
+      },
+      "efficiency_pct": {
+        "mean": null,
+        "available_days": 3
+      },
+      "restorative_minutes": {
+        "mean": null,
+        "available_days": 3
+      },
+      "hrv_rmssd_ms": {
+        "mean": null,
+        "available_days": 3
+      },
+      "resting_hr_bpm": {
+        "mean": null,
+        "available_days": 3
+      },
+      "respiratory_rate_bpm": {
+        "mean": null,
+        "available_days": 3
+      },
+      "spo2_pct": {
+        "mean": null,
+        "available_days": 3
+      },
+      "skin_temp_deviation_c": {
+        "mean": null,
+        "available_days": 3
+      },
+      "steps": {
+        "mean": null,
+        "available_days": 1
+      },
+      "zones_1_3_minutes": {
+        "mean": null,
+        "available_days": 2
+      },
+      "zones_4_5_minutes": {
+        "mean": null,
+        "available_days": 2
+      },
+      "strength_minutes": {
+        "mean": null,
+        "available_days": 3
+      }
+    }
+  }
+}

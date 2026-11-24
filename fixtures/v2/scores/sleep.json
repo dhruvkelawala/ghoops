@@ -1,0 +1,465 @@
+{
+  "kind": "score_vectors",
+  "score_version": "2.4.1",
+  "synthetic_fixture": true,
+  "sleep_need": [
+    {
+      "name": "worked_example_full_day",
+      "input": {
+        "baseline_need_minutes": 450,
+        "previous_cycle_strain": 11.2,
+        "prior_nights_asleep_minutes": [
+          427,
+          419,
+          441
+        ],
+        "nap_asleep_minutes": [
+          28
+        ],
+        "main_asleep_minutes": 415
+      },
+      "expected": {
+        "strain_extra_minutes": 5,
+        "debt_extra_minutes": 16,
+        "debt_nights_used": 3,
+        "nap_credit_minutes": 28,
+        "total_minutes": 443,
+        "performance": 94,
+        "band": "high"
+      }
+    },
+    {
+      "name": "hard_day_short_nights",
+      "input": {
+        "baseline_need_minutes": 450,
+        "previous_cycle_strain": 18.6,
+        "prior_nights_asleep_minutes": [
+          330,
+          360,
+          300
+        ],
+        "nap_asleep_minutes": [],
+        "main_asleep_minutes": 390
+      },
+      "expected": {
+        "strain_extra_minutes": 34,
+        "debt_extra_minutes": 60,
+        "debt_nights_used": 3,
+        "nap_credit_minutes": 0,
+        "total_minutes": 544,
+        "performance": 72,
+        "band": "medium"
+      }
+    },
+    {
+      "name": "caps_and_missing_night",
+      "input": {
+        "baseline_need_minutes": 450,
+        "previous_cycle_strain": 21.0,
+        "prior_nights_asleep_minutes": [
+          null,
+          200,
+          180
+        ],
+        "nap_asleep_minutes": [],
+        "main_asleep_minutes": 520
+      },
+      "expected": {
+        "strain_extra_minutes": 44,
+        "debt_extra_minutes": 60,
+        "debt_nights_used": 2,
+        "nap_credit_minutes": 0,
+        "total_minutes": 554,
+        "performance": 94,
+        "band": "high"
+      }
+    },
+    {
+      "name": "long_naps_hit_floor",
+      "input": {
+        "baseline_need_minutes": 360,
+        "previous_cycle_strain": null,
+        "prior_nights_asleep_minutes": [
+          400,
+          410,
+          420
+        ],
+        "nap_asleep_minutes": [
+          90,
+          60
+        ],
+        "main_asleep_minutes": 300
+      },
+      "expected": {
+        "strain_extra_minutes": 0,
+        "debt_extra_minutes": 0,
+        "debt_nights_used": 3,
+        "nap_credit_minutes": 120,
+        "total_minutes": 300,
+        "performance": 100,
+        "band": "high"
+      }
+    },
+    {
+      "name": "no_main_sleep",
+      "input": {
+        "baseline_need_minutes": 450,
+        "previous_cycle_strain": 9.9,
+        "prior_nights_asleep_minutes": [
+          450,
+          450,
+          450
+        ],
+        "nap_asleep_minutes": [],
+        "main_asleep_minutes": null
+      },
+      "expected": {
+        "strain_extra_minutes": 0,
+        "debt_extra_minutes": 0,
+        "debt_nights_used": 3,
+        "nap_credit_minutes": 0,
+        "total_minutes": 450,
+        "performance": null,
+        "band": null
+      }
+    }
+  ],
+  "consistency": [
+    {
+      "name": "regular_week",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "23:10",
+            "wake_local": "07:05"
+          },
+          {
+            "bed_local": "23:25",
+            "wake_local": "07:15"
+          },
+          {
+            "bed_local": "23:05",
+            "wake_local": "07:00"
+          },
+          {
+            "bed_local": "23:40",
+            "wake_local": "07:30"
+          },
+          {
+            "bed_local": "23:15",
+            "wake_local": "07:10"
+          },
+          {
+            "bed_local": "23:20",
+            "wake_local": "07:05"
+          },
+          {
+            "bed_local": "23:00",
+            "wake_local": "06:55"
+          }
+        ]
+      },
+      "expected": {
+        "value": 90,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 7,
+        "bedtime_sd_minutes": 13.5,
+        "wake_sd_minutes": 11.4,
+        "band": "high"
+      }
+    },
+    {
+      "name": "crosses_midnight",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "23:50",
+            "wake_local": "07:40"
+          },
+          {
+            "bed_local": "00:20",
+            "wake_local": "08:10"
+          },
+          {
+            "bed_local": "01:05",
+            "wake_local": "08:45"
+          },
+          {
+            "bed_local": "23:35",
+            "wake_local": "07:20"
+          }
+        ]
+      },
+      "expected": {
+        "value": 68,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 4,
+        "bedtime_sd_minutes": 39.7,
+        "wake_sd_minutes": 37.1,
+        "band": "medium"
+      }
+    },
+    {
+      "name": "late_sleeper_irregular",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "02:10",
+            "wake_local": "10:05"
+          },
+          {
+            "bed_local": "04:30",
+            "wake_local": "12:40"
+          },
+          {
+            "bed_local": "01:40",
+            "wake_local": "09:30"
+          },
+          {
+            "bed_local": "05:55",
+            "wake_local": "13:20"
+          },
+          {
+            "bed_local": "03:10",
+            "wake_local": "11:00"
+          }
+        ]
+      },
+      "expected": {
+        "value": 15,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 5,
+        "bedtime_sd_minutes": 104.3,
+        "wake_sd_minutes": 98.6,
+        "band": "low"
+      }
+    },
+    {
+      "name": "evening_wake_wraps",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "14:00",
+            "wake_local": "23:40"
+          },
+          {
+            "bed_local": "15:10",
+            "wake_local": "00:20"
+          },
+          {
+            "bed_local": "14:30",
+            "wake_local": "23:55"
+          },
+          {
+            "bed_local": "15:00",
+            "wake_local": "00:05"
+          }
+        ]
+      },
+      "expected": {
+        "value": 80,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 4,
+        "bedtime_sd_minutes": 31.6,
+        "wake_sd_minutes": 16.8,
+        "band": "high"
+      }
+    },
+    {
+      "name": "shift_evening_wake",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "17:30"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "18:05"
+          }
+        ]
+      },
+      "expected": {
+        "value": 94,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 7,
+        "bedtime_sd_minutes": 0.0,
+        "wake_sd_minutes": 13.2,
+        "band": "high"
+      }
+    },
+    {
+      "name": "shift_noon_bedtime",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "11:40",
+            "wake_local": "19:50"
+          },
+          {
+            "bed_local": "11:50",
+            "wake_local": "20:00"
+          },
+          {
+            "bed_local": "12:00",
+            "wake_local": "20:10"
+          },
+          {
+            "bed_local": "12:10",
+            "wake_local": "20:00"
+          },
+          {
+            "bed_local": "12:20",
+            "wake_local": "19:55"
+          },
+          {
+            "bed_local": "11:55",
+            "wake_local": "20:05"
+          },
+          {
+            "bed_local": "12:05",
+            "wake_local": "20:00"
+          }
+        ]
+      },
+      "expected": {
+        "value": 92,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 7,
+        "bedtime_sd_minutes": 13.2,
+        "wake_sd_minutes": 6.5,
+        "band": "high"
+      }
+    },
+    {
+      "name": "irregular_shift_schedule",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "23:00",
+            "wake_local": "07:00"
+          },
+          {
+            "bed_local": "08:00",
+            "wake_local": "16:00"
+          },
+          {
+            "bed_local": "15:00",
+            "wake_local": "23:00"
+          },
+          {
+            "bed_local": "01:00",
+            "wake_local": "09:00"
+          },
+          {
+            "bed_local": "10:00",
+            "wake_local": "18:00"
+          },
+          {
+            "bed_local": "22:00",
+            "wake_local": "06:00"
+          },
+          {
+            "bed_local": "04:00",
+            "wake_local": "12:00"
+          }
+        ]
+      },
+      "expected": {
+        "value": 0,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 7,
+        "bedtime_sd_minutes": 376.3,
+        "wake_sd_minutes": 376.3,
+        "band": "low"
+      }
+    },
+    {
+      "name": "ambiguous_centre",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "00:00",
+            "wake_local": "08:00"
+          },
+          {
+            "bed_local": "06:00",
+            "wake_local": "14:00"
+          },
+          {
+            "bed_local": "12:00",
+            "wake_local": "20:00"
+          },
+          {
+            "bed_local": "18:00",
+            "wake_local": "02:00"
+          }
+        ]
+      },
+      "expected": {
+        "value": 0,
+        "status": "ok",
+        "reason": null,
+        "nights_used": 4,
+        "bedtime_sd_minutes": 464.8,
+        "wake_sd_minutes": 464.8,
+        "band": "low"
+      }
+    },
+    {
+      "name": "three_nights_only",
+      "input": {
+        "nights": [
+          {
+            "bed_local": "23:10",
+            "wake_local": "07:05"
+          },
+          {
+            "bed_local": "23:25",
+            "wake_local": "07:15"
+          },
+          {
+            "bed_local": "23:05",
+            "wake_local": "07:00"
+          }
+        ]
+      },
+      "expected": {
+        "value": null,
+        "status": "unavailable",
+        "reason": "insufficient_nights",
+        "nights_used": 3,
+        "bedtime_sd_minutes": null,
+        "wake_sd_minutes": null,
+        "band": null
+      }
+    }
+  ]
+}

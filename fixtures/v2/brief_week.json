@@ -1,0 +1,104 @@
+{
+  "schema_version": 2,
+  "kind": "brief",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "disclosure": "status_only",
+  "part": "week",
+  "date": "2026-03-08",
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collector_stale": false,
+    "device_stale": false
+  },
+  "recovery": {
+    "status": "ok",
+    "reason": null,
+    "band": "high",
+    "calibrating": false
+  },
+  "strain": {
+    "status": "ok",
+    "reason": null,
+    "band": "light",
+    "confidence": "low"
+  },
+  "strain_target": {
+    "status": "ok",
+    "reason": "low_coverage",
+    "intent": "maintain",
+    "position": null
+  },
+  "sleep": {
+    "status": "ok",
+    "reason": null,
+    "band": "high"
+  },
+  "sleep_plan": null,
+  "trend": {
+    "recovery": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28
+    },
+    "hrv_rmssd_ms": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28
+    },
+    "resting_hr_bpm": {
+      "direction": "near",
+      "days_7": 7,
+      "days_30": 30
+    },
+    "sleep_performance": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28
+    },
+    "asleep_minutes": {
+      "direction": "near",
+      "days_7": 6,
+      "days_30": 28
+    },
+    "strain": {
+      "direction": null,
+      "days_7": 1,
+      "days_30": 1
+    }
+  },
+  "vitals_adverse": [],
+  "hrv_trend": {
+    "position": "within",
+    "nights": 6,
+    "baseline_values": 28
+  },
+  "workouts": [],
+  "health_flags": [],
+  "week": {
+    "from": "2026-03-02",
+    "to": "2026-03-08",
+    "days_counted": 7,
+    "complete": true,
+    "targets": {
+      "sleep": {
+        "status": "no_data"
+      },
+      "activity": {
+        "status": "no_data"
+      },
+      "strength": {
+        "status": "not_met"
+      }
+    },
+    "workouts": {
+      "total": 0,
+      "detected_efforts": 0,
+      "by_sport": []
+    }
+  },
+  "note": "ghoops estimates from documented formulas; not medical advice. Strain uses Banister's published heart-rate formula on a scale ghoops set from public examples; it is not WHOOP's Strain."
+}

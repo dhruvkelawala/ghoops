@@ -1,0 +1,4159 @@
+{
+  "schema_version": 2,
+  "kind": "snapshot",
+  "source": "google_health_v4",
+  "score_version": "2.4.1",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "score_config": {
+    "max_hr_override_bpm": null,
+    "sleep_base_need_minutes": 450,
+    "trimp_profile": "banister_b192",
+    "sport_aliases": {},
+    "strain_intent": "maintain",
+    "wake_target": null
+  },
+  "score_constants": {
+    "recovery": {
+      "bands": {
+        "medium": 34,
+        "high": 67
+      },
+      "penalty_max": 10
+    },
+    "strain": {
+      "bands": {
+        "moderate": 10,
+        "strenuous": 14,
+        "all_out": 18
+      },
+      "zones_hrr": {
+        "z1": 0.3,
+        "z2": 0.5,
+        "z3": 0.6,
+        "z4": 0.7,
+        "z5": 0.85
+      },
+      "trimp": {
+        "a": 0.64,
+        "b": 1.92
+      },
+      "scale": {
+        "k": 10,
+        "trimp_cap": 700
+      },
+      "coverage": {
+        "medium": 0.5,
+        "high": 0.8
+      }
+    },
+    "sleep": {
+      "unstaged_counts_as": "asleep",
+      "performance_bands": {
+        "medium": 70,
+        "high": 85
+      },
+      "consistency_bands": {
+        "medium": 60,
+        "high": 80
+      },
+      "efficiency_bands": {
+        "medium": 85,
+        "high": 90
+      }
+    },
+    "workouts": {
+      "recorded_hidden_overlap": 0.5,
+      "effort_hidden_overlap": 0.5
+    },
+    "vitals": {
+      "range_sd": 1.25,
+      "attention_nights": 2,
+      "attention_min_vitals": 2
+    },
+    "hrv_trend": {
+      "days": 7,
+      "min_nights": 4,
+      "band_sd": 1,
+      "min_baseline": 14
+    },
+    "journal": {
+      "window_days": 90,
+      "min_answers": 5
+    }
+  },
+  "synthetic_fixture": true,
+  "freshness": {
+    "collected_at": "2026-03-10T14:16:02Z",
+    "collect_age_minutes": 13,
+    "last_collect_status": "ok",
+    "collector_stale": false,
+    "device_last_sync_at": "2026-03-10T14:08:00Z",
+    "device_sync_age_minutes": 22,
+    "device_stale": false,
+    "device_sync_source": "paired_devices"
+  },
+  "default_date": "2026-03-10",
+  "status": {
+    "schema_version": 2,
+    "kind": "status",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "score_config": {
+      "max_hr_override_bpm": null,
+      "sleep_base_need_minutes": 450,
+      "trimp_profile": "banister_b192",
+      "sport_aliases": {},
+      "strain_intent": "maintain",
+      "wake_target": null
+    },
+    "score_constants": {
+      "recovery": {
+        "bands": {
+          "medium": 34,
+          "high": 67
+        },
+        "penalty_max": 10
+      },
+      "strain": {
+        "bands": {
+          "moderate": 10,
+          "strenuous": 14,
+          "all_out": 18
+        },
+        "zones_hrr": {
+          "z1": 0.3,
+          "z2": 0.5,
+          "z3": 0.6,
+          "z4": 0.7,
+          "z5": 0.85
+        },
+        "trimp": {
+          "a": 0.64,
+          "b": 1.92
+        },
+        "scale": {
+          "k": 10,
+          "trimp_cap": 700
+        },
+        "coverage": {
+          "medium": 0.5,
+          "high": 0.8
+        }
+      },
+      "sleep": {
+        "unstaged_counts_as": "asleep",
+        "performance_bands": {
+          "medium": 70,
+          "high": 85
+        },
+        "consistency_bands": {
+          "medium": 60,
+          "high": 80
+        },
+        "efficiency_bands": {
+          "medium": 85,
+          "high": 90
+        }
+      },
+      "workouts": {
+        "recorded_hidden_overlap": 0.5,
+        "effort_hidden_overlap": 0.5
+      },
+      "vitals": {
+        "range_sd": 1.25,
+        "attention_nights": 2,
+        "attention_min_vitals": 2
+      },
+      "hrv_trend": {
+        "days": 7,
+        "min_nights": 4,
+        "band_sd": 1,
+        "min_baseline": 14
+      },
+      "journal": {
+        "window_days": 90,
+        "min_answers": 5
+      }
+    },
+    "synthetic_fixture": true,
+    "freshness": {
+      "collected_at": "2026-03-10T14:16:02Z",
+      "collect_age_minutes": 13,
+      "last_collect_status": "ok",
+      "collector_stale": false,
+      "device_last_sync_at": "2026-03-10T14:08:00Z",
+      "device_sync_age_minutes": 22,
+      "device_stale": false,
+      "device_sync_source": "paired_devices"
+    },
+    "default_date": "2026-03-10",
+    "auth": {
+      "authorized": true,
+      "state": "authorized",
+      "refreshable": true,
+      "missing_scopes": [],
+      "partial_permissions": false
+    },
+    "collector": {
+      "schedule_installed": true,
+      "interval_minutes": 30,
+      "last_run": {
+        "started_at": "2026-03-10T14:15:30Z",
+        "finished_at": "2026-03-10T14:16:02Z",
+        "pass": "hot",
+        "status": "ok",
+        "core_complete": true,
+        "requests": 21,
+        "failed_streams": []
+      },
+      "last_core_success_at": "2026-03-10T14:16:02Z",
+      "streams": [
+        {
+          "stream": "sleep/reconcile",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-heart-rate-variability/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-resting-heart-rate/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-respiratory-rate/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-oxygen-saturation/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-sleep-temperature-derivations/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-heart-rate-zones/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "daily-vo2-max/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "respiratory-rate-sleep-summary/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "heart-rate-variability/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "exercise/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "irregular-rhythm-notification/list",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "heart-rate/rollUp",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "steps/dailyRollUp",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "active-zone-minutes/dailyRollUp",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "total-calories/dailyRollUp",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        },
+        {
+          "stream": "distance/dailyRollUp",
+          "last_date": "2026-03-10",
+          "status": "ok",
+          "last_success_at": "2026-03-10T14:15:58Z",
+          "error": null
+        }
+      ]
+    },
+    "device": {
+      "status": "ok",
+      "name": "Synthetic band",
+      "battery_level": 64,
+      "battery_status": "Medium",
+      "last_sync_at": "2026-03-10T14:08:00Z"
+    },
+    "store": {
+      "oldest_date": "2026-01-27",
+      "newest_date": "2026-03-10",
+      "heart_rate_days": 2
+    },
+    "calibration": {
+      "status": "ready",
+      "values_needed": 7,
+      "values_for_full_confidence": 14,
+      "hrv_values": 28,
+      "resting_hr_values": 28
+    },
+    "user_resources": {
+      "irn_profile": {
+        "status": "ok",
+        "fetched_at": "2026-03-10T14:15:40Z",
+        "onboarded": false,
+        "enrolled": false
+      },
+      "paired_devices": {
+        "status": "ok",
+        "fetched_at": "2026-03-10T14:15:40Z"
+      },
+      "profile": {
+        "status": "ok",
+        "fetched_at": "2026-03-10T14:15:40Z"
+      },
+      "settings": {
+        "status": "ok",
+        "fetched_at": "2026-03-10T14:15:40Z"
+      }
+    },
+    "provider_timezone": "Europe/London",
+    "server": {
+      "version": "0.2.0",
+      "revision": "synthetic"
+    },
+    "edit_limits": {
+      "sleep_min_minutes": 60,
+      "horizon_days": 30,
+      "shift_minutes": 180,
+      "merge_gap_minutes": 15,
+      "merge_max_ids": 4,
+      "notes_max_chars": 500,
+      "active_min_minutes": 1,
+      "active_max_minutes": 720,
+      "heart_rate_span_max_minutes": 1080,
+      "rpe_scale": "cr10"
+    }
+  },
+  "day": {
+    "schema_version": 2,
+    "kind": "day",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "score_config": {
+      "max_hr_override_bpm": null,
+      "sleep_base_need_minutes": 450,
+      "trimp_profile": "banister_b192",
+      "sport_aliases": {},
+      "strain_intent": "maintain",
+      "wake_target": null
+    },
+    "score_constants": {
+      "recovery": {
+        "bands": {
+          "medium": 34,
+          "high": 67
+        },
+        "penalty_max": 10
+      },
+      "strain": {
+        "bands": {
+          "moderate": 10,
+          "strenuous": 14,
+          "all_out": 18
+        },
+        "zones_hrr": {
+          "z1": 0.3,
+          "z2": 0.5,
+          "z3": 0.6,
+          "z4": 0.7,
+          "z5": 0.85
+        },
+        "trimp": {
+          "a": 0.64,
+          "b": 1.92
+        },
+        "scale": {
+          "k": 10,
+          "trimp_cap": 700
+        },
+        "coverage": {
+          "medium": 0.5,
+          "high": 0.8
+        }
+      },
+      "sleep": {
+        "unstaged_counts_as": "asleep",
+        "performance_bands": {
+          "medium": 70,
+          "high": 85
+        },
+        "consistency_bands": {
+          "medium": 60,
+          "high": 80
+        },
+        "efficiency_bands": {
+          "medium": 85,
+          "high": 90
+        }
+      },
+      "workouts": {
+        "recorded_hidden_overlap": 0.5,
+        "effort_hidden_overlap": 0.5
+      },
+      "vitals": {
+        "range_sd": 1.25,
+        "attention_nights": 2,
+        "attention_min_vitals": 2
+      },
+      "hrv_trend": {
+        "days": 7,
+        "min_nights": 4,
+        "band_sd": 1,
+        "min_baseline": 14
+      },
+      "journal": {
+        "window_days": 90,
+        "min_answers": 5
+      }
+    },
+    "synthetic_fixture": true,
+    "freshness": {
+      "collected_at": "2026-03-10T14:16:02Z",
+      "collect_age_minutes": 13,
+      "last_collect_status": "ok",
+      "collector_stale": false,
+      "device_last_sync_at": "2026-03-10T14:08:00Z",
+      "device_sync_age_minutes": 22,
+      "device_stale": false,
+      "device_sync_source": "paired_devices"
+    },
+    "date": "2026-03-10",
+    "is_current_cycle": true,
+    "cycle": {
+      "start": "2026-03-10T06:29:00Z",
+      "end": null,
+      "status": "open",
+      "start_source": "main_sleep_wake",
+      "end_source": "now"
+    },
+    "recovery": {
+      "value": 73,
+      "band": "high",
+      "status": "ok",
+      "reason": null,
+      "missing_inputs": [],
+      "confidence": "high",
+      "calibrating": false,
+      "calibration": {
+        "values_needed": 7,
+        "values_for_full_confidence": 14,
+        "hrv_values": 28,
+        "resting_hr_values": 28
+      },
+      "inputs": {
+        "hrv_rmssd_ms": 56,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 15.2,
+        "skin_temp_deviation_c": 0.15,
+        "sleep_performance": 94
+      },
+      "baseline": {
+        "window_days": 42,
+        "hrv": {
+          "values_used": 28,
+          "ln_mean": 3.9531,
+          "ln_sd": 0.1,
+          "sd_floor_applied": true,
+          "mean_ms": 52.1
+        },
+        "resting_hr": {
+          "values_used": 28,
+          "mean": 56.04,
+          "sd": 2,
+          "sd_floor_applied": true
+        },
+        "respiratory_rate": {
+          "values_used": 28,
+          "mean": 14.62,
+          "sd": 0.4,
+          "sd_floor_applied": true
+        }
+      },
+      "components": {
+        "hrv_z": 0.72,
+        "hrv_score": 76.5,
+        "resting_hr_z": -0.02,
+        "resting_hr_score": 50.7,
+        "sleep_score": 94,
+        "weighted_base": 75.7,
+        "weights": {
+          "hrv": 0.55,
+          "resting_hr": 0.2,
+          "sleep": 0.25
+        },
+        "respiratory_rate_z": 1.46,
+        "respiratory_rate_penalty": 2.3,
+        "skin_temp_z": 0.75,
+        "skin_temp_penalty": 0,
+        "optional_missing": []
+      }
+    },
+    "strain": {
+      "value": 12.8,
+      "band": "moderate",
+      "status": "in_progress",
+      "reason": null,
+      "confidence": "high",
+      "trimp": 124.1,
+      "hr_coverage": 1,
+      "covered_minutes": 459,
+      "expected_minutes": 459,
+      "coverage_until": "2026-03-10T14:08:00Z",
+      "avg_hr_bpm": 80,
+      "peak_hr_bpm": 174,
+      "resting_hr_bpm": 56,
+      "resting_hr_source": "daily_resting_heart_rate",
+      "max_hr_bpm": 187,
+      "max_hr_source": "age_predicted_profile",
+      "zones_minutes": {
+        "below": 399,
+        "z1": 5,
+        "z2": 7,
+        "z3": 15,
+        "z4": 12,
+        "z5": 21
+      }
+    },
+    "strain_target": {
+      "low": 13.3,
+      "high": 16.3,
+      "intent": "maintain",
+      "position": "below",
+      "status": "ok",
+      "reason": null
+    },
+    "sleep": {
+      "stage_typical": {
+        "window_nights": 30,
+        "nights_used": 28,
+        "nights_needed": 7,
+        "low_percentile": 25,
+        "high_percentile": 75,
+        "light": {
+          "low_minutes": 256,
+          "high_minutes": 273,
+          "nights_used": 28
+        },
+        "deep": {
+          "low_minutes": 71,
+          "high_minutes": 76,
+          "nights_used": 28
+        },
+        "rem": {
+          "low_minutes": 92,
+          "high_minutes": 99,
+          "nights_used": 28
+        },
+        "awake": {
+          "low_minutes": 31,
+          "high_minutes": 45,
+          "nights_used": 28
+        },
+        "restorative": {
+          "low_minutes": 163,
+          "high_minutes": 175,
+          "nights_used": 28
+        }
+      },
+      "performance": {
+        "value": 94,
+        "band": "high",
+        "status": "ok",
+        "reason": null
+      },
+      "asleep_minutes": 415,
+      "time_in_bed_minutes": 437,
+      "need": {
+        "total_minutes": 443,
+        "baseline_minutes": 450,
+        "strain_extra_minutes": 5,
+        "debt_extra_minutes": 16,
+        "nap_credit_minutes": 28,
+        "previous_cycle_strain": 11.2,
+        "debt_nights_used": 3
+      },
+      "efficiency_pct": 95,
+      "efficiency_band": "high",
+      "consistency": {
+        "value": 87,
+        "band": "high",
+        "status": "ok",
+        "reason": null,
+        "nights_used": 6,
+        "bedtime_sd_minutes": 13.5,
+        "wake_sd_minutes": 18.9
+      },
+      "stages": {
+        "awake": {
+          "minutes": 22,
+          "segments": 5,
+          "pct_of_asleep": null
+        },
+        "deep": {
+          "minutes": 85,
+          "segments": 3,
+          "pct_of_asleep": 20.5
+        },
+        "light": {
+          "minutes": 214,
+          "segments": 9,
+          "pct_of_asleep": 51.6
+        },
+        "rem": {
+          "minutes": 116,
+          "segments": 5,
+          "pct_of_asleep": 28
+        },
+        "unstaged": {
+          "minutes": 0,
+          "segments": 0,
+          "pct_of_asleep": 0
+        }
+      },
+      "disturbances": {
+        "total": 9,
+        "awake_segments": 3,
+        "short_awakenings": 6
+      },
+      "minutes_to_fall_asleep": 4,
+      "bedtime": "2026-03-09T23:12:00Z",
+      "wake_time": "2026-03-10T06:29:00Z",
+      "naps": []
+    },
+    "sleep_plan": {
+      "status": "ok",
+      "reason": null,
+      "need_minutes": 483,
+      "need_parts": {
+        "baseline_minutes": 450,
+        "strain_extra_minutes": 11,
+        "debt_extra_minutes": 22,
+        "nap_credit_minutes": 0,
+        "cycle_strain": 12.8,
+        "debt_nights_used": 3
+      },
+      "wake_target": "2026-03-11T07:07:00Z",
+      "wake_source": "typical",
+      "efficiency_pct_used": 92.5,
+      "latency_minutes_used": null,
+      "nights_used": 12,
+      "nights_needed": 3,
+      "window_nights": 14,
+      "goals": [
+        {
+          "pct": 100,
+          "in_bed_minutes": 522,
+          "bedtime": "2026-03-10T22:25:00Z"
+        },
+        {
+          "pct": 85,
+          "in_bed_minutes": 444,
+          "bedtime": "2026-03-10T23:43:00Z"
+        },
+        {
+          "pct": 70,
+          "in_bed_minutes": 366,
+          "bedtime": "2026-03-11T01:01:00Z"
+        }
+      ]
+    },
+    "vitals": {
+      "metrics": {
+        "hrv_rmssd": {
+          "value": 56,
+          "unit": "ms",
+          "status": "available",
+          "range_low": 46,
+          "range_high": 59,
+          "baseline_values": 28,
+          "position": "within"
+        },
+        "respiratory_rate": {
+          "value": 15.2,
+          "unit": "breaths_per_minute",
+          "status": "available",
+          "range_low": 14.1,
+          "range_high": 15.1,
+          "baseline_values": 28,
+          "position": "above"
+        },
+        "resting_hr": {
+          "value": 56,
+          "unit": "bpm",
+          "status": "available",
+          "range_low": 53.5,
+          "range_high": 58.5,
+          "baseline_values": 28,
+          "position": "within"
+        },
+        "skin_temp_deviation": {
+          "value": 0.15,
+          "unit": "celsius_deviation",
+          "status": "available",
+          "range_low": -0.25,
+          "range_high": 0.25,
+          "baseline_values": null,
+          "position": "within"
+        },
+        "spo2": {
+          "value": 96.4,
+          "unit": "percent",
+          "status": "available",
+          "range_low": 95.4,
+          "range_high": 96.7,
+          "baseline_values": 28,
+          "position": "within"
+        }
+      },
+      "outside_range": [
+        "respiratory_rate"
+      ],
+      "adverse": [
+        "respiratory_rate"
+      ],
+      "persistent": [],
+      "metrics_with_range": 5,
+      "values_needed": 7,
+      "monitor_state": "outside",
+      "hrv_trend": {
+        "value": 52.7,
+        "unit": "ms",
+        "status": "available",
+        "range_low": 47,
+        "range_high": 57.4,
+        "baseline_values": 28,
+        "position": "within",
+        "nights": 6
+      }
+    },
+    "activity": {
+      "active_zone_minutes": {
+        "value": 96,
+        "unit": "minutes",
+        "status": "available",
+        "reason": null
+      },
+      "calories_kcal": {
+        "value": 1988,
+        "unit": "kcal",
+        "status": "available",
+        "reason": null
+      },
+      "distance_km": {
+        "value": 5.1,
+        "unit": "km",
+        "status": "available",
+        "reason": null
+      },
+      "steps": {
+        "value": 6904,
+        "unit": "steps",
+        "status": "available",
+        "reason": null
+      }
+    },
+    "workouts": [
+      {
+        "paused_minutes": 0,
+        "pauses": [],
+        "original": {
+          "exercise_type": "KICKBOXING",
+          "display_name": "Kickboxing",
+          "start": "2026-03-10T12:00:00Z",
+          "end": "2026-03-10T13:00:00Z"
+        },
+        "edit": null,
+        "edited": false,
+        "merged": [],
+        "notes": null,
+        "rpe": null,
+        "origin": null,
+        "suggested": null,
+        "kind": "recorded",
+        "id": "7000000000000000002",
+        "exercise_type": "KICKBOXING",
+        "display_name": "Kickboxing",
+        "category": "combat",
+        "cycle_date": "2026-03-10",
+        "start": "2026-03-10T12:00:00Z",
+        "end": "2026-03-10T13:00:00Z",
+        "elapsed_minutes": 60,
+        "active_minutes": 59,
+        "strain": 12.8,
+        "trimp": 124.1,
+        "hr_coverage": 1,
+        "confidence": "high",
+        "avg_hr_bpm": 152,
+        "peak_hr_bpm": 174,
+        "zones_minutes": {
+          "below": 0,
+          "z1": 5,
+          "z2": 7,
+          "z3": 15,
+          "z4": 12,
+          "z5": 21
+        },
+        "provider": {
+          "avg_hr_bpm": 156,
+          "calories_kcal": 610,
+          "active_zone_minutes": 96
+        },
+        "source": {
+          "recording_method": "PASSIVELY_MEASURED",
+          "platform": "FITBIT",
+          "form_factor": "FITNESS_BAND"
+        },
+        "has_gps": false
+      }
+    ],
+    "strength_minutes": 0,
+    "vo2_max": {
+      "value": null,
+      "unit": "ml_per_kg_min",
+      "date": null,
+      "cardio_fitness_level": null,
+      "estimated": null,
+      "status": "missing",
+      "reason": "no_data"
+    },
+    "health_flags": [],
+    "comparison": {
+      "window_days": 30,
+      "from": "2026-02-08",
+      "to": "2026-03-09",
+      "min_days": 7,
+      "metrics": {
+        "recovery": {
+          "mean": 62.2,
+          "available_days": 28
+        },
+        "strain": {
+          "mean": null,
+          "available_days": 2
+        },
+        "sleep_performance": {
+          "mean": 93.3,
+          "available_days": 28
+        },
+        "asleep_minutes": {
+          "mean": 432.4,
+          "available_days": 28
+        },
+        "efficiency_pct": {
+          "mean": 91.9,
+          "available_days": 28
+        },
+        "restorative_minutes": {
+          "mean": 168.6,
+          "available_days": 28
+        },
+        "hrv_rmssd_ms": {
+          "mean": 52.3,
+          "available_days": 28
+        },
+        "resting_hr_bpm": {
+          "mean": 56.2,
+          "available_days": 30
+        },
+        "respiratory_rate_bpm": {
+          "mean": 14.6,
+          "available_days": 28
+        },
+        "spo2_pct": {
+          "mean": 96,
+          "available_days": 28
+        },
+        "skin_temp_deviation_c": {
+          "mean": 0.01,
+          "available_days": 28
+        },
+        "steps": {
+          "mean": null,
+          "available_days": 1
+        },
+        "zones_1_3_minutes": {
+          "mean": null,
+          "available_days": 2
+        },
+        "zones_4_5_minutes": {
+          "mean": null,
+          "available_days": 2
+        },
+        "strength_minutes": {
+          "mean": 0,
+          "available_days": 30
+        }
+      }
+    }
+  },
+  "sleep": {
+    "schema_version": 2,
+    "kind": "sleep",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "score_config": {
+      "max_hr_override_bpm": null,
+      "sleep_base_need_minutes": 450,
+      "trimp_profile": "banister_b192",
+      "sport_aliases": {},
+      "strain_intent": "maintain",
+      "wake_target": null
+    },
+    "score_constants": {
+      "recovery": {
+        "bands": {
+          "medium": 34,
+          "high": 67
+        },
+        "penalty_max": 10
+      },
+      "strain": {
+        "bands": {
+          "moderate": 10,
+          "strenuous": 14,
+          "all_out": 18
+        },
+        "zones_hrr": {
+          "z1": 0.3,
+          "z2": 0.5,
+          "z3": 0.6,
+          "z4": 0.7,
+          "z5": 0.85
+        },
+        "trimp": {
+          "a": 0.64,
+          "b": 1.92
+        },
+        "scale": {
+          "k": 10,
+          "trimp_cap": 700
+        },
+        "coverage": {
+          "medium": 0.5,
+          "high": 0.8
+        }
+      },
+      "sleep": {
+        "unstaged_counts_as": "asleep",
+        "performance_bands": {
+          "medium": 70,
+          "high": 85
+        },
+        "consistency_bands": {
+          "medium": 60,
+          "high": 80
+        },
+        "efficiency_bands": {
+          "medium": 85,
+          "high": 90
+        }
+      },
+      "workouts": {
+        "recorded_hidden_overlap": 0.5,
+        "effort_hidden_overlap": 0.5
+      },
+      "vitals": {
+        "range_sd": 1.25,
+        "attention_nights": 2,
+        "attention_min_vitals": 2
+      },
+      "hrv_trend": {
+        "days": 7,
+        "min_nights": 4,
+        "band_sd": 1,
+        "min_baseline": 14
+      },
+      "journal": {
+        "window_days": 90,
+        "min_answers": 5
+      }
+    },
+    "synthetic_fixture": true,
+    "freshness": {
+      "collected_at": "2026-03-10T14:16:02Z",
+      "collect_age_minutes": 13,
+      "last_collect_status": "ok",
+      "collector_stale": false,
+      "device_last_sync_at": "2026-03-10T14:08:00Z",
+      "device_sync_age_minutes": 22,
+      "device_stale": false,
+      "device_sync_source": "paired_devices"
+    },
+    "date": "2026-03-10",
+    "stage_typical": {
+      "window_nights": 30,
+      "nights_used": 28,
+      "nights_needed": 7,
+      "low_percentile": 25,
+      "high_percentile": 75,
+      "light": {
+        "low_minutes": 256,
+        "high_minutes": 273,
+        "nights_used": 28
+      },
+      "deep": {
+        "low_minutes": 71,
+        "high_minutes": 76,
+        "nights_used": 28
+      },
+      "rem": {
+        "low_minutes": 92,
+        "high_minutes": 99,
+        "nights_used": 28
+      },
+      "awake": {
+        "low_minutes": 31,
+        "high_minutes": 45,
+        "nights_used": 28
+      },
+      "restorative": {
+        "low_minutes": 163,
+        "high_minutes": 175,
+        "nights_used": 28
+      }
+    },
+    "performance": {
+      "value": 94,
+      "band": "high",
+      "status": "ok",
+      "reason": null
+    },
+    "asleep_minutes": 415,
+    "time_in_bed_minutes": 437,
+    "need": {
+      "total_minutes": 443,
+      "baseline_minutes": 450,
+      "strain_extra_minutes": 5,
+      "debt_extra_minutes": 16,
+      "nap_credit_minutes": 28,
+      "previous_cycle_strain": 11.2,
+      "debt_nights_used": 3
+    },
+    "efficiency_pct": 95,
+    "efficiency_band": "high",
+    "consistency": {
+      "value": 87,
+      "band": "high",
+      "status": "ok",
+      "reason": null,
+      "nights_used": 6,
+      "bedtime_sd_minutes": 13.5,
+      "wake_sd_minutes": 18.9
+    },
+    "stages": {
+      "awake": {
+        "minutes": 22,
+        "segments": 5,
+        "pct_of_asleep": null
+      },
+      "deep": {
+        "minutes": 85,
+        "segments": 3,
+        "pct_of_asleep": 20.5
+      },
+      "light": {
+        "minutes": 214,
+        "segments": 9,
+        "pct_of_asleep": 51.6
+      },
+      "rem": {
+        "minutes": 116,
+        "segments": 5,
+        "pct_of_asleep": 28
+      },
+      "unstaged": {
+        "minutes": 0,
+        "segments": 0,
+        "pct_of_asleep": 0
+      }
+    },
+    "disturbances": {
+      "total": 9,
+      "awake_segments": 3,
+      "short_awakenings": 6
+    },
+    "minutes_to_fall_asleep": 4,
+    "bedtime": "2026-03-09T23:12:00Z",
+    "wake_time": "2026-03-10T06:29:00Z",
+    "naps": [],
+    "session": {
+      "google": {
+        "start": "2026-03-09T23:12:00Z",
+        "end": "2026-03-10T06:29:00Z",
+        "asleep_minutes": 415,
+        "stage_minutes": {
+          "awake": 22,
+          "deep": 85,
+          "light": 214,
+          "rem": 116
+        },
+        "stage_segments": {
+          "awake": 5,
+          "deep": 3,
+          "light": 9,
+          "rem": 5
+        },
+        "minutes_to_fall_asleep": 4
+      },
+      "edit": null,
+      "edit_range": {
+        "earliest_start": "2026-03-09T20:12:00Z",
+        "latest_end": "2026-03-10T09:29:00Z"
+      },
+      "start": "2026-03-09T23:12:00Z",
+      "end": "2026-03-10T06:29:00Z",
+      "type": "STAGES",
+      "main_sleep": true,
+      "processed": true,
+      "stages_status": "SUCCEEDED",
+      "minutes_awake": 22,
+      "minutes_after_wake_up": 6,
+      "minutes_in_sleep_period": 437
+    },
+    "respiratory_rate": {
+      "full_bpm": 14.8,
+      "deep_bpm": 13.9,
+      "light_bpm": 14.9,
+      "rem_bpm": 15.6
+    },
+    "hypnogram": {
+      "outside": [],
+      "unstaged": [],
+      "start": "2026-03-09T23:12:00Z",
+      "end": "2026-03-10T06:29:00Z",
+      "segments": [
+        {
+          "start": "2026-03-09T23:12:00Z",
+          "end": "2026-03-09T23:16:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-09T23:16:00Z",
+          "end": "2026-03-09T23:44:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-09T23:44:00Z",
+          "end": "2026-03-10T00:26:00Z",
+          "stage": "deep"
+        },
+        {
+          "start": "2026-03-10T00:26:00Z",
+          "end": "2026-03-10T00:46:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T00:46:00Z",
+          "end": "2026-03-10T01:04:00Z",
+          "stage": "rem"
+        },
+        {
+          "start": "2026-03-10T01:04:00Z",
+          "end": "2026-03-10T01:07:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T01:07:00Z",
+          "end": "2026-03-10T01:32:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T01:32:00Z",
+          "end": "2026-03-10T01:57:00Z",
+          "stage": "deep"
+        },
+        {
+          "start": "2026-03-10T01:57:00Z",
+          "end": "2026-03-10T02:22:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T02:22:00Z",
+          "end": "2026-03-10T02:48:00Z",
+          "stage": "rem"
+        },
+        {
+          "start": "2026-03-10T02:48:00Z",
+          "end": "2026-03-10T03:18:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T03:18:00Z",
+          "end": "2026-03-10T03:23:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T03:23:00Z",
+          "end": "2026-03-10T03:45:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T03:45:00Z",
+          "end": "2026-03-10T04:03:00Z",
+          "stage": "deep"
+        },
+        {
+          "start": "2026-03-10T04:03:00Z",
+          "end": "2026-03-10T04:35:00Z",
+          "stage": "rem"
+        },
+        {
+          "start": "2026-03-10T04:35:00Z",
+          "end": "2026-03-10T04:55:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T04:55:00Z",
+          "end": "2026-03-10T05:13:00Z",
+          "stage": "rem"
+        },
+        {
+          "start": "2026-03-10T05:13:00Z",
+          "end": "2026-03-10T05:17:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T05:17:00Z",
+          "end": "2026-03-10T05:37:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T05:37:00Z",
+          "end": "2026-03-10T05:59:00Z",
+          "stage": "rem"
+        },
+        {
+          "start": "2026-03-10T05:59:00Z",
+          "end": "2026-03-10T06:23:00Z",
+          "stage": "light"
+        },
+        {
+          "start": "2026-03-10T06:23:00Z",
+          "end": "2026-03-10T06:29:00Z",
+          "stage": "awake"
+        }
+      ],
+      "short_awakenings": [
+        {
+          "start": "2026-03-10T00:02:00Z",
+          "end": "2026-03-10T00:03:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T01:10:00Z",
+          "end": "2026-03-10T01:11:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T02:22:00Z",
+          "end": "2026-03-10T02:23:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T03:23:00Z",
+          "end": "2026-03-10T03:24:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T04:45:00Z",
+          "end": "2026-03-10T04:46:00Z",
+          "stage": "awake"
+        },
+        {
+          "start": "2026-03-10T05:32:00Z",
+          "end": "2026-03-10T05:33:00Z",
+          "stage": "awake"
+        }
+      ]
+    },
+    "overnight_hr": [
+      {
+        "t": "2026-03-09T23:12:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-09T23:17:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-09T23:22:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-09T23:27:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-09T23:32:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-09T23:37:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-09T23:42:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-09T23:47:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-09T23:52:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-09T23:57:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T00:02:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T00:07:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T00:12:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T00:17:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T00:22:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:27:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:32:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:37:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:42:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:47:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T00:52:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T00:57:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T01:02:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T01:07:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T01:12:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T01:17:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T01:22:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T01:27:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T01:32:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T01:37:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T01:42:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T01:47:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T01:52:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T01:57:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:02:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:07:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:12:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:17:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:22:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:27:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T02:32:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T02:37:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T02:42:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T02:47:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T02:52:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T02:57:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T03:02:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T03:07:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T03:12:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T03:17:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T03:22:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T03:27:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T03:32:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T03:37:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T03:42:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T03:47:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T03:52:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T03:57:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T04:02:00Z",
+        "bpm": 49
+      },
+      {
+        "t": "2026-03-10T04:07:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T04:12:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T04:17:00Z",
+        "bpm": 50
+      },
+      {
+        "t": "2026-03-10T04:22:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T04:27:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T04:32:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T04:37:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T04:42:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T04:47:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T04:52:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T04:57:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T05:02:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T05:07:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:12:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:17:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:22:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:27:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:32:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:37:00Z",
+        "bpm": 55
+      },
+      {
+        "t": "2026-03-10T05:42:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T05:47:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T05:52:00Z",
+        "bpm": 54
+      },
+      {
+        "t": "2026-03-10T05:57:00Z",
+        "bpm": 53
+      },
+      {
+        "t": "2026-03-10T06:02:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T06:07:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T06:12:00Z",
+        "bpm": 52
+      },
+      {
+        "t": "2026-03-10T06:17:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T06:22:00Z",
+        "bpm": 51
+      },
+      {
+        "t": "2026-03-10T06:27:00Z",
+        "bpm": 50
+      }
+    ],
+    "overnight_hrv": [
+      {
+        "t": "2026-03-09T23:22:00Z",
+        "rmssd_ms": 60
+      },
+      {
+        "t": "2026-03-09T23:27:00Z",
+        "rmssd_ms": 61.6
+      },
+      {
+        "t": "2026-03-09T23:32:00Z",
+        "rmssd_ms": 63.1
+      },
+      {
+        "t": "2026-03-09T23:37:00Z",
+        "rmssd_ms": 64.5
+      },
+      {
+        "t": "2026-03-09T23:42:00Z",
+        "rmssd_ms": 65.7
+      },
+      {
+        "t": "2026-03-09T23:47:00Z",
+        "rmssd_ms": 66.7
+      },
+      {
+        "t": "2026-03-09T23:52:00Z",
+        "rmssd_ms": 67.5
+      },
+      {
+        "t": "2026-03-09T23:57:00Z",
+        "rmssd_ms": 67.9
+      },
+      {
+        "t": "2026-03-10T00:02:00Z",
+        "rmssd_ms": 68
+      },
+      {
+        "t": "2026-03-10T00:07:00Z",
+        "rmssd_ms": 67.8
+      },
+      {
+        "t": "2026-03-10T00:12:00Z",
+        "rmssd_ms": 67.3
+      },
+      {
+        "t": "2026-03-10T00:17:00Z",
+        "rmssd_ms": 66.5
+      },
+      {
+        "t": "2026-03-10T00:22:00Z",
+        "rmssd_ms": 65.4
+      },
+      {
+        "t": "2026-03-10T00:27:00Z",
+        "rmssd_ms": 64.1
+      },
+      {
+        "t": "2026-03-10T00:32:00Z",
+        "rmssd_ms": 62.7
+      },
+      {
+        "t": "2026-03-10T00:37:00Z",
+        "rmssd_ms": 61.1
+      },
+      {
+        "t": "2026-03-10T00:42:00Z",
+        "rmssd_ms": 59.5
+      },
+      {
+        "t": "2026-03-10T00:47:00Z",
+        "rmssd_ms": 58
+      },
+      {
+        "t": "2026-03-10T00:52:00Z",
+        "rmssd_ms": 56.5
+      },
+      {
+        "t": "2026-03-10T00:57:00Z",
+        "rmssd_ms": 55.1
+      },
+      {
+        "t": "2026-03-10T01:02:00Z",
+        "rmssd_ms": 53.9
+      },
+      {
+        "t": "2026-03-10T01:07:00Z",
+        "rmssd_ms": 53
+      },
+      {
+        "t": "2026-03-10T01:12:00Z",
+        "rmssd_ms": 52.4
+      },
+      {
+        "t": "2026-03-10T01:17:00Z",
+        "rmssd_ms": 52.1
+      },
+      {
+        "t": "2026-03-10T01:22:00Z",
+        "rmssd_ms": 52
+      },
+      {
+        "t": "2026-03-10T01:27:00Z",
+        "rmssd_ms": 52.3
+      },
+      {
+        "t": "2026-03-10T01:32:00Z",
+        "rmssd_ms": 52.9
+      },
+      {
+        "t": "2026-03-10T01:37:00Z",
+        "rmssd_ms": 53.8
+      },
+      {
+        "t": "2026-03-10T01:42:00Z",
+        "rmssd_ms": 54.9
+      },
+      {
+        "t": "2026-03-10T01:47:00Z",
+        "rmssd_ms": 56.3
+      },
+      {
+        "t": "2026-03-10T01:52:00Z",
+        "rmssd_ms": 57.8
+      },
+      {
+        "t": "2026-03-10T01:57:00Z",
+        "rmssd_ms": 59.3
+      },
+      {
+        "t": "2026-03-10T02:02:00Z",
+        "rmssd_ms": 60.9
+      },
+      {
+        "t": "2026-03-10T02:07:00Z",
+        "rmssd_ms": 62.5
+      },
+      {
+        "t": "2026-03-10T02:12:00Z",
+        "rmssd_ms": 64
+      },
+      {
+        "t": "2026-03-10T02:17:00Z",
+        "rmssd_ms": 65.3
+      },
+      {
+        "t": "2026-03-10T02:22:00Z",
+        "rmssd_ms": 66.3
+      },
+      {
+        "t": "2026-03-10T02:27:00Z",
+        "rmssd_ms": 67.2
+      },
+      {
+        "t": "2026-03-10T02:32:00Z",
+        "rmssd_ms": 67.7
+      },
+      {
+        "t": "2026-03-10T02:37:00Z",
+        "rmssd_ms": 68
+      },
+      {
+        "t": "2026-03-10T02:42:00Z",
+        "rmssd_ms": 67.9
+      },
+      {
+        "t": "2026-03-10T02:47:00Z",
+        "rmssd_ms": 67.5
+      },
+      {
+        "t": "2026-03-10T02:52:00Z",
+        "rmssd_ms": 66.8
+      },
+      {
+        "t": "2026-03-10T02:57:00Z",
+        "rmssd_ms": 65.9
+      },
+      {
+        "t": "2026-03-10T03:02:00Z",
+        "rmssd_ms": 64.7
+      },
+      {
+        "t": "2026-03-10T03:07:00Z",
+        "rmssd_ms": 63.3
+      },
+      {
+        "t": "2026-03-10T03:12:00Z",
+        "rmssd_ms": 61.8
+      },
+      {
+        "t": "2026-03-10T03:17:00Z",
+        "rmssd_ms": 60.2
+      },
+      {
+        "t": "2026-03-10T03:22:00Z",
+        "rmssd_ms": 58.6
+      },
+      {
+        "t": "2026-03-10T03:27:00Z",
+        "rmssd_ms": 57.1
+      },
+      {
+        "t": "2026-03-10T03:32:00Z",
+        "rmssd_ms": 55.6
+      },
+      {
+        "t": "2026-03-10T03:37:00Z",
+        "rmssd_ms": 54.4
+      },
+      {
+        "t": "2026-03-10T03:42:00Z",
+        "rmssd_ms": 53.4
+      },
+      {
+        "t": "2026-03-10T03:47:00Z",
+        "rmssd_ms": 52.6
+      },
+      {
+        "t": "2026-03-10T03:52:00Z",
+        "rmssd_ms": 52.2
+      },
+      {
+        "t": "2026-03-10T03:57:00Z",
+        "rmssd_ms": 52
+      },
+      {
+        "t": "2026-03-10T04:02:00Z",
+        "rmssd_ms": 52.2
+      },
+      {
+        "t": "2026-03-10T04:07:00Z",
+        "rmssd_ms": 52.6
+      },
+      {
+        "t": "2026-03-10T04:12:00Z",
+        "rmssd_ms": 53.4
+      },
+      {
+        "t": "2026-03-10T04:17:00Z",
+        "rmssd_ms": 54.5
+      },
+      {
+        "t": "2026-03-10T04:22:00Z",
+        "rmssd_ms": 55.7
+      },
+      {
+        "t": "2026-03-10T04:27:00Z",
+        "rmssd_ms": 57.1
+      },
+      {
+        "t": "2026-03-10T04:32:00Z",
+        "rmssd_ms": 58.7
+      },
+      {
+        "t": "2026-03-10T04:37:00Z",
+        "rmssd_ms": 60.3
+      },
+      {
+        "t": "2026-03-10T04:42:00Z",
+        "rmssd_ms": 61.9
+      },
+      {
+        "t": "2026-03-10T04:47:00Z",
+        "rmssd_ms": 63.4
+      },
+      {
+        "t": "2026-03-10T04:52:00Z",
+        "rmssd_ms": 64.7
+      },
+      {
+        "t": "2026-03-10T04:57:00Z",
+        "rmssd_ms": 65.9
+      },
+      {
+        "t": "2026-03-10T05:02:00Z",
+        "rmssd_ms": 66.9
+      },
+      {
+        "t": "2026-03-10T05:07:00Z",
+        "rmssd_ms": 67.5
+      },
+      {
+        "t": "2026-03-10T05:12:00Z",
+        "rmssd_ms": 67.9
+      },
+      {
+        "t": "2026-03-10T05:17:00Z",
+        "rmssd_ms": 68
+      },
+      {
+        "t": "2026-03-10T05:22:00Z",
+        "rmssd_ms": 67.7
+      },
+      {
+        "t": "2026-03-10T05:27:00Z",
+        "rmssd_ms": 67.2
+      },
+      {
+        "t": "2026-03-10T05:32:00Z",
+        "rmssd_ms": 66.3
+      },
+      {
+        "t": "2026-03-10T05:37:00Z",
+        "rmssd_ms": 65.2
+      },
+      {
+        "t": "2026-03-10T05:42:00Z",
+        "rmssd_ms": 63.9
+      },
+      {
+        "t": "2026-03-10T05:47:00Z",
+        "rmssd_ms": 62.4
+      },
+      {
+        "t": "2026-03-10T05:52:00Z",
+        "rmssd_ms": 60.9
+      },
+      {
+        "t": "2026-03-10T05:57:00Z",
+        "rmssd_ms": 59.3
+      },
+      {
+        "t": "2026-03-10T06:02:00Z",
+        "rmssd_ms": 57.7
+      },
+      {
+        "t": "2026-03-10T06:07:00Z",
+        "rmssd_ms": 56.2
+      },
+      {
+        "t": "2026-03-10T06:12:00Z",
+        "rmssd_ms": 54.9
+      },
+      {
+        "t": "2026-03-10T06:17:00Z",
+        "rmssd_ms": 53.8
+      },
+      {
+        "t": "2026-03-10T06:22:00Z",
+        "rmssd_ms": 52.9
+      },
+      {
+        "t": "2026-03-10T06:27:00Z",
+        "rmssd_ms": 52.3
+      }
+    ]
+  },
+  "days": {
+    "schema_version": 2,
+    "kind": "days",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "score_config": {
+      "max_hr_override_bpm": null,
+      "sleep_base_need_minutes": 450,
+      "trimp_profile": "banister_b192",
+      "sport_aliases": {},
+      "strain_intent": "maintain",
+      "wake_target": null
+    },
+    "score_constants": {
+      "recovery": {
+        "bands": {
+          "medium": 34,
+          "high": 67
+        },
+        "penalty_max": 10
+      },
+      "strain": {
+        "bands": {
+          "moderate": 10,
+          "strenuous": 14,
+          "all_out": 18
+        },
+        "zones_hrr": {
+          "z1": 0.3,
+          "z2": 0.5,
+          "z3": 0.6,
+          "z4": 0.7,
+          "z5": 0.85
+        },
+        "trimp": {
+          "a": 0.64,
+          "b": 1.92
+        },
+        "scale": {
+          "k": 10,
+          "trimp_cap": 700
+        },
+        "coverage": {
+          "medium": 0.5,
+          "high": 0.8
+        }
+      },
+      "sleep": {
+        "unstaged_counts_as": "asleep",
+        "performance_bands": {
+          "medium": 70,
+          "high": 85
+        },
+        "consistency_bands": {
+          "medium": 60,
+          "high": 80
+        },
+        "efficiency_bands": {
+          "medium": 85,
+          "high": 90
+        }
+      },
+      "workouts": {
+        "recorded_hidden_overlap": 0.5,
+        "effort_hidden_overlap": 0.5
+      },
+      "vitals": {
+        "range_sd": 1.25,
+        "attention_nights": 2,
+        "attention_min_vitals": 2
+      },
+      "hrv_trend": {
+        "days": 7,
+        "min_nights": 4,
+        "band_sd": 1,
+        "min_baseline": 14
+      },
+      "journal": {
+        "window_days": 90,
+        "min_answers": 5
+      }
+    },
+    "synthetic_fixture": true,
+    "freshness": {
+      "collected_at": "2026-03-10T14:16:02Z",
+      "collect_age_minutes": 13,
+      "last_collect_status": "ok",
+      "collector_stale": false,
+      "device_last_sync_at": "2026-03-10T14:08:00Z",
+      "device_sync_age_minutes": 22,
+      "device_stale": false,
+      "device_sync_source": "paired_devices"
+    },
+    "from": "2026-02-09",
+    "to": "2026-03-10",
+    "days": [
+      {
+        "date": "2026-02-09",
+        "cycle_status": "closed",
+        "recovery": 59,
+        "recovery_band": "medium",
+        "recovery_status": "calibrating",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 96,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 452,
+        "sleep_need_minutes": 473,
+        "time_in_bed_minutes": 497,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 52.4,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.8,
+        "spo2_pct": 95.6,
+        "skin_temp_deviation_c": -0.14,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 176,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-10",
+        "cycle_status": "closed",
+        "recovery": 50,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 99,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 461,
+        "sleep_need_minutes": 467,
+        "time_in_bed_minutes": 489,
+        "efficiency_pct": 94,
+        "hrv_rmssd_ms": 48.4,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 14.4,
+        "spo2_pct": 96.2,
+        "skin_temp_deviation_c": -0.06,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 179,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-11",
+        "cycle_status": "closed",
+        "recovery": 67,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 89,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 406,
+        "sleep_need_minutes": 458,
+        "time_in_bed_minutes": 451,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 51.9,
+        "resting_hr_bpm": 55,
+        "respiratory_rate_bpm": 14.2,
+        "spo2_pct": 96.6,
+        "skin_temp_deviation_c": 0.06,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 158,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-12",
+        "cycle_status": "closed",
+        "recovery": 89,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 90,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 414,
+        "sleep_need_minutes": 461,
+        "time_in_bed_minutes": 453,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 58.5,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": 14.5,
+        "spo2_pct": 96.5,
+        "skin_temp_deviation_c": 0.14,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 161,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-13",
+        "cycle_status": "closed",
+        "recovery": 86,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 95,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 448,
+        "sleep_need_minutes": 470,
+        "time_in_bed_minutes": 478,
+        "efficiency_pct": 94,
+        "hrv_rmssd_ms": 58,
+        "resting_hr_bpm": 55,
+        "respiratory_rate_bpm": 14.9,
+        "spo2_pct": 95.9,
+        "skin_temp_deviation_c": 0.14,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 175,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-14",
+        "cycle_status": "closed",
+        "recovery": 45,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 90,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 425,
+        "sleep_need_minutes": 471,
+        "time_in_bed_minutes": 473,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 49.3,
+        "resting_hr_bpm": 57,
+        "respiratory_rate_bpm": 15,
+        "spo2_pct": 95.5,
+        "skin_temp_deviation_c": 0.05,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 166,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-15",
+        "cycle_status": "closed",
+        "recovery": 28,
+        "recovery_band": "low",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 93,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 433,
+        "sleep_need_minutes": 466,
+        "time_in_bed_minutes": 466,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 43.2,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.7,
+        "spo2_pct": 95.5,
+        "skin_temp_deviation_c": -0.07,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 169,
+        "sleep_consistency": 89
+      },
+      {
+        "date": "2026-02-16",
+        "cycle_status": "closed",
+        "recovery": 39,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 97,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 448,
+        "sleep_need_minutes": 461,
+        "time_in_bed_minutes": 483,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 47.2,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.3,
+        "spo2_pct": 96,
+        "skin_temp_deviation_c": -0.14,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 1,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 175,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-17",
+        "cycle_status": "closed",
+        "recovery": 77,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 94,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 433,
+        "sleep_need_minutes": 461,
+        "time_in_bed_minutes": 480,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 55.4,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 14.2,
+        "spo2_pct": 96.5,
+        "skin_temp_deviation_c": -0.13,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 169,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-18",
+        "cycle_status": "closed",
+        "recovery": 87,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 91,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 417,
+        "sleep_need_minutes": 459,
+        "time_in_bed_minutes": 446,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 57,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": 14.6,
+        "spo2_pct": 96.5,
+        "skin_temp_deviation_c": -0.04,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 163,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-19",
+        "cycle_status": "closed",
+        "recovery": 67,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 88,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 409,
+        "sleep_need_minutes": 463,
+        "time_in_bed_minutes": 450,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 51.7,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": 15,
+        "spo2_pct": 96.1,
+        "skin_temp_deviation_c": 0.07,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 160,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-20",
+        "cycle_status": "closed",
+        "recovery": 55,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 95,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 448,
+        "sleep_need_minutes": 473,
+        "time_in_bed_minutes": 491,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 49.1,
+        "resting_hr_bpm": 55,
+        "respiratory_rate_bpm": 14.9,
+        "spo2_pct": 95.5,
+        "skin_temp_deviation_c": 0.14,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 175,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-21",
+        "cycle_status": "closed",
+        "recovery": 67,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 100,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 467,
+        "sleep_need_minutes": 469,
+        "time_in_bed_minutes": 495,
+        "efficiency_pct": 94,
+        "hrv_rmssd_ms": 53.7,
+        "resting_hr_bpm": 57,
+        "respiratory_rate_bpm": 14.5,
+        "spo2_pct": 95.4,
+        "skin_temp_deviation_c": 0.13,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 182,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-22",
+        "cycle_status": "closed",
+        "recovery": 74,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 89,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 412,
+        "sleep_need_minutes": 461,
+        "time_in_bed_minutes": 458,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 58.2,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.2,
+        "spo2_pct": 95.8,
+        "skin_temp_deviation_c": 0.03,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 161,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-23",
+        "cycle_status": "closed",
+        "recovery": 63,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 91,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 417,
+        "sleep_need_minutes": 460,
+        "time_in_bed_minutes": 454,
+        "efficiency_pct": 92,
+        "hrv_rmssd_ms": 54.2,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.3,
+        "spo2_pct": 96.4,
+        "skin_temp_deviation_c": -0.08,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 1,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 163,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-24",
+        "cycle_status": "closed",
+        "recovery": 40,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 95,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 443,
+        "sleep_need_minutes": 468,
+        "time_in_bed_minutes": 474,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 45.6,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 14.7,
+        "spo2_pct": 96.6,
+        "skin_temp_deviation_c": -0.15,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 172,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-25",
+        "cycle_status": "closed",
+        "recovery": 42,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 90,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 422,
+        "sleep_need_minutes": 470,
+        "time_in_bed_minutes": 470,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 43.6,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": 15,
+        "spo2_pct": 96.3,
+        "skin_temp_deviation_c": -0.12,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 165,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-26",
+        "cycle_status": "closed",
+        "recovery": null,
+        "recovery_band": null,
+        "recovery_status": "unavailable",
+        "recovery_reason": "no_sleep",
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": null,
+        "sleep_performance_band": null,
+        "asleep_minutes": null,
+        "sleep_need_minutes": 467,
+        "time_in_bed_minutes": null,
+        "efficiency_pct": null,
+        "hrv_rmssd_ms": null,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": null,
+        "spo2_pct": null,
+        "skin_temp_deviation_c": null,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": null,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-27",
+        "cycle_status": "closed",
+        "recovery": 88,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 98,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 450,
+        "sleep_need_minutes": 459,
+        "time_in_bed_minutes": 486,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 58.4,
+        "resting_hr_bpm": 55,
+        "respiratory_rate_bpm": 14.4,
+        "spo2_pct": 95.4,
+        "skin_temp_deviation_c": 0.09,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 175,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-02-28",
+        "cycle_status": "closed",
+        "recovery": 76,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 96,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 441,
+        "sleep_need_minutes": 457,
+        "time_in_bed_minutes": 487,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 56.8,
+        "resting_hr_bpm": 57,
+        "respiratory_rate_bpm": 14.2,
+        "spo2_pct": 95.7,
+        "skin_temp_deviation_c": 0.15,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 172,
+        "sleep_consistency": 91
+      },
+      {
+        "date": "2026-03-01",
+        "cycle_status": "closed",
+        "recovery": 48,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 94,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 423,
+        "sleep_need_minutes": 452,
+        "time_in_bed_minutes": 451,
+        "efficiency_pct": 94,
+        "hrv_rmssd_ms": 50.4,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.4,
+        "spo2_pct": 96.2,
+        "skin_temp_deviation_c": 0.12,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 165,
+        "sleep_consistency": 91
+      },
+      {
+        "date": "2026-03-02",
+        "cycle_status": "closed",
+        "recovery": 42,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 88,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 402,
+        "sleep_need_minutes": 459,
+        "time_in_bed_minutes": 444,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 49.4,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.8,
+        "spo2_pct": 96.6,
+        "skin_temp_deviation_c": 0.02,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 1,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 156,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-03",
+        "cycle_status": "closed",
+        "recovery": 71,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 94,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 441,
+        "sleep_need_minutes": 471,
+        "time_in_bed_minutes": 483,
+        "efficiency_pct": 91,
+        "hrv_rmssd_ms": 54.5,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 15,
+        "spo2_pct": 96.4,
+        "skin_temp_deviation_c": -0.09,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 172,
+        "sleep_consistency": 91
+      },
+      {
+        "date": "2026-03-04",
+        "cycle_status": "closed",
+        "recovery": 86,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 99,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 467,
+        "sleep_need_minutes": 471,
+        "time_in_bed_minutes": 496,
+        "efficiency_pct": 94,
+        "hrv_rmssd_ms": 56.5,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": 14.7,
+        "spo2_pct": 95.8,
+        "skin_temp_deviation_c": -0.15,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 182,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-05",
+        "cycle_status": "closed",
+        "recovery": null,
+        "recovery_band": null,
+        "recovery_status": "unavailable",
+        "recovery_reason": "no_sleep",
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": null,
+        "sleep_performance_band": null,
+        "asleep_minutes": null,
+        "sleep_need_minutes": 464,
+        "time_in_bed_minutes": null,
+        "efficiency_pct": null,
+        "hrv_rmssd_ms": null,
+        "resting_hr_bpm": 54,
+        "respiratory_rate_bpm": null,
+        "spo2_pct": null,
+        "skin_temp_deviation_c": null,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": null,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-06",
+        "cycle_status": "closed",
+        "recovery": 40,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 93,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 421,
+        "sleep_need_minutes": 452,
+        "time_in_bed_minutes": 457,
+        "efficiency_pct": 92,
+        "hrv_rmssd_ms": 43.9,
+        "resting_hr_bpm": 55,
+        "respiratory_rate_bpm": 14.2,
+        "spo2_pct": 95.5,
+        "skin_temp_deviation_c": -0.01,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 165,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-07",
+        "cycle_status": "closed",
+        "recovery": 39,
+        "recovery_band": "medium",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": null,
+        "strain_band": null,
+        "strain_status": "unavailable",
+        "hr_coverage": 0,
+        "sleep_performance": 96,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 441,
+        "sleep_need_minutes": 457,
+        "time_in_bed_minutes": 473,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 46.4,
+        "resting_hr_bpm": 57,
+        "respiratory_rate_bpm": 14.5,
+        "spo2_pct": 96.1,
+        "skin_temp_deviation_c": 0.1,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": null,
+        "zones_4_5_minutes": null,
+        "strength_minutes": 0,
+        "restorative_minutes": 172,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-08",
+        "cycle_status": "closed",
+        "recovery": 69,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": 0,
+        "strain_band": "light",
+        "strain_status": "ok",
+        "hr_coverage": 0.3,
+        "sleep_performance": 91,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 419,
+        "sleep_need_minutes": 460,
+        "time_in_bed_minutes": 467,
+        "efficiency_pct": 90,
+        "hrv_rmssd_ms": 55.6,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 14.9,
+        "spo2_pct": 96.5,
+        "skin_temp_deviation_c": 0.15,
+        "steps": null,
+        "active_zone_minutes": null,
+        "calories_kcal": null,
+        "workouts": 0,
+        "detected_efforts": 0,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": 0,
+        "zones_4_5_minutes": 0,
+        "strength_minutes": 0,
+        "restorative_minutes": 163,
+        "sleep_consistency": 91
+      },
+      {
+        "date": "2026-03-09",
+        "cycle_status": "closed",
+        "recovery": 77,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": 11.2,
+        "strain_band": "moderate",
+        "strain_status": "ok",
+        "hr_coverage": 0.94,
+        "sleep_performance": 91,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 427,
+        "sleep_need_minutes": 467,
+        "time_in_bed_minutes": 458,
+        "efficiency_pct": 93,
+        "hrv_rmssd_ms": 60.1,
+        "resting_hr_bpm": 58,
+        "respiratory_rate_bpm": 15,
+        "spo2_pct": 96.5,
+        "skin_temp_deviation_c": 0.11,
+        "steps": 11873,
+        "active_zone_minutes": 40,
+        "calories_kcal": 2742,
+        "workouts": 1,
+        "detected_efforts": 1,
+        "vitals_adverse": 0,
+        "zones_1_3_minutes": 80,
+        "zones_4_5_minutes": 0,
+        "strength_minutes": 0,
+        "restorative_minutes": 167,
+        "sleep_consistency": 90
+      },
+      {
+        "date": "2026-03-10",
+        "cycle_status": "open",
+        "recovery": 73,
+        "recovery_band": "high",
+        "recovery_status": "ok",
+        "recovery_reason": null,
+        "strain": 12.8,
+        "strain_band": "moderate",
+        "strain_status": "in_progress",
+        "hr_coverage": 1,
+        "sleep_performance": 94,
+        "sleep_performance_band": "high",
+        "asleep_minutes": 415,
+        "sleep_need_minutes": 443,
+        "time_in_bed_minutes": 437,
+        "efficiency_pct": 95,
+        "hrv_rmssd_ms": 56,
+        "resting_hr_bpm": 56,
+        "respiratory_rate_bpm": 15.2,
+        "spo2_pct": 96.4,
+        "skin_temp_deviation_c": 0.15,
+        "steps": 6904,
+        "active_zone_minutes": 96,
+        "calories_kcal": 1988,
+        "workouts": 1,
+        "detected_efforts": 0,
+        "vitals_adverse": 1,
+        "zones_1_3_minutes": 27,
+        "zones_4_5_minutes": 33,
+        "strength_minutes": 0,
+        "restorative_minutes": 201,
+        "sleep_consistency": 87
+      }
+    ],
+    "summary": {
+      "asleep_minutes": {
+        "mean": 432.2,
+        "min": 402,
+        "max": 467,
+        "available_days": 28
+      },
+      "hrv_rmssd_ms": {
+        "mean": 52.3,
+        "min": 43.2,
+        "max": 60.1,
+        "available_days": 28
+      },
+      "recovery": {
+        "mean": 62.3,
+        "min": 28,
+        "max": 89,
+        "available_days": 28
+      },
+      "resting_hr_bpm": {
+        "mean": 56.1,
+        "min": 54,
+        "max": 58,
+        "available_days": 30
+      },
+      "sleep_performance": {
+        "mean": 93.4,
+        "min": 88,
+        "max": 100,
+        "available_days": 28
+      },
+      "steps": {
+        "mean": 9389,
+        "min": 6904,
+        "max": 11873,
+        "available_days": 2
+      },
+      "strain": {
+        "mean": 8,
+        "min": 0,
+        "max": 12.8,
+        "available_days": 3
+      }
+    }
+  },
+  "workouts": {
+    "schema_version": 2,
+    "kind": "workouts",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "score_config": {
+      "max_hr_override_bpm": null,
+      "sleep_base_need_minutes": 450,
+      "trimp_profile": "banister_b192",
+      "sport_aliases": {},
+      "strain_intent": "maintain",
+      "wake_target": null
+    },
+    "score_constants": {
+      "recovery": {
+        "bands": {
+          "medium": 34,
+          "high": 67
+        },
+        "penalty_max": 10
+      },
+      "strain": {
+        "bands": {
+          "moderate": 10,
+          "strenuous": 14,
+          "all_out": 18
+        },
+        "zones_hrr": {
+          "z1": 0.3,
+          "z2": 0.5,
+          "z3": 0.6,
+          "z4": 0.7,
+          "z5": 0.85
+        },
+        "trimp": {
+          "a": 0.64,
+          "b": 1.92
+        },
+        "scale": {
+          "k": 10,
+          "trimp_cap": 700
+        },
+        "coverage": {
+          "medium": 0.5,
+          "high": 0.8
+        }
+      },
+      "sleep": {
+        "unstaged_counts_as": "asleep",
+        "performance_bands": {
+          "medium": 70,
+          "high": 85
+        },
+        "consistency_bands": {
+          "medium": 60,
+          "high": 80
+        },
+        "efficiency_bands": {
+          "medium": 85,
+          "high": 90
+        }
+      },
+      "workouts": {
+        "recorded_hidden_overlap": 0.5,
+        "effort_hidden_overlap": 0.5
+      },
+      "vitals": {
+        "range_sd": 1.25,
+        "attention_nights": 2,
+        "attention_min_vitals": 2
+      },
+      "hrv_trend": {
+        "days": 7,
+        "min_nights": 4,
+        "band_sd": 1,
+        "min_baseline": 14
+      },
+      "journal": {
+        "window_days": 90,
+        "min_answers": 5
+      }
+    },
+    "synthetic_fixture": true,
+    "freshness": {
+      "collected_at": "2026-03-10T14:16:02Z",
+      "collect_age_minutes": 13,
+      "last_collect_status": "ok",
+      "collector_stale": false,
+      "device_last_sync_at": "2026-03-10T14:08:00Z",
+      "device_sync_age_minutes": 22,
+      "device_stale": false,
+      "device_sync_source": "paired_devices"
+    },
+    "from": "2026-02-25",
+    "to": "2026-03-10",
+    "workouts": [
+      {
+        "paused_minutes": 0,
+        "pauses": [],
+        "original": {
+          "exercise_type": "BOXING",
+          "display_name": "Boxing",
+          "start": "2026-03-02T19:30:00Z",
+          "end": "2026-03-02T20:30:00Z"
+        },
+        "edit": null,
+        "edited": false,
+        "merged": [],
+        "notes": null,
+        "rpe": null,
+        "origin": null,
+        "suggested": null,
+        "kind": "recorded",
+        "id": "7400000000000000003",
+        "exercise_type": "BOXING",
+        "display_name": "Boxing",
+        "category": "combat",
+        "cycle_date": "2026-03-02",
+        "start": "2026-03-02T19:30:00Z",
+        "end": "2026-03-02T20:30:00Z",
+        "elapsed_minutes": 60,
+        "active_minutes": 60,
+        "strain": null,
+        "trimp": null,
+        "hr_coverage": 0,
+        "confidence": null,
+        "avg_hr_bpm": null,
+        "peak_hr_bpm": null,
+        "zones_minutes": null,
+        "provider": {
+          "avg_hr_bpm": 156,
+          "calories_kcal": 610,
+          "active_zone_minutes": 96
+        },
+        "source": {
+          "recording_method": "PASSIVELY_MEASURED",
+          "platform": "FITBIT",
+          "form_factor": "FITNESS_BAND"
+        },
+        "has_gps": false,
+        "hr_series": []
+      },
+      {
+        "paused_minutes": 0,
+        "pauses": [],
+        "original": {
+          "exercise_type": "WALKING",
+          "display_name": "Walking",
+          "start": "2026-03-09T17:30:00Z",
+          "end": "2026-03-09T18:05:00Z"
+        },
+        "edit": null,
+        "edited": false,
+        "merged": [],
+        "notes": null,
+        "rpe": null,
+        "origin": null,
+        "suggested": null,
+        "kind": "recorded",
+        "id": "7000000000000000001",
+        "exercise_type": "WALKING",
+        "display_name": "Walking",
+        "category": "walking",
+        "cycle_date": "2026-03-09",
+        "start": "2026-03-09T17:30:00Z",
+        "end": "2026-03-09T18:05:00Z",
+        "elapsed_minutes": 35,
+        "active_minutes": 35,
+        "strain": 4.5,
+        "trimp": 14.7,
+        "hr_coverage": 1,
+        "confidence": "high",
+        "avg_hr_bpm": 102,
+        "peak_hr_bpm": 108,
+        "zones_minutes": {
+          "below": 0,
+          "z1": 35,
+          "z2": 0,
+          "z3": 0,
+          "z4": 0,
+          "z5": 0
+        },
+        "provider": {
+          "avg_hr_bpm": 101,
+          "calories_kcal": 160,
+          "active_zone_minutes": 4
+        },
+        "source": {
+          "recording_method": "PASSIVELY_MEASURED",
+          "platform": "FITBIT",
+          "form_factor": "FITNESS_BAND"
+        },
+        "has_gps": false,
+        "hr_series": [
+          {
+            "t": "2026-03-09T17:30:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:31:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:32:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:33:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:34:00Z",
+            "bpm": 104
+          },
+          {
+            "t": "2026-03-09T17:35:00Z",
+            "bpm": 100
+          },
+          {
+            "t": "2026-03-09T17:36:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:37:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:38:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:39:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:40:00Z",
+            "bpm": 104
+          },
+          {
+            "t": "2026-03-09T17:41:00Z",
+            "bpm": 100
+          },
+          {
+            "t": "2026-03-09T17:42:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:43:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:44:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:45:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:46:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:47:00Z",
+            "bpm": 104
+          },
+          {
+            "t": "2026-03-09T17:48:00Z",
+            "bpm": 100
+          },
+          {
+            "t": "2026-03-09T17:49:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:50:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:51:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:52:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:53:00Z",
+            "bpm": 104
+          },
+          {
+            "t": "2026-03-09T17:54:00Z",
+            "bpm": 100
+          },
+          {
+            "t": "2026-03-09T17:55:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:56:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T17:57:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T17:58:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T17:59:00Z",
+            "bpm": 103
+          },
+          {
+            "t": "2026-03-09T18:00:00Z",
+            "bpm": 104
+          },
+          {
+            "t": "2026-03-09T18:01:00Z",
+            "bpm": 100
+          },
+          {
+            "t": "2026-03-09T18:02:00Z",
+            "bpm": 101
+          },
+          {
+            "t": "2026-03-09T18:03:00Z",
+            "bpm": 102
+          },
+          {
+            "t": "2026-03-09T18:04:00Z",
+            "bpm": 102
+          }
+        ]
+      },
+      {
+        "paused_minutes": 0,
+        "pauses": [],
+        "original": null,
+        "edit": null,
+        "edited": false,
+        "merged": [],
+        "notes": null,
+        "rpe": null,
+        "origin": null,
+        "suggested": {
+          "exercise_type": "BOXING",
+          "display_name": "Boxing",
+          "matches": 3,
+          "window_days": 56
+        },
+        "kind": "detected",
+        "id": "effort-2026-03-09T19:40:00Z",
+        "exercise_type": null,
+        "display_name": "Detected effort",
+        "category": "detected",
+        "cycle_date": "2026-03-09",
+        "start": "2026-03-09T19:40:00Z",
+        "end": "2026-03-09T20:25:00Z",
+        "elapsed_minutes": 45,
+        "active_minutes": null,
+        "strain": 10.4,
+        "trimp": 72.9,
+        "hr_coverage": 1,
+        "confidence": "high",
+        "avg_hr_bpm": 146,
+        "peak_hr_bpm": 152,
+        "zones_minutes": {
+          "below": 0,
+          "z1": 0,
+          "z2": 0,
+          "z3": 45,
+          "z4": 0,
+          "z5": 0
+        },
+        "provider": null,
+        "source": null,
+        "has_gps": false,
+        "hr_series": [
+          {
+            "t": "2026-03-09T19:40:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T19:41:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T19:42:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T19:43:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T19:44:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T19:45:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T19:46:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T19:47:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T19:48:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T19:49:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T19:50:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T19:51:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T19:52:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T19:53:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T19:54:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T19:55:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T19:56:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T19:57:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T19:58:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T19:59:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:00:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:01:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:02:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:03:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T20:04:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T20:05:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:06:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:07:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:08:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:09:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:10:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T20:11:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T20:12:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:13:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:14:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:15:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:16:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T20:17:00Z",
+            "bpm": 144
+          },
+          {
+            "t": "2026-03-09T20:18:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:19:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-09T20:20:00Z",
+            "bpm": 146
+          },
+          {
+            "t": "2026-03-09T20:21:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:22:00Z",
+            "bpm": 147
+          },
+          {
+            "t": "2026-03-09T20:23:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-09T20:24:00Z",
+            "bpm": 144
+          }
+        ]
+      },
+      {
+        "paused_minutes": 0,
+        "pauses": [],
+        "original": {
+          "exercise_type": "KICKBOXING",
+          "display_name": "Kickboxing",
+          "start": "2026-03-10T12:00:00Z",
+          "end": "2026-03-10T13:00:00Z"
+        },
+        "edit": null,
+        "edited": false,
+        "merged": [],
+        "notes": null,
+        "rpe": null,
+        "origin": null,
+        "suggested": null,
+        "kind": "recorded",
+        "id": "7000000000000000002",
+        "exercise_type": "KICKBOXING",
+        "display_name": "Kickboxing",
+        "category": "combat",
+        "cycle_date": "2026-03-10",
+        "start": "2026-03-10T12:00:00Z",
+        "end": "2026-03-10T13:00:00Z",
+        "elapsed_minutes": 60,
+        "active_minutes": 59,
+        "strain": 12.8,
+        "trimp": 124.1,
+        "hr_coverage": 1,
+        "confidence": "high",
+        "avg_hr_bpm": 152,
+        "peak_hr_bpm": 174,
+        "zones_minutes": {
+          "below": 0,
+          "z1": 5,
+          "z2": 7,
+          "z3": 15,
+          "z4": 12,
+          "z5": 21
+        },
+        "provider": {
+          "avg_hr_bpm": 156,
+          "calories_kcal": 610,
+          "active_zone_minutes": 96
+        },
+        "source": {
+          "recording_method": "PASSIVELY_MEASURED",
+          "platform": "FITBIT",
+          "form_factor": "FITNESS_BAND"
+        },
+        "has_gps": false,
+        "hr_series": [
+          {
+            "t": "2026-03-10T12:00:00Z",
+            "bpm": 106
+          },
+          {
+            "t": "2026-03-10T12:01:00Z",
+            "bpm": 110
+          },
+          {
+            "t": "2026-03-10T12:02:00Z",
+            "bpm": 114
+          },
+          {
+            "t": "2026-03-10T12:03:00Z",
+            "bpm": 118
+          },
+          {
+            "t": "2026-03-10T12:04:00Z",
+            "bpm": 122
+          },
+          {
+            "t": "2026-03-10T12:05:00Z",
+            "bpm": 126
+          },
+          {
+            "t": "2026-03-10T12:06:00Z",
+            "bpm": 125
+          },
+          {
+            "t": "2026-03-10T12:07:00Z",
+            "bpm": 129
+          },
+          {
+            "t": "2026-03-10T12:08:00Z",
+            "bpm": 133
+          },
+          {
+            "t": "2026-03-10T12:09:00Z",
+            "bpm": 137
+          },
+          {
+            "t": "2026-03-10T12:10:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:11:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:12:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:13:00Z",
+            "bpm": 139
+          },
+          {
+            "t": "2026-03-10T12:14:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:15:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:16:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:17:00Z",
+            "bpm": 142
+          },
+          {
+            "t": "2026-03-10T12:18:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:19:00Z",
+            "bpm": 166
+          },
+          {
+            "t": "2026-03-10T12:20:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:21:00Z",
+            "bpm": 140
+          },
+          {
+            "t": "2026-03-10T12:22:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:23:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:24:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:25:00Z",
+            "bpm": 143
+          },
+          {
+            "t": "2026-03-10T12:26:00Z",
+            "bpm": 166
+          },
+          {
+            "t": "2026-03-10T12:27:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:28:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:29:00Z",
+            "bpm": 141
+          },
+          {
+            "t": "2026-03-10T12:30:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:31:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:32:00Z",
+            "bpm": 166
+          },
+          {
+            "t": "2026-03-10T12:33:00Z",
+            "bpm": 140
+          },
+          {
+            "t": "2026-03-10T12:34:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:35:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:36:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:37:00Z",
+            "bpm": 142
+          },
+          {
+            "t": "2026-03-10T12:38:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:39:00Z",
+            "bpm": 166
+          },
+          {
+            "t": "2026-03-10T12:40:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:41:00Z",
+            "bpm": 141
+          },
+          {
+            "t": "2026-03-10T12:42:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:43:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:44:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:45:00Z",
+            "bpm": 139
+          },
+          {
+            "t": "2026-03-10T12:46:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:47:00Z",
+            "bpm": 167
+          },
+          {
+            "t": "2026-03-10T12:48:00Z",
+            "bpm": 168
+          },
+          {
+            "t": "2026-03-10T12:49:00Z",
+            "bpm": 142
+          },
+          {
+            "t": "2026-03-10T12:50:00Z",
+            "bpm": 169
+          },
+          {
+            "t": "2026-03-10T12:51:00Z",
+            "bpm": 170
+          },
+          {
+            "t": "2026-03-10T12:52:00Z",
+            "bpm": 148
+          },
+          {
+            "t": "2026-03-10T12:53:00Z",
+            "bpm": 145
+          },
+          {
+            "t": "2026-03-10T12:54:00Z",
+            "bpm": 142
+          },
+          {
+            "t": "2026-03-10T12:55:00Z",
+            "bpm": 138
+          },
+          {
+            "t": "2026-03-10T12:56:00Z",
+            "bpm": 135
+          },
+          {
+            "t": "2026-03-10T12:57:00Z",
+            "bpm": 132
+          },
+          {
+            "t": "2026-03-10T12:58:00Z",
+            "bpm": 124
+          },
+          {
+            "t": "2026-03-10T12:59:00Z",
+            "bpm": 121
+          }
+        ]
+      }
+    ]
+  },
+  "journal": {
+    "schema_version": 2,
+    "kind": "journal",
+    "source": "google_health_v4",
+    "score_version": "2.4.1",
+    "generated_at": "2026-03-10T14:30:00Z",
+    "timezone": "Europe/London",
+    "synthetic_fixture": true,
+    "default_date": "2026-03-10",
+    "from": "2026-02-09",
+    "to": "2026-03-10",
+    "behaviours": [
+      {
+        "key": "alcohol",
+        "name": "Alcohol",
+        "question": "Did you drink any alcohol?"
+      },
+      {
+        "key": "late_caffeine",
+        "name": "Late caffeine",
+        "question": "Any caffeine after 14:00?"
+      },
+      {
+        "key": "late_meal",
+        "name": "Late meal",
+        "question": "A large meal close to bedtime?"
+      },
+      {
+        "key": "screen_in_bed",
+        "name": "Screen in bed",
+        "question": "Used a phone or screen in bed?"
+      },
+      {
+        "key": "stress",
+        "name": "Stress",
+        "question": "Did you feel stressed?"
+      }
+    ],
+    "entries": [],
+    "impact": {
+      "from": "2025-12-11",
+      "to": "2026-03-10",
+      "behaviours": [
+        {
+          "key": "alcohol",
+          "status": "insufficient",
+          "yes_mornings": 0,
+          "no_mornings": 0,
+          "yes_mean": null,
+          "no_mean": null,
+          "difference": null,
+          "direction": null
+        },
+        {
+          "key": "late_caffeine",
+          "status": "insufficient",
+          "yes_mornings": 0,
+          "no_mornings": 0,
+          "yes_mean": null,
+          "no_mean": null,
+          "difference": null,
+          "direction": null
+        },
+        {
+          "key": "late_meal",
+          "status": "insufficient",
+          "yes_mornings": 0,
+          "no_mornings": 0,
+          "yes_mean": null,
+          "no_mean": null,
+          "difference": null,
+          "direction": null
+        },
+        {
+          "key": "screen_in_bed",
+          "status": "insufficient",
+          "yes_mornings": 0,
+          "no_mornings": 0,
+          "yes_mean": null,
+          "no_mean": null,
+          "difference": null,
+          "direction": null
+        },
+        {
+          "key": "stress",
+          "status": "insufficient",
+          "yes_mornings": 0,
+          "no_mornings": 0,
+          "yes_mean": null,
+          "no_mean": null,
+          "difference": null,
+          "direction": null
+        }
+      ]
+    }
+  }
+}
