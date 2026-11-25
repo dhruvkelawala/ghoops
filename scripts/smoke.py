@@ -50,6 +50,9 @@ with tempfile.TemporaryDirectory(prefix="ghealth-smoke-") as state:
     run("unknown", code=2)
     run("auth", "login", code=2)
     run("doctor", "--offline", "--live", code=2)
+    pair = run("pair", "--json", code=2)
+    assert pair.stdout == "" and "ghv" not in pair.stderr
+    assert json.loads(pair.stderr)["error"]["code"] == "invalid_request"
     assert not list(pathlib.Path(state).iterdir()), "offline commands wrote state"
     for command in ("day", "sleep", "days", "workouts", "status", "snapshot", "brief"):
         body = json.loads(run(command, "--json").stdout)

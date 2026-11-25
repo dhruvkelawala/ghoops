@@ -37,12 +37,6 @@ public struct PairResponse: Codable, Sendable {
     public var scoreConfig: ScoreConfig?
     public var syntheticFixture: Bool?
     public var paired: Bool
-    public var url: String?
-    public var name: String?
-    public var link: String?
-    public var tokenCreatedAt: Date?
-    public var tailscaleServeConfigured: Bool?
-    public var pngPath: String?
 }
 
 public struct Schedule: Codable, Sendable {
@@ -54,6 +48,7 @@ public struct Schedule: Codable, Sendable {
     public var timezone: String
     public var scoreConfig: ScoreConfig?
     public var syntheticFixture: Bool?
+    public var profile: String?
     @DefaultEmpty public var agents: [ScheduledAgent]
 }
 

@@ -32,6 +32,7 @@ Usage: ghoops [--json] [--state-dir PATH] COMMAND
   help                         Show this help
   version                      Show version, revision and toolchain
   doctor [--offline]           Check local runtime, auth and cache readiness
+  doctor --keychain [--json]    Report which Keychain items trust only the installed binary
   doctor --keychain-test       Scoped dummy test using fresh installed processes
   doctor --live [--days 7]     Sync and require real records for all core metrics
   auth login --client-file PATH [--no-browser]
@@ -71,6 +72,7 @@ Version 2 (JSON, local reads never collect implicitly):
   activity edits [--days 30]
   activity rate --id ID --rpe 0-10 | --clear
   activity list [--days 30] | delete --id ID
+  activities compact          Remove old phone estimates from the activity file
   journal show [--days 30]    Read the private yes/no journal (never in brief)
   journal set [--date D] KEY=yes|no|clear ...
   journal behaviours [set KEY[,KEY...] | reset]
@@ -81,9 +83,10 @@ Version 2 (JSON, local reads never collect implicitly):
   config show | set KEY VALUE | unset KEY
                                Read or change score configuration
   serve [--port 8787]          Serve read-only JSON on 127.0.0.1
-  pair [--rotate] [--url URL] [--png PATH]
-                               Print a private pairing link and QR
-  pair revoke                 Revoke the active pairing token
+  pair [--url URL] [--png PATH]
+                               Pair an iPhone with a one-time code
+  pair devices                 List paired devices
+  pair revoke [DEVICE]         Revoke one device, or all pairings
   schedule install | uninstall | status
                                Manage collection and server LaunchAgents
   workout export-tcx --id ID --output PATH [--partial]
@@ -97,12 +100,14 @@ Exit codes: 0 success, 1 unavailable/incomplete, 2 invalid usage.
 `
 
 type Options struct {
-	Version  string
-	Revision string
-	Vault    secure.Vault
-	Auth     *auth.Manager
-	Fetcher  cache.Fetcher
-	Now      func() time.Time
+	Version         string
+	Revision        string
+	Vault           secure.Vault
+	Auth            *auth.Manager
+	Fetcher         cache.Fetcher
+	Now             func() time.Time
+	Launchctl       func(context.Context, ...string) error
+	ReadKeychainACL func(service string) (onlyInstalledBinary bool, err error)
 }
 type app struct {
 	dir      string
@@ -133,7 +138,7 @@ func Run(ctx context.Context, args []string, in io.Reader, out, stderr io.Writer
 		fmt.Fprintln(stderr, "ghoops: cannot find home directory")
 		return 1
 	}
-	a := app{dir: filepath.Join(home, ".local", "share", "ghealth"), out: out, err: stderr, options: options}
+	a := app{dir: defaultStateDir(home), out: out, err: stderr, options: options}
 	filtered := []string{}
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
@@ -155,7 +160,7 @@ func Run(ctx context.Context, args []string, in io.Reader, out, stderr io.Writer
 	args = filtered
 	if len(args) > 0 {
 		switch args[0] {
-		case "heart-rate", "activity", "journal", "schedule", "serve", "pair", "workout", "collect", "config", "day", "sleep", "days", "workouts", "status", "snapshot", "brief", "week":
+		case "heart-rate", "activity", "activities", "journal", "schedule", "serve", "pair", "workout", "collect", "config", "day", "sleep", "days", "workouts", "status", "snapshot", "brief", "week":
 			a.v2 = true
 		}
 	}
@@ -210,7 +215,7 @@ func Run(ctx context.Context, args []string, in io.Reader, out, stderr io.Writer
 	case "serve":
 		err = a.serve(ctx, args[1:])
 	case "pair":
-		err = a.pair(ctx, args[1:])
+		err = a.pair(ctx, args[1:], in)
 	case "auth":
 		err = a.authentication(ctx, args[1:])
 	case "doctor":
@@ -221,6 +226,8 @@ func Run(ctx context.Context, args []string, in io.Reader, out, stderr io.Writer
 		err = a.collectV2(ctx, args[1:])
 	case "activity":
 		err = a.activity(ctx, args[1:])
+	case "activities":
+		err = a.compactActivities(ctx, args[1:])
 	case "workout":
 		err = a.workout(ctx, args[1:])
 	case "config":
@@ -384,16 +391,16 @@ func (a *app) authentication(ctx context.Context, args []string) error {
 		if err != nil {
 			return err
 		}
-		unlock, err := secure.Lock(ctx, a.dir, "sync.lock")
+		unlock, err := a.lockAccountChange(ctx)
 		if err != nil {
 			return err
 		}
 		defer unlock()
-		state, err := a.store.Load()
+		owner, err := a.profileOwner()
 		if err != nil {
 			return err
 		}
-		if err := a.auth.Login(ctx, client, state.Account, *noBrowser, a.out); err != nil {
+		if err := a.auth.Login(ctx, client, owner, *noBrowser, a.out); err != nil {
 			return err
 		}
 		fmt.Fprintln(a.out, "Authorized. Run ghoops sync to collect data.")
@@ -403,7 +410,7 @@ func (a *app) authentication(ctx context.Context, args []string) error {
 		if err := parse(f, args[1:]); err != nil {
 			return err
 		}
-		unlock, err := secure.Lock(ctx, a.dir, "sync.lock")
+		unlock, err := a.lockAccountChange(ctx)
 		if err != nil {
 			return err
 		}
@@ -559,6 +566,7 @@ func (a *app) export(args []string) error {
 func (a *app) doctor(ctx context.Context, args []string) error {
 	f := flags("doctor")
 	offline := f.Bool("offline", false, "check runtime and cache presence without reading Keychain or health data")
+	keychainReport := f.Bool("keychain", false, "report Keychain item presence and access controls")
 	keychain := f.Bool("keychain-test", false, "scoped dummy fresh-process Keychain test")
 	live := f.Bool("live", false, "sync and require all core metric records")
 	days := f.Int("days", 7, "live date range")
@@ -566,13 +574,16 @@ func (a *app) doctor(ctx context.Context, args []string) error {
 		return err
 	}
 	modes := 0
-	for _, v := range []bool{*offline, *keychain, *live} {
+	for _, v := range []bool{*offline, *keychainReport, *keychain, *live} {
 		if v {
 			modes++
 		}
 	}
 	if modes > 1 {
 		return usageError{"doctor modes are mutually exclusive"}
+	}
+	if *keychainReport {
+		return a.doctorKeychain()
 	}
 	if *keychain {
 		if err := keychainTest(ctx); err != nil {

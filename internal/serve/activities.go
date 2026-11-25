@@ -19,59 +19,48 @@ func (h *Handler) activityStore() activities.Store {
 	return activities.Store{Dir: h.settings.Store.Dir, Vault: h.settings.Store.Vault}
 }
 func (h *Handler) activity(w http.ResponseWriter, r *http.Request, now time.Time) int {
-	fail := func(code string, err error) int {
-		e := v2report.NewError(code)
-		var field *activities.ValidationError
-		if errors.As(err, &field) {
-			e.Message = field.Error()
-		}
+	fail := func(e *v2report.Error) int {
 		w.WriteHeader(*e.HTTP)
 		json.NewEncoder(w).Encode(e.Body(now))
 		return *e.HTTP
 	}
 	if r.Method != http.MethodPost && r.URL.Path == "/v2/activities" {
 		w.Header().Set("Allow", "POST")
-		return fail("method_not_allowed", nil)
+		return fail(v2report.NewError("method_not_allowed"))
 	}
 	if strings.HasPrefix(r.URL.Path, "/v2/activities/") && r.Method != http.MethodDelete {
 		w.Header().Set("Allow", "DELETE")
-		return fail("method_not_allowed", nil)
+		return fail(v2report.NewError("method_not_allowed"))
 	}
 	if r.URL.RawQuery != "" || r.URL.ForceQuery {
-		return fail("invalid_request", nil)
+		return fail(v2report.NewError("invalid_request"))
 	}
 	store := h.activityStore()
 	if r.URL.Path == "/v2/activities" && r.Method == http.MethodPost {
 		media, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 		if err != nil || media != "application/json" {
-			return fail("invalid_request", nil)
+			return fail(v2report.NewError("invalid_request"))
 		}
 		b, err := io.ReadAll(io.LimitReader(r.Body, 64<<10+1))
 		if err != nil {
-			return fail("invalid_request", nil)
+			return fail(v2report.NewError("invalid_request"))
 		}
 		if len(b) > 64<<10 {
-			return fail("payload_too_large", nil)
+			return fail(v2report.NewError("payload_too_large"))
 		}
 		a, err := activities.DecodeUpload(b)
 		if err != nil {
-			return fail("invalid_request", err)
+			return fail(v2report.ActivityError(err))
 		}
 		row, created, err := store.Put(r.Context(), a, now)
-		if errors.Is(err, activities.ErrConflict) {
-			return fail("conflict", nil)
-		}
-		var invalid *activities.ValidationError
-		if errors.As(err, &invalid) {
-			return fail("invalid_request", err)
-		}
 		if err != nil {
-			return fail("store_unavailable", nil)
+			return fail(v2report.ActivityError(err))
 		}
 		status := 200
 		if created {
 			status = 201
 		}
+		row.Live = nil
 		w.WriteHeader(status)
 		json.NewEncoder(w).Encode(struct {
 			v2report.Envelope
@@ -82,14 +71,11 @@ func (h *Handler) activity(w http.ResponseWriter, r *http.Request, now time.Time
 	id := strings.TrimPrefix(r.URL.Path, "/v2/activities/")
 	if r.Method == http.MethodDelete && id != r.URL.Path && id != "" && !strings.Contains(id, "/") {
 		if r.ContentLength != 0 || len(r.TransferEncoding) > 0 {
-			return fail("invalid_request", nil)
+			return fail(v2report.NewError("invalid_request"))
 		}
 		err := store.Delete(r.Context(), id, now)
-		if errors.Is(err, activities.ErrNotFound) {
-			return fail("not_found", nil)
-		}
 		if err != nil {
-			return fail("store_unavailable", nil)
+			return fail(v2report.ActivityError(err))
 		}
 		json.NewEncoder(w).Encode(struct {
 			v2report.Envelope
@@ -97,7 +83,7 @@ func (h *Handler) activity(w http.ResponseWriter, r *http.Request, now time.Time
 		}{v2report.CommandEnvelope("activity_deleted", now), id})
 		return 200
 	}
-	return fail("method_not_allowed", nil)
+	return fail(v2report.NewError("method_not_allowed"))
 }
 
 func (h *Handler) loadActivities() (activities.Book, error) {

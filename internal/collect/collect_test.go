@@ -14,8 +14,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dhruvkelawala/ghoops/internal/auth"
 	"github.com/dhruvkelawala/ghoops/internal/collect"
 	"github.com/dhruvkelawala/ghoops/internal/health"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
 	"github.com/dhruvkelawala/ghoops/internal/testutil"
 )
@@ -28,11 +30,13 @@ type provider struct {
 	peak   atomic.Int32
 }
 
-func syntheticProvider(t *testing.T, failed string, code int) *provider {
+func syntheticProvider(t *testing.T, failed string, code int, firstBatch int32) *provider {
 	t.Helper()
 	p := &provider{}
+	ready := make(chan struct{})
+	var arrived atomic.Int32
 	p.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		p.calls.Add(1)
+		request := p.calls.Add(1)
 		active := p.active.Add(1)
 		defer p.active.Add(-1)
 		for old := p.peak.Load(); active > old; old = p.peak.Load() {
@@ -40,7 +44,20 @@ func syntheticProvider(t *testing.T, failed string, code int) *provider {
 				break
 			}
 		}
-		time.Sleep(time.Millisecond)
+		if request <= firstBatch {
+			if arrived.Add(1) == firstBatch {
+				close(ready)
+			}
+			select {
+			case <-ready:
+			case <-r.Context().Done():
+				return
+			case <-time.After(5 * time.Second):
+				t.Error("the first batch of collector requests did not overlap")
+				w.WriteHeader(http.StatusServiceUnavailable)
+				return
+			}
+		}
 		if failed != "" && strings.Contains(r.URL.Path, failed) {
 			w.Header().Set("Retry-After", "0")
 			w.WriteHeader(code)
@@ -70,9 +87,26 @@ func syntheticProvider(t *testing.T, failed string, code int) *provider {
 		}
 	}))
 	t.Cleanup(p.server.Close)
-	p.client = health.New(func(context.Context, string) (string, error) { return "synthetic-token", nil })
+	p.client = health.New(nil)
 	p.client.BaseURL = p.server.URL
 	return p
+}
+
+func syntheticManager(t *testing.T, store store2.Store) *auth.Manager {
+	t.Helper()
+	session := auth.Session{
+		Client:      auth.ClientSpec{ID: "synthetic-client", Secret: "synthetic-secret"},
+		AccessToken: "synthetic-token", ExpiresAt: time.Now().Add(time.Hour),
+		Scopes: auth.Scopes, HealthUserID: "synthetic-account",
+	}
+	data, err := json.Marshal(session)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := store.Vault.Set(secure.Service(store.Dir)+".oauth", data); err != nil {
+		t.Fatal(err)
+	}
+	return auth.New(store.Vault, store.Dir)
 }
 
 func TestCollectStatusesRetainFailedCoreMinutesAndLimitConcurrency(t *testing.T) {
@@ -88,7 +122,7 @@ func TestCollectStatusesRetainFailedCoreMinutesAndLimitConcurrency(t *testing.T)
 		{"core_failure", "/heart-rate/", "failed", 500, 1, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			p := syntheticProvider(t, tc.failed, tc.http)
+			p := syntheticProvider(t, tc.failed, tc.http, 4)
 			store := store2.Store{Dir: testutil.Dir(t), Vault: &testutil.Vault{}}
 			from := time.Date(2026, 3, 10, 0, 0, 0, 0, time.UTC)
 			previous := store2.Empty()
@@ -97,12 +131,12 @@ func TestCollectStatusesRetainFailedCoreMinutesAndLimitConcurrency(t *testing.T)
 			if err := store.Save(previous, from); err != nil {
 				t.Fatal(err)
 			}
-			result, err := collect.Run(context.Background(), store, p.client, func(context.Context) (string, error) { return "synthetic-account", nil }, collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(15 * time.Hour) }})
+			result, err := collect.Run(context.Background(), store, p.client, syntheticManager(t, store), collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(15 * time.Hour) }})
 			if (err != nil) != (tc.exit != 0) || result.Status != tc.status || result.CoreComplete != tc.core || len(result.Streams) != 17 || result.Requests != int(p.calls.Load()) {
 				t.Fatalf("unexpected run: %+v, %v", result, err)
 			}
-			if p.peak.Load() > 4 || p.peak.Load() < 2 {
-				t.Fatal("expected concurrent requests capped at four", p.peak.Load())
+			if p.peak.Load() != 4 {
+				t.Fatal("expected four concurrent requests", p.peak.Load())
 			}
 			loaded, err := store.Load()
 			if err != nil || len(loaded.Runs) != 1 || loaded.Runs[0].Status != tc.status {
@@ -132,10 +166,10 @@ func TestCollectLondonDSTDays(t *testing.T) {
 		windows int
 	}{{"2026-03-29", 1380}, {"2026-10-25", 1500}} {
 		t.Run(tc.date, func(t *testing.T) {
-			p := syntheticProvider(t, "", 0)
+			p := syntheticProvider(t, "", 0, 0)
 			from, _ := time.ParseInLocation("2006-01-02", tc.date, loc)
 			store := store2.Store{Dir: testutil.Dir(t), Vault: &testutil.Vault{}}
-			result, err := collect.Run(context.Background(), store, p.client, func(context.Context) (string, error) { return "synthetic-account", nil }, collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(12 * time.Hour) }})
+			result, err := collect.Run(context.Background(), store, p.client, syntheticManager(t, store), collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(12 * time.Hour) }})
 			if err != nil || result.Status != "ok" {
 				t.Fatal(err)
 			}
@@ -148,8 +182,9 @@ func TestCollectLondonDSTDays(t *testing.T) {
 }
 
 func TestSettlePassRunsOncePerLondonDayAfterNoon(t *testing.T) {
-	p := syntheticProvider(t, "", 0)
+	p := syntheticProvider(t, "", 0, 0)
 	store := store2.Store{Dir: testutil.Dir(t), Vault: &testutil.Vault{}}
+	manager := syntheticManager(t, store)
 	loc, _ := time.LoadLocation("Europe/London")
 	for _, tc := range []struct{ at, pass, from string }{
 		{"2026-07-10T11:59:00", "hot", "2026-07-08"},
@@ -158,7 +193,7 @@ func TestSettlePassRunsOncePerLondonDayAfterNoon(t *testing.T) {
 		{"2026-07-11T12:00:00", "settle", "2026-07-02"},
 	} {
 		now, _ := time.ParseInLocation("2006-01-02T15:04:05", tc.at, loc)
-		result, err := collect.Run(context.Background(), store, p.client, func(context.Context) (string, error) { return "synthetic-account", nil }, collect.Options{Now: func() time.Time { return now }})
+		result, err := collect.Run(context.Background(), store, p.client, manager, collect.Options{Now: func() time.Time { return now }})
 		if err != nil || result.Pass != tc.pass || result.From != tc.from {
 			t.Fatalf("plan mismatch: %+v %v", result, err)
 		}
@@ -166,7 +201,7 @@ func TestSettlePassRunsOncePerLondonDayAfterNoon(t *testing.T) {
 }
 
 func TestCancelledCollectSavesNothing(t *testing.T) {
-	p := syntheticProvider(t, "", 0)
+	p := syntheticProvider(t, "", 0, 0)
 	store := store2.Store{Dir: testutil.Dir(t), Vault: &testutil.Vault{}}
 	now := time.Date(2026, 3, 10, 15, 0, 0, 0, time.UTC)
 	if err := store.Save(store2.Empty(), now); err != nil {
@@ -176,7 +211,7 @@ func TestCancelledCollectSavesNothing(t *testing.T) {
 	before, _ := os.ReadFile(path)
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := collect.Run(ctx, store, p.client, func(context.Context) (string, error) { return "synthetic-account", nil }, collect.Options{Now: func() time.Time { return now }})
+	_, err := collect.Run(ctx, store, p.client, syntheticManager(t, store), collect.Options{Now: func() time.Time { return now }})
 	after, _ := os.ReadFile(path)
 	if err == nil || !bytes.Equal(before, after) {
 		t.Fatal("cancelled run saved data")
@@ -184,7 +219,7 @@ func TestCancelledCollectSavesNothing(t *testing.T) {
 }
 
 func TestCollectionNameDoesNotReplaceRecordsOutsideRequestedDates(t *testing.T) {
-	p := syntheticProvider(t, "", 0)
+	p := syntheticProvider(t, "", 0, 0)
 	base := p.server.Config.Handler
 	p.server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "/daily-respiratory-rate/") {
@@ -200,7 +235,7 @@ func TestCollectionNameDoesNotReplaceRecordsOutsideRequestedDates(t *testing.T) 
 	if err := store.Save(previous, from); err != nil {
 		t.Fatal(err)
 	}
-	_, err := collect.Run(context.Background(), store, p.client, func(context.Context) (string, error) { return "synthetic-account", nil }, collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(15 * time.Hour) }})
+	_, err := collect.Run(context.Background(), store, p.client, syntheticManager(t, store), collect.Options{From: from, Until: from.AddDate(0, 0, 1), Now: func() time.Time { return from.Add(15 * time.Hour) }})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -22,6 +22,8 @@ import (
 
 var updateGoldens = flag.Bool("update-goldens", false, "write fixture response goldens")
 
+const fixtureProfileID = "ghoops-fixture-profile"
+
 var goldenResponses = []struct{ file, input, kind, query string }{
 	{"sleep_unstaged", "sleep_unstaged", "sleep", "date=2026-03-10"},
 	{"day_unstaged", "sleep_unstaged", "day", "date=2026-03-10"},
@@ -96,7 +98,7 @@ func TestGoldenResponses(t *testing.T) {
 			if tc.file == "week_config" {
 				cfg.Week.SleepNights = 4
 			}
-			options := v2report.Options{Auth: auth, ScheduleInstalled: true, Server: v2report.Server{Version: "0.2.0", Revision: "synthetic"}}
+			options := v2report.Options{Auth: auth, ScheduleInstalled: true, Server: v2report.Server{Version: "0.2.0", Revision: "synthetic", ProfileID: fixturePointer(fixtureProfileID)}}
 			if tc.file == "names/workouts_edited" {
 				e, err := score.New(state, now, cfg)
 				if err != nil {
@@ -193,6 +195,12 @@ func TestFixtureBodiesPreserveEveryKey(t *testing.T) {
 					body = &v2report.Config{}
 				case "pair":
 					body = &v2report.Pair{}
+				case "pair_redeem":
+					body = &v2report.PairRedeem{}
+				case "pair_status":
+					body = &v2report.PairStatus{}
+				case "pair_devices":
+					body = &v2report.PairDevices{}
 				case "schedule":
 					body = &v2report.Schedule{}
 				case "export":

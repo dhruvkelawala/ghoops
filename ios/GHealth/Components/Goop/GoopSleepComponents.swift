@@ -148,8 +148,9 @@ struct GoopNeedCard: View {
                 GoopNeedBar(baseline: need.baselineMinutes, strain: need.strainExtraMinutes, debt: need.debtExtraMinutes, naps: need.napCreditMinutes, scale: scale)
                     .padding(.horizontal, 10).padding(.top, 9).opacity(dimmed ? Goop.Opacity.stale : 1)
                 needLabel("SLEEP NEEDED", value: need.totalMinutes).padding(.top, 8)
+                GoopDivider(card: true).padding(.top, 12)
                 GoopNeedParts(baseline: need.baselineMinutes, strain: need.previousCycleStrain == nil ? nil : need.strainExtraMinutes, debt: need.debtExtraMinutes, naps: need.napCreditMinutes, debtNightsUsed: need.debtNightsUsed, dimmed: dimmed)
-                    .padding(.vertical, 6).padding(.horizontal, 14).background(Goop.Color.legendFill, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusLegend)).padding(.top, 12)
+                    .padding(.horizontal, 10).padding(.top, 7)
             }
         }.buttonStyle(.plain)
     }

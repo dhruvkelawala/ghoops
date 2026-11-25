@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "kind": "pair_redeem",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "device_id": "dev_0123456789ab",
+  "credential": "ghv3_<redacted>",
+  "verification_code": "<code>",
+  "mac_name": "Mac A",
+  "profile_id": "ghoops-fixture-profile",
+  "expires_at": "2026-03-10T14:35:00Z"
+}

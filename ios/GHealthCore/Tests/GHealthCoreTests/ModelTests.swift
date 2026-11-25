@@ -45,6 +45,9 @@ func everyContractFixtureDecodes(_ url: URL) throws {
     case "brief": try roundTrip(Brief.self)
     case "collect": try roundTrip(Collect.self)
     case "pair": try roundTrip(PairResponse.self)
+    case "pair_redeem": try roundTrip(PairRedeemResponse.self)
+    case "pair_status": try roundTrip(PairStatusResponse.self)
+    case "pair_devices": try roundTrip(PairDevicesResponse.self)
     case "schedule": try roundTrip(Schedule.self)
     case "config": try roundTrip(Config.self)
     case "export": try roundTrip(Export.self)
@@ -59,10 +62,26 @@ func everyContractFixtureDecodes(_ url: URL) throws {
     let body: Snapshot = try fixture("preview/snapshot_fresh.json")
     let copy = try JSONCoding.decoder().decode(Snapshot.self, from: JSONCoding.encoder().encode(body))
     #expect(copy.day.recovery.value == 73)
+    #expect(copy.status.server.profileId == "ghoops-fixture-profile")
     #expect(copy.day.strain.value == 12.8)
     #expect(copy.sleep.hypnogram?.segments.count == body.sleep.hypnogram?.segments.count)
     #expect(copy.days.days.count == 30)
     #expect(copy.sleep.hypnogram?.segments.isEmpty == false)
+}
+
+@Test func statusDecodesProfileIDWhenPresent() throws {
+    let data = try Data(contentsOf: fixtureRoot.appendingPathComponent("status_full.json"))
+    let decoder = JSONCoding.decoder()
+    #expect(try decoder.decode(Status.self, from: data).server.profileId == "ghoops-fixture-profile")
+
+    var body = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    var server = try #require(body["server"] as? [String: Any])
+    for value in [NSNull(), nil] {
+        server["profile_id"] = value
+        body["server"] = server
+        let olderBody = try JSONSerialization.data(withJSONObject: body)
+        #expect(try decoder.decode(Status.self, from: olderBody).server.profileId == nil)
+    }
 }
 
 @Test func additiveEvolutionAndMissingArrays() throws {

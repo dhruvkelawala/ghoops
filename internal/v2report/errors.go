@@ -34,6 +34,8 @@ func NewError(code string) *Error {
 		status, message = 429, "Too many failed authentication attempts."
 	case "store_unavailable":
 		status, message = 503, "The local store is unavailable."
+	case "storage_full":
+		status, message = 507, "Your Mac's activity file is full. Run ghoops activities compact."
 	case "collect_in_progress":
 		return &Error{Code: code, Message: "Another collection is in progress."}
 	case "collect_failed":

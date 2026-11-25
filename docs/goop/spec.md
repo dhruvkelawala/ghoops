@@ -203,7 +203,7 @@ Hex values are sRGB, opacity 1 unless a percentage is given.
 | `contributorFillTop` / `Bottom` | `#252B30` / `#1B2024` | notched card |
 | `contributorBorder` | `#262B2F` | notched card border |
 | `notchBorder` | `#2A2F33` | notch edges |
-| `legendFill` | `#090C0D` | legend strip, need legend, banners |
+| `legendFill` | `#090C0D` | nap-credit mark in the need bar |
 | `insightFillTop` / `Bottom` | `#192024` / `#171C1F` | insight card |
 | `insightBorderStart` / `End` | `#4D3D8C` / `#32738C` | insight border, left to right |
 | `cardTop` / `cardBottom` | `#2A3035` / `#22272B` | standard detail card |
@@ -506,7 +506,7 @@ Margins 26 top, 16 sides. Corner 14, fill `contributorFillTop → contributorFil
 
 Rows are buttons → Trend view for their metric (§7.4). Identifier `contributor-<metric key>`.
 
-**Legend strip** (last child, 8 pt top margin): `legendFill`, corner 8, height 40, horizontal padding 14, gap 18, text `legend` `legendText`.
+**Legend strip.** A 1 pt `divider` follows the last contributor. The legend sits directly on the card at the card's inset, with a minimum height of 44 pt, an 18 pt gap and `legend` text in `legendText`. At accessibility sizes, add 10 pt vertical padding and stack the Sleep bands with 8 pt gaps.
 
 - Recovery and Strain: up triangle `positive` + down triangle `caution` (2 pt gap) then `Today` + 4 pt + `vs. prior 30 days` in `iconMuted`. (The triangles group sits 10 pt closer to the text than the gap, as in the mockup.)
 - Sleep: three items, each a 12×4 dash (corner 1) + 8 pt + label: `Poor` (`caution`), `Sufficient` (`neutral`), `Optimal` (`positive`).
@@ -604,7 +604,7 @@ Detail card, 12 pt below the sleep card.
 4. Hours bar: inset 10, height 16, corner 3, `hoursBar`, width = `asleep / S` of the inset width.
 5. Need bar (9 pt below): inset 10, height 16, corner 3, clipped; segments left to right with 2 pt gaps: `baseline_minutes` (`baselineNeedBar`), `strain_extra_minutes` (`strain`), `debt_extra_minutes` (`sufficient`); zero-width segments and their gaps are omitted. When `nap_credit_minutes > 0`, overlay the rightmost `nap_credit / S` of the drawn bar with a box filled `legendFill` at 70 % and a 1 pt `naCredit` dashed `[3, 2]` border.
 6. `SLEEP NEEDED` row (8 pt below): label + `need.total_minutes` in `valueMid`.
-7. Need legend (12 pt below): `legendFill`, corner 8, padding 6 vertical, 14 horizontal; four rows (padding 5 vertical, 10 pt gap): 13×13 swatch (corner 2) + label (`legend`) + value (`valueSmall`, right). Rows: Baseline Need (`dialSegmentOff`, `h:mm`), Recent Strain (`strain`, `+h:mm`), Sleep Debt (`sufficient`, `+h:mm`), Nap Credit (clear swatch with 1 pt dashed `naCredit` border, `−h:mm`).
+7. Need legend. Place a 1 pt `cardDivider` 12 pt below the SLEEP NEEDED row. The four rows sit directly on the card with 10 pt horizontal inset and 7 pt top padding after the divider. Each row has 5 pt vertical padding. A 13×13 swatch (corner 2) sits 10 pt before its `legend` label, and the value is right-aligned in `valueSmall`. Rows are Baseline Need (`dialSegmentOff`, `h:mm`), Recent Strain (`strain`, `+h:mm`), Sleep Debt (`sufficient`, `+h:mm`), and Nap Credit (clear swatch with 1 pt dashed `naCredit` border, `−h:mm`).
 
 `S = max(asleep_minutes ?? 0, baseline + strain_extra + debt_extra)`. No main sleep: title becomes `TONIGHT'S NEED SO FAR`, items 2 to 4 are hidden, the rest stays.
 
@@ -671,7 +671,7 @@ Height 50, corner 12, 1.5 pt `outlineBorder`, label `labelCard` centred. Used fo
 
 ### 5.26 Banner
 
-`legendFill`, corner 10, padding 12 × 14, 10 pt gap: symbol (§2.3, 15 pt), text `bodyMid` `legendText` (flexible, wraps), `xmark` button (label "Dismiss: {text}") when dismissible. Stacked with 8 pt gaps.
+The neutral banner uses the `tile` gradient, corner 10, padding 12 × 14 and a 10 pt gap. It has a 15 pt symbol (§2.3), wrapping `bodyMid` text in `legendText`, and an `xmark` button (label "Dismiss: {text}") when dismissible. Banners stack with 8 pt gaps.
 
 ### 5.27 Tab bar
 
@@ -981,12 +981,16 @@ Content, side margins 16:
 
 | Section | Rows |
 | --- | --- |
-| MAC | `PAIRED MAC` → `credentials.name` (fixture: `Fixture Mac`); `ADDRESS` → URL (text selectable); `LAST FETCH` → relative phone-copy age; `TEST CONNECTION` (button; result shown as the value, identifier `connection-result`); `UNPAIR` outline button (§5.25), confirmation dialog "Unpair from your Mac?" with a destructive `Unpair`. |
+| MAC | `PAIRED MAC` → `credentials.name` (fixture: `Fixture Mac`); `ADDRESS` → URL (text selectable); `LAST FETCH` → relative phone-copy age; `TEST CONNECTION` (button; result shown as the value, identifier `connection-result`); `PAIR AGAIN` opens the pairing task at SCAN CODE. `UNSENT ACTIVITIES` shows the count of pending activities saved for another or unknown Mac. The row appears when the count is positive and pushes Unsent. |
 | BAND | `S.status.device`: `scope_missing` → one row `Band details need permission: run ghoops auth login on your Mac` (`caution`); otherwise `NAME` → name or `Unavailable`; `BATTERY` → `NN% · {battery_status}` or `—`; `LAST SYNCED` → `Last synced to Fitbit {relative}` or `Band sync time unavailable`. |
 | DATA COLLECTION | `LAST COLLECTED` → relative `collected_at` or `never`; `STATUS` → `last_collect_status`; `SCHEDULE` → `Installed` / `Not installed`; `CALIBRATION` → `status.calibration.status` capitalised; missing scopes → `Run ghoops auth login on your Mac to grant: …` (`caution`). |
 | SCORES | `SCORE VERSION`, `MAX HR OVERRIDE` (`N bpm` or `Default`), `SLEEP BASE NEED` (`h:mm`), `TRIMP PROFILE`; caption `Change these with ghoops config set on your Mac`. |
-| ABOUT | `VERSION` → `CFBundleShortVersionString`; text `Data stays on your Mac and this iPhone. ghoops is not a medical device.`; `OPEN-SOURCE FONTS` → `Sofia Sans Condensed and Nunito Sans, SIL Open Font License 1.1`. |
+| ABOUT | `VERSION` → `CFBundleShortVersionString`. The caption says scores stay on the Mac and iPhone, and waiting workouts are part of the iPhone's backup. A second caption says ghoops is not a medical device. `OPEN-SOURCE FONTS` lists Sofia Sans Condensed and Nunito Sans under SIL Open Font License 1.1. |
 | DEVELOPER (DEBUG only) | `FIXTURE MODE` menu listing the sets (app.md §11). |
+
+Unsent groups activities by the Mac they were saved for and shows an unknown group labelled `SAVED BEFORE THIS UPDATE`. `SEND TO <CURRENT NAME>` moves the selected group to Today's activities and tries to upload it to the paired Mac. `DISCARD ALL` asks for confirmation with the number of activities it will delete from the iPhone. When no rows remain, Unsent returns to More. [Unsent page behaviour](pairing-isolation-spec.md#35-what-the-person-sees-flag-unsentactivities-except-the-d6-sentence)
+
+UNPAIR sits below About. The alert says the iPhone stops reading from the Mac and deletes its saved scores. It shows Unpair and Cancel when the current Mac has no waiting workouts. A waiting workout or running session for this Mac adds a count and changes the choices to Unpair, keep workouts and Unpair, delete workouts. Kept workouts wait for the same Mac profile to pair again. The message also counts any unsent edits the phone will discard.
 
 ### 8.9 Activities list (sheet)
 
@@ -994,7 +998,18 @@ Title `TODAY'S ACTIVITIES` (or the date label for other dates). All rows of §5.
 
 ### 8.10 Pairing (`pairing-screen`)
 
-`homeBackground`, no tab bar. Centred column, side margins 24: `GoopMark` 72 pt white, 24 pt, `GoopWordmark(size: 40, color: #E9ECEE)`, 28 pt, `Pair with your Mac` (`heading`), 10 pt, `On the Mac, run ghoops pair, then scan the code with the Camera app, or paste the link below.` (`bodyMid` `text2`, centred), 24 pt, text field (min height 50, corner 12, `controlFill`, padding 14, `bodyMid`, placeholder `ghealth://pair?…` in `text3`, multi-line, accessibility label `Pairing link`), 12 pt, primary `PAIR` button (disabled at 40 % opacity while empty or busy; progress view inside while busy), 12 pt, error text (`bodyMid` `caution`). Pairing flow and messages unchanged (contract §8.4, app.md §4.9).
+The full screen uses `homeBackground`, 24 pt side margins and a centred column. The white 72 pt mark and the 40 pt wordmark sit above "Pair with your Mac" and the instruction to run `ghoops pair`. **SCAN CODE** opens the pairing task. The paste field uses `controlFill`, `radiusPicker`, and placeholder `GHOOPS1 …`. Outline **CONTINUE** opens Check Address after a valid paste. Errors appear under the field.
+
+- **SCAN CODE** opens the in-app camera or the paste field when the camera is unavailable.
+- **CHECK ADDRESS** shows the host and port. When the address differs, show the saved address too. The pinned **PAIR WITH THIS MAC** commit uses a checkmark and opens the Replace alert for an address change.
+- **CONFIRM ON MAC** shows the six digits in two groups in Sofia `valueAverage` on `controlFill`. It shows "Waiting for your Mac" while the Mac asks the person to approve. Close is available throughout the task.
+
+"Replace the current pairing?" opens before the app contacts the new address. The message begins `This iPhone switches to <HOST>, port <PORT>. Nothing is deleted on your Mac.` It adds each sentence that has a positive count, using singular or plural as needed.
+
+- `If this is a different Mac, 1 unsent activity stays on this iPhone for <NAME>.`
+- `If this is a different Mac, 2 unsent changes to <NAME> are discarded.`
+
+An old pairing link displays a dismissible info banner on the current screen. On Home it sits below the header. The banner points a paired phone to **More › PAIR AGAIN** and an unpaired phone to **SCAN CODE**. The link leaves the saved pairing in place.
 
 ### 8.11 Info sheets
 

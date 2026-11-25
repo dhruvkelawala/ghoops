@@ -611,7 +611,148 @@ final class GHealthUITests: XCTestCase {
         app.terminate()
     }
 
-    @MainActor func testDestructiveAlerts() {
+    @MainActor func testOldPairingLinkShowsBanner() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-GHealthFixture", "fresh"]
+        app.launch()
+        let today = app.descendants(matching: .any)["today-screen"]
+        XCTAssertTrue(today.waitForExistence(timeout: 15))
+        let banner = app.descendants(matching: .any)["old-pairing-link"]
+        XCTAssertFalse(banner.exists)
+
+        app.terminate()
+        app.open(URL(string: "ghealth://pair" + "?url=invalid&token=fixture")!)
+        XCTAssertTrue(banner.waitForExistence(timeout: 15))
+        XCTAssertTrue(today.exists)
+        XCTAssertFalse(app.alerts.firstMatch.exists)
+        let message = "ghoops no longer opens pairing links. On your Mac, run ghoops pair, then scan its code in More › PAIR AGAIN."
+        XCTAssertTrue(banner.staticTexts.matching(NSPredicate(format: "label == %@", message)).firstMatch.exists)
+        capture("old-link", app: app)
+        banner.buttons.firstMatch.tap()
+        XCTAssertFalse(banner.exists)
+        app.buttons["tab-more"].tap()
+        XCTAssertTrue(app.staticTexts["Fixture Mac"].exists)
+        app.terminate()
+    }
+
+    @MainActor func testSecurePairingFlow() {
+        continueAfterFailure = false
+        let app = securePairingApp("approve")
+        XCTAssertTrue(app.buttons["pairing-scan"].waitForExistence(timeout: 15))
+        capture("start", app: app)
+        openPairingCheck(in: app, host: "mac-a.invalid")
+        XCTAssertTrue(app.staticTexts["mac-a.invalid"].exists)
+        XCTAssertTrue(app.staticTexts["8787"].exists)
+        XCTAssertFalse(app.staticTexts["CONFIRM ON MAC"].exists)
+        capture("confirm", app: app)
+        app.buttons["pairing-confirm"].tap()
+        let digits = app.staticTexts["pairing-verification-code"]
+        XCTAssertTrue(digits.waitForExistence(timeout: 5))
+        XCTAssertTrue(digits.label == "482 913")
+        capturePairingRedacted("verify", app: app, hiding: digits)
+        XCTAssertTrue(app.descendants(matching: .any)["today-screen"].waitForExistence(timeout: 20))
+        XCTAssertTrue(digits.waitForNonExistence(timeout: 5))
+        app.terminate()
+    }
+
+    @MainActor func testSecurePairingExpired() {
+        continueAfterFailure = false
+        let app = securePairingApp("expired")
+        openPairingCheck(in: app, host: "mac-a.invalid")
+        app.buttons["pairing-confirm"].tap()
+        XCTAssertTrue(app.buttons["pairing-close"].waitForNonExistence(timeout: 8))
+        let issue = app.descendants(matching: .any)["pairing-screen"].staticTexts["pairing-issue"]
+        XCTAssertTrue(issue.waitForExistence(timeout: 8))
+        XCTAssertEqual(issue.label, "This code has expired or was already used. Run ghoops pair on your Mac again.")
+        XCTAssertFalse(app.staticTexts["pairing-verification-code"].exists)
+        capturePairingRedacted("expired", app: app, hiding: app.textFields["pairing-code"])
+        app.terminate()
+    }
+
+    @MainActor func testSecurePairingDeclined() {
+        continueAfterFailure = false
+        let app = securePairingApp("decline")
+        openPairingCheck(in: app, host: "mac-a.invalid")
+        app.buttons["pairing-confirm"].tap()
+        XCTAssertTrue(app.buttons["pairing-close"].waitForNonExistence(timeout: 10))
+        let issue = app.descendants(matching: .any)["pairing-screen"].staticTexts["pairing-issue"]
+        XCTAssertTrue(issue.waitForExistence(timeout: 10))
+        XCTAssertEqual(issue.label, "Your Mac didn't pair this iPhone. Run ghoops pair on your Mac to try again.")
+        XCTAssertFalse(app.buttons["tab-home"].exists)
+        app.terminate()
+    }
+
+    @MainActor func testPairAgainReplace() {
+        continueAfterFailure = false
+        let app = securePairingApp("approve", fixture: "fresh")
+        XCTAssertTrue(app.buttons["tab-more"].waitForExistence(timeout: 15))
+        app.buttons["tab-more"].tap()
+        let pairAgain = app.buttons["pair-again"]
+        XCTAssertTrue(pairAgain.waitForExistence(timeout: 5))
+        capture("more", app: app)
+        pairAgain.tap()
+        XCTAssertTrue(app.staticTexts["SCAN CODE"].waitForExistence(timeout: 5))
+        openPairingCheck(in: app, host: "mac-b.invalid")
+        XCTAssertTrue(app.staticTexts["PAIRED NOW"].exists)
+        XCTAssertTrue(app.staticTexts["MAC IN THE CODE"].exists)
+        XCTAssertTrue(app.staticTexts["mac-a.invalid"].exists)
+        XCTAssertTrue(app.staticTexts["mac-b.invalid"].exists)
+        app.buttons["pairing-confirm"].tap()
+        let alert = app.alerts["Replace the current pairing?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        XCTAssertTrue(alert.staticTexts["This iPhone switches to mac-b.invalid, port 8787. Nothing is deleted on your Mac."].exists)
+        capture("replace", app: app)
+        alert.buttons["Cancel"].tap()
+        XCTAssertTrue(app.staticTexts["PAIRED NOW"].exists)
+        XCTAssertFalse(app.staticTexts["pairing-verification-code"].exists)
+        app.terminate()
+    }
+
+    @MainActor private func securePairingApp(_ outcome: String, fixture: String = "unpaired") -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["-GHealthEnrolmentFixture", outcome]
+        if fixture != "unpaired" { app.launchArguments += ["-GHealthFixture", fixture] }
+        app.launch()
+        return app
+    }
+
+    @MainActor private func openPairingCheck(in app: XCUIApplication, host: String) {
+        let field = app.textFields["pairing-code"]
+        XCTAssertTrue(field.waitForExistence(timeout: 15))
+        field.tap()
+        field.typeText("GHOOPS1 https://\(host):8787 " + String(repeating: "A", count: 43))
+        app.buttons["pairing-continue"].tap()
+        XCTAssertTrue(app.buttons["pairing-confirm"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor private func capturePairingRedacted(_ name: String, app: XCUIApplication, hiding field: XCUIElement) {
+        let frame = field.frame
+        XCTAssertFalse(frame.isEmpty)
+        let image = app.screenshot().image
+        let appFrame = app.frame
+        let scale = image.size.width / appFrame.width
+        let area = frame.offsetBy(dx: -appFrame.minX, dy: -appFrame.minY)
+            .applying(CGAffineTransform(scaleX: scale, y: scale)).insetBy(dx: -3 * scale, dy: -2 * scale)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let redacted = UIGraphicsImageRenderer(size: image.size, format: format).image { context in
+            image.draw(at: .zero)
+            UIColor(red: 42 / 255, green: 46 / 255, blue: 51 / 255, alpha: 1).setFill()
+            context.fill(area)
+            let placeholder = NSAttributedString(string: "<code>", attributes: [
+                .font: UIFont.systemFont(ofSize: 15 * scale), .foregroundColor: UIColor.white,
+            ])
+            let size = placeholder.size()
+            placeholder.draw(at: CGPoint(x: area.midX - size.width / 2, y: area.midY - size.height / 2))
+        }
+        let attachment = XCTAttachment(image: redacted)
+        attachment.name = name + ".png"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor func testUnpair() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-GHealthFixture", "fresh"]
@@ -624,7 +765,8 @@ final class GHealthUITests: XCTestCase {
         XCTAssertTrue(unpair.waitForExistence(timeout: 3))
         XCTAssertTrue(unpair.buttons["Unpair"].exists)
         XCTAssertTrue(unpair.buttons["Cancel"].exists)
-        XCTAssertTrue(unpair.staticTexts["This iPhone stops reading from your Mac until you pair again. Nothing is deleted on your Mac."].exists)
+        XCTAssertEqual(unpair.buttons.count, 2)
+        XCTAssertTrue(unpair.staticTexts["This iPhone stops reading from Fixture Mac and deletes the scores saved on it. Nothing is deleted on your Mac."].exists)
         capture("alert-unpair", app: app)
         unpair.buttons["Cancel"].tap()
         XCTAssertFalse(unpair.exists)
@@ -632,22 +774,34 @@ final class GHealthUITests: XCTestCase {
         app.buttons["UNPAIR"].tap()
         unpair.buttons["Unpair"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["pairing-screen"].waitForExistence(timeout: 10))
+    }
 
-        app.terminate()
-        app.launchArguments = ["-GHealthFixture", "fresh"]
+    @MainActor func testUnpairWithWaitingWorkouts() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-GHealthFixture", "fresh", "-GHealthLiveFixture", "ended_pending"]
         app.launch()
-        XCTAssertTrue(app.descendants(matching: .any)["today-screen"].waitForExistence(timeout: 15))
-        app.open(URL(string: "ghealth://pair?verify=invalid")!)
-        let replace = app.alerts["Replace the current pairing?"]
-        XCTAssertTrue(replace.waitForExistence(timeout: 5))
-        XCTAssertTrue(replace.buttons["Replace pairing"].exists)
-        XCTAssertTrue(replace.buttons["Cancel"].exists)
-        capture("alert-replace", app: app)
-        replace.buttons["Cancel"].tap()
-        XCTAssertFalse(replace.exists)
-        XCTAssertTrue(app.descendants(matching: .any)["today-screen"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["workout-screen"].waitForExistence(timeout: 15))
+        app.buttons["back-button"].tap()
+        app.buttons["tab-more"].tap()
+        reveal(app.buttons["UNPAIR"], in: app)
+        app.buttons["UNPAIR"].tap()
+        let unpair = app.alerts["Unpair from your Mac?"]
+        XCTAssertTrue(unpair.waitForExistence(timeout: 3))
+        XCTAssertEqual(unpair.buttons.count, 3)
+        XCTAssertTrue(unpair.buttons["Unpair, keep workouts"].exists)
+        XCTAssertTrue(unpair.buttons["Unpair, delete workouts"].exists)
+        XCTAssertTrue(unpair.buttons["Cancel"].exists)
+        let message = "This iPhone stops reading from Fixture Mac and deletes the scores saved on it. Nothing is deleted on your Mac. 1 workout hasn't reached Fixture Mac yet."
+        XCTAssertTrue(unpair.staticTexts.matching(NSPredicate(format: "label == %@", message)).firstMatch.exists)
+        capture("alert-unpair-waiting", app: app)
+        unpair.buttons["Unpair, keep workouts"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["pairing-screen"].waitForExistence(timeout: 10))
+    }
 
-        app.terminate()
+    @MainActor func testDestructiveAlerts() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
         app.launchArguments = ["-GHealthFixture", "fresh", "-GHealthLiveFixture", "ended_pending"]
         app.launch()
         XCTAssertTrue(app.descendants(matching: .any)["workout-screen"].waitForExistence(timeout: 15))
@@ -658,6 +812,79 @@ final class GHealthUITests: XCTestCase {
         capture("alert-delete", app: app)
         delete.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["activity-delete"].exists)
+        app.buttons["back-button"].tap()
+        app.buttons["tab-more"].tap()
+        app.buttons["pair-again"].tap()
+        openPairingCheck(in: app, host: "mac-b.invalid")
+        app.buttons["pairing-confirm"].tap()
+        let replace = app.alerts["Replace the current pairing?"]
+        XCTAssertTrue(replace.waitForExistence(timeout: 5))
+        let countedMessage = "This iPhone switches to mac-b.invalid, port 8787. Nothing is deleted on your Mac. If this is a different Mac, 1 unsent activity stays on this iPhone for Fixture Mac."
+        XCTAssertTrue(replace.staticTexts.matching(NSPredicate(format: "label == %@", countedMessage)).firstMatch.exists)
+        capture("unsent-replace-alert", app: app)
+        replace.buttons["Cancel"].tap()
+        app.terminate()
+    }
+
+    @MainActor func testUnsentActivities() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-GHealthFixture", "fresh", "-GHealthLiveFixture", "held"]
+        app.launch()
+        XCTAssertTrue(app.descendants(matching: .any)["today-screen"].waitForExistence(timeout: 15))
+        let screen = app.descendants(matching: .any)["unsent-screen"]
+        XCTAssertFalse(screen.exists)
+        app.buttons["tab-more"].tap()
+        let row = app.buttons["unsent-row"]
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        XCTAssertTrue(row.label.contains("3"))
+        capture("unsent-more", app: app)
+        row.tap()
+        XCTAssertTrue(screen.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["SAVED FOR OTHER MAC"].exists)
+        XCTAssertTrue(app.staticTexts["SAVED BEFORE THIS UPDATE"].exists)
+        XCTAssertTrue(app.staticTexts["BOXING"].exists)
+        XCTAssertTrue(app.staticTexts["RUNNING"].exists)
+        XCTAssertTrue(app.staticTexts["WALKING"].exists)
+        capture("unsent-page", app: app)
+
+        let discard = app.buttons["unsent-discard"]
+        reveal(discard, in: app)
+        discard.tap()
+        let alert = app.alerts["Discard unsent activities?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        XCTAssertTrue(alert.staticTexts["3 activities are deleted from this iPhone. Nothing changes on any Mac."].exists)
+        capture("unsent-discard-alert", app: app)
+        alert.buttons["Cancel"].tap()
+
+        let send = app.buttons["unsent-send-0"]
+        XCTAssertEqual(send.label, "SEND TO FIXTURE MAC")
+        send.tap()
+        XCTAssertTrue(app.staticTexts["SAVED FOR OTHER MAC"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["SAVED BEFORE THIS UPDATE"].exists)
+        capture("unsent-after-send", app: app)
+        app.buttons["back-button"].tap()
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        XCTAssertTrue(row.label.contains("1"))
+        app.buttons["tab-home"].tap()
+        let allActivities = app.buttons["activities-expand"]
+        reveal(allActivities, in: app)
+        allActivities.tap()
+        let activities = app.descendants(matching: .any)["activities-sheet"]
+        let adopted = activities.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Fixture unsent run,")).firstMatch
+        XCTAssertTrue(adopted.waitForExistence(timeout: 5))
+        app.buttons["sheet-close"].tap()
+
+        app.buttons["tab-more"].tap()
+        row.tap()
+        XCTAssertTrue(screen.waitForExistence(timeout: 5))
+        discard.tap()
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        XCTAssertTrue(alert.staticTexts["1 activity is deleted from this iPhone. Nothing changes on any Mac."].exists)
+        alert.buttons["Discard"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["more-screen"].waitForExistence(timeout: 5))
+        XCTAssertTrue(screen.waitForNonExistence(timeout: 5))
+        XCTAssertFalse(row.exists)
         app.terminate()
     }
 
@@ -1247,6 +1474,87 @@ final class GHealthUITests: XCTestCase {
         XCTAssertEqual(app.descendants(matching: .any)["plan-asleep"].value as? String, "6:51")
         XCTAssertEqual(app.descendants(matching: .any)["plan-awake"].value as? String, "+0:39")
         XCTAssertEqual(app.descendants(matching: .any)["plan-window"].label, "Bed by 23:37, wake at 07:07, 7 hours 30 minutes in bed")
+        app.terminate()
+    }
+
+    @MainActor func testCompositeSleepPerformance() throws {
+        continueAfterFailure = false
+        let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot_composite", withExtension: "json"))
+        let body = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
+        let sleep = try XCTUnwrap(body["sleep"] as? [String: Any])
+        let version = try XCTUnwrap(sleep["score_version"] as? String)
+        let app = XCUIApplication()
+
+        for set in ["composite", "fresh"] {
+            let composite = set == "composite"
+            let score = composite ? 84 : 93
+            app.launchArguments = ["-GHealthFixture", set]
+            app.launch()
+            let homeDial = app.buttons["sleep-link"]
+            XCTAssertTrue(homeDial.waitForExistence(timeout: 15))
+            XCTAssertEqual(homeDial.label, "Sleep, \(score) percent")
+            capture("\(set)-home", app: app)
+
+            homeDial.tap()
+            XCTAssertTrue(app.descendants(matching: .any)["sleep-screen"].waitForExistence(timeout: 5))
+            let detailDial = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Sleep, \(score) percent")).firstMatch
+            XCTAssertTrue(detailDial.isHittable)
+            let hours = app.buttons["contributor-sleep_performance"]
+            XCTAssertEqual(hours.label, "HOURS VS. NEEDED, \(composite ? 94 : 93)%, optimal")
+            if composite {
+                XCTAssertEqual(app.staticTexts["insight-text"].label, "Your Sleep Performance is sufficient. You got 7:24 of the 7:52 you needed. Irregular bed and wake times and time awake in bed lowered it.")
+            }
+            capture("\(set)-sleep", app: app)
+
+            app.buttons["info-button"].tap()
+            let total = app.descendants(matching: .any)["sleep-performance-total"]
+            let hoursScale = app.descendants(matching: .any)["scale-hours"]
+            if composite {
+                reveal(total, in: app)
+                XCTAssertEqual(total.value as? String, "84%")
+                for (label, value) in [
+                    ("Hours vs. needed, 94% · 70% weight", "+65.8"),
+                    ("Consistency, 52% · 15% weight", "+7.8"),
+                    ("Efficiency, 84% · scores 70 · 15% weight", "+10.5")
+                ] {
+                    let row = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+                    XCTAssertEqual(row.value as? String, value)
+                }
+                capture("composite-sleep-sheet", app: app)
+                let scale = app.descendants(matching: .any)["scale-sleep-performance"]
+                XCTAssertTrue(scale.label.hasPrefix("Sleep performance, 84%."))
+                XCTAssertTrue(scale.label.hasSuffix("Today: Sufficient"))
+                XCTAssertTrue(hoursScale.label.hasPrefix("Hours vs. needed, 94%."))
+                reveal(app.staticTexts["Score version \(version)"], in: app)
+                capture("composite-sleep-scales", app: app)
+            } else {
+                reveal(hoursScale, in: app)
+                XCTAssertTrue(hoursScale.label.hasPrefix("Hours vs. needed, 93%."))
+                XCTAssertFalse(total.exists)
+                capture("fresh-sleep-sheet", app: app)
+            }
+            app.buttons["sheet-close"].tap()
+            app.buttons["back-button"].tap()
+
+            let tile = app.buttons["tile-sleep_performance"]
+            reveal(tile, in: app)
+            if composite {
+                XCTAssertTrue(tile.label.contains("84%, down"), tile.label)
+                XCTAssertTrue(tile.label.hasSuffix("86%"), tile.label)
+            }
+            capture("\(set)-home-dashboard", app: app)
+            if composite {
+                tile.tap()
+                let summary = app.staticTexts["Your average sleep performance over these 7 days was 86%. 6 of 7 days have data."]
+                XCTAssertTrue(summary.waitForExistence(timeout: 10))
+            }
+            app.terminate()
+        }
+
+        app.launchArguments = ["-GHealthWidgetPreview", "composite"]
+        app.launch()
+        let widgetScore = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Sleep, 84%")).firstMatch
+        XCTAssertTrue(widgetScore.waitForExistence(timeout: 15))
         app.terminate()
     }
 

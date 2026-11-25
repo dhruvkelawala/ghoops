@@ -28,6 +28,7 @@ struct GoopTonightCard: View {
                     if !typeSize.isAccessibilitySize { Spacer(minLength: 0) }
                     key("WAKE", value: GoopFormat.time(plan.wakeTarget), identifier: "tonight-wake")
                 }.padding(.horizontal, 10).padding(.top, 16)
+                GoopDivider(card: true).padding(.top, 12)
                 VStack(spacing: 0) {
                     HStack(spacing: 0) {
                         Text("GOAL").frame(maxWidth: .infinity, alignment: .leading)
@@ -44,8 +45,8 @@ struct GoopTonightCard: View {
                             .accessibilityElement(children: .ignore).accessibilityLabel(SleepPlanText.goalAccessibility(goal))
                             .accessibilityIdentifier("tonight-goal-\(goal.pct)")
                     }
-                }.padding(.vertical, 6).padding(.horizontal, 14)
-                    .background(Goop.Color.legendFill, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusLegend)).padding(.top, 12)
+                }
+                .padding(.horizontal, 10).padding(.top, 7)
             } else {
                 GoopPlaceholder(text: SleepPlanText.placeholder(plan), alignment: .leading)
                     .padding(.top, 12).accessibilityIdentifier("tonight-placeholder")

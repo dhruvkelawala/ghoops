@@ -22,7 +22,7 @@ ios/
     Sources/GHealthCore/
       Models/                      Codable types mirroring contract.md §5 (one file per body)
       API/APIClient.swift          URLSession client (§6)
-      API/Pairing.swift            link parsing, Keychain token storage
+      API/Pairing.swift            Keychain pairing record and migration
       Cache/SnapshotStore.swift    App Group file cache (§5)
       Presentation/                formatting, band→colour token mapping, reason texts (§7)
       Fixtures/FixtureLoader.swift DEBUG-only fixture sets (§11)
@@ -198,35 +198,50 @@ No main sleep: dial `—`, text from §7, need breakdown still shown ("Tonight's
 
 ### 4.8 Settings
 
-- **Mac**: paired name and URL; "Test connection" (GET `/v2/status`, shows latency and result); last successful fetch time; "Unpair" (deletes Keychain token and defaults after confirmation).
+- **Mac** shows the paired name and address, last successful fetch, **Test Connection** (`GET /v2/status`) and **Pair Again**. **Unsent Activities** shows how many pending activities the phone holds for another or unknown Mac. When the count is positive, tap the row to review the groups, send a group to the paired Mac or discard the remaining rows from the phone.
+- **Unpair** clears the phone's pairing, scores, uploaded workout copies and waiting edits. If workouts for that Mac are still waiting, the alert asks whether to keep or delete them.
 - **Collection** (from `status`): last collect time and status, LaunchAgent installed yes/no, calibration status, missing scopes with the line "Run `ghoops auth login` on your Mac to grant: Profile, Settings, Irregular rhythm, Location".
 - **Scores**: `score_version`, `score_config` values (read-only; changed with `ghoops config set` on the Mac).
-- **About**: app version, "Data stays on your Mac and this iPhone. ghoops is not a medical device."
+- **About** shows the app version and explains which data the phone backs up.
 - DEBUG builds only: "Fixture mode" picker listing the sets in §11.
+
+**Unpair** removes the saved pairing after confirmation. The alert counts the pending activities that will stay on the iPhone for that Mac and the unsent changes the app will discard.
 
 ### 4.9 Pairing
 
-Shown when no token is stored. Text: "Pair with your Mac. On the Mac, run `ghoops pair`, then scan the code with the Camera app, or paste the link below." A text field accepting a `ghealth://pair?…` link and a "Pair" button. The flow and messages are contract §8.4. Opening a `ghealth://pair` URL while already paired asks "Replace the current pairing?".
+Pairing opens when the phone has no saved pairing or the Mac revokes its credential. Run `ghoops pair` on the Mac, then tap **Scan Code** in the app or paste the line and tap **Continue**. The scanner opens inside ghoops. On a phone without camera access, the sheet offers the paste field.
+
+The sheet shows the Mac's host and port before the app contacts it. Tap **Pair with this Mac**, then compare the six digits shown on the Mac and iPhone and type `y` on the Mac. The app saves the pairing after approval. **More › Pair Again** opens the same sheet. A new address shows both addresses and asks for confirmation before replacing the pairing. The alert counts pending activities that stay on the phone and unsent changes that will be discarded if the address belongs to a different Mac. It starts each counted sentence with "If this is a different Mac," and leaves out counts of zero. [Pairing flow and commands](contract.md#8-pairing)
+
+Opening a `ghealth://pair` link shows a dismissible banner and keeps the current pairing. `ghealth://today` and `ghealth://activity` still open their app screens.
 
 ## 5. Data and cache
 
 | Item | Location | Contents |
 | --- | --- | --- |
-| Snapshot | App Group container `snapshot.json` | the last successful `/v2/snapshot` body, verbatim bytes |
-| Meta | App Group container `snapshot-meta.json` | `{"fetched_at": Time, "server_url": string, "schema_version": 2}` |
-| Server URL and Mac name | App Group defaults, keys `serverURL` and `macName` | |
-| Token | Keychain, `kSecClassGenericPassword`, service `io.ghealth.app.token`, account `default`, access group `<prefix>io.ghealth.shared`, `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` | so widgets can fetch while the phone is locked, after first unlock, and the token never syncs to iCloud |
+| Snapshot | App Group container `Cache/snapshot-cache.json` | Last successful `/v2/snapshot` response with fetch time, Mac address and profile ID |
+| Uploaded workout copies | App Group container `Cache/activities-uploaded.json` | Recent workout copies used while a Mac refresh catches up |
+| Waiting work | App Group container `activities-local.json`, `live-session.json` and `pending-changes.json` | Work and recordings the phone still holds |
+| Pairing record | Shared Keychain generic password, service `io.ghealth.app.pairing`, account `default` | Mac URL and name, credential, device ID, profile ID and pairing time |
+| Revocation marker | App Group defaults, `revokedCredentials` | Hash prefixes for up to eight recently revoked credentials |
 
-Write both files atomically (`Data.write(to:options: .atomic)`) with file protection `.completeUntilFirstUserAuthentication`. Decode before writing; a body that fails to decode, has `schema_version != 2`, or (in release builds) carries `synthetic_fixture` is rejected and the old cache kept.
+The pairing record uses `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. The app and widgets use the same record. At first launch an existing pairing moves into that record before the app removes its old Keychain item and defaults keys. An existing credential works through the upgrade until the Mac approves a device.
+
+The app writes the snapshot and metadata atomically with file protection `.completeUntilFirstUserAuthentication`. It accepts only schema 2 and a snapshot for the paired Mac. Release also rejects bodies with fixture data. A failed fetch leaves the last snapshot available. A 401 on a paired request marks the credential revoked and clears its snapshot.
+
+The app excludes `Cache/` from iPhone backups and checks the setting at launch. Waiting work is eligible for backup. The next successful snapshot save removes snapshot files in the App Group root.
 
 ## 6. Network
 
 ### 6.1 Client
 
 - `URLSession` with an ephemeral configuration, `timeoutIntervalForRequest` 15 s (widgets: 10 s), `waitsForConnectivity` false, `requestCachePolicy` `.reloadIgnoringLocalCacheData`.
+- Pairing and API clients follow a redirect only when its scheme, host and effective port match the current request. A refused redirect uses its original HTTP status.
+- The clients read up to 8 MiB of decoded response data. A larger response stops the request and shows the incompatible-version message.
 - Header `Authorization: Bearer <token>`, `Accept: application/json`.
-- Base URL from defaults; paths from contract §7.2.
+- The pairing record supplies the base URL. Request paths are in contract §7.2.
 - Errors map to: `unauthorized` (401) → show the pairing-invalid state; `rate_limited` → "Your Mac is getting too many requests. Try again in a minute."; `store_unavailable` → "Your Mac can't open its saved health data. Log in on your Mac, then try again."; transport errors → offline state; decode failure → "Your Mac and this phone run different versions of ghoops. Update both to the same version."
+- A 429 ends the current upload or edit pass and keeps the work pending. The affected queue waits for `Retry-After` before making another attempt. The client accepts a whole number of seconds, clamps it to 1–300 s, and waits 30 s if the header is absent or invalid.
 
 ### 6.2 Decoding
 
@@ -345,12 +360,12 @@ When `device_sync_source` is `scope_missing`, the Health tab's Band card explain
 
 Timeline provider (`ScoresProvider`):
 
-1. Read `snapshot.json` and `snapshot-meta.json` from the App Group.
-2. If paired and the snapshot is older than 30 min, try one fetch (10 s timeout). On success write the cache (same rules as the app). On failure keep the cache.
+1. Read the shared pairing record and `Cache/snapshot-cache.json` for the paired Mac.
+2. If paired and the snapshot is older than 30 min, try one fetch (10 s timeout). On success, write the cache. A 401 marks the credential revoked, clears its snapshot and shows "Open ghoops to pair." Connection errors, rate limits and server outages preserve the cached snapshot.
 3. Build entries at now, +15, +30, +45, +60 min (so the age text updates), policy `.after(now + 30 min)`.
 4. Entry view rules: values from `snapshot.day`; age line "now", "12m", "3h"; when phone-copy age > 6 h or `collector_stale`, values at 55 % opacity with a `clock.badge.exclamationmark` glyph; unpaired → "Open ghoops to pair"; no cache → "No data yet".
-5. Lock Screen widgets use `widgetAccentable()` on the dial and render in vibrant mode without custom colours.
-6. Tapping any widget opens the app on Today (`widgetURL` `ghealth://today`).
+5. Lock Screen widgets render in vibrant mode without custom colours. Widget scores and HRV, and Live Activity health readings, use `privacySensitive()` and follow iOS access settings for the locked phone. The Live Activity timer stays visible.
+6. A scores widget opens Today (`ghealth://today`). A Live Activity opens the activity screen (`ghealth://activity`).
 
 ## 11. Fixture mode (DEBUG only)
 

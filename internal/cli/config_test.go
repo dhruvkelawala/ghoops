@@ -4,13 +4,115 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/dhruvkelawala/ghoops/internal/config"
 	"github.com/dhruvkelawala/ghoops/internal/testutil"
+	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
+
+func TestDefaultAndAlternateProfilesKeepSeparateSettings(t *testing.T) {
+	home := testutil.Dir(t)
+	t.Setenv("HOME", home)
+	defaultConfig := filepath.Join(home, ".config", "ghealth", "config.json")
+	legacy := []byte(`{"sleep_base_need_minutes":495,"strain_intent":"restore","wake_target":"06:45"}`)
+	if err := os.MkdirAll(filepath.Dir(defaultConfig), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(defaultConfig, legacy, 0600); err != nil {
+		t.Fatal(err)
+	}
+	other := testutil.Dir(t)
+	options := Options{Vault: &testutil.Vault{}}
+	readConfig := func(args ...string) v2report.Config {
+		t.Helper()
+		var out, stderr bytes.Buffer
+		if code := Run(context.Background(), args, nil, &out, &stderr, options); code != 0 {
+			t.Fatalf("config: exit %d: %s", code, stderr.String())
+		}
+		var body v2report.Config
+		if err := json.Unmarshal(out.Bytes(), &body); err != nil {
+			t.Fatal(err)
+		}
+		return body
+	}
+
+	separate := readConfig("config", "show", "--state-dir", other)
+	otherPath := filepath.Join(other, "config.json")
+	if separate.Path != otherPath || separate.Values.SleepBaseNeed != 450 || separate.Values.WakeTarget != nil {
+		t.Fatal("alternate profile did not start from defaults")
+	}
+	separate = readConfig("config", "set", "sleep_base_need_minutes", "510", "--state-dir", other)
+	if separate.Path != otherPath || separate.Values.SleepBaseNeed != 510 {
+		t.Fatal("alternate config set did not write the selected profile")
+	}
+	if loaded, err := (config.File{Path: otherPath}).Load(); err != nil || loaded.SleepBaseNeed != 510 {
+		t.Fatalf("alternate config readback: %v", err)
+	}
+	for _, args := range [][]string{
+		{"config", "show"},
+		{"config", "show", "--state-dir", filepath.Join(home, ".local", "share", "ghealth")},
+	} {
+		current := readConfig(args...)
+		if current.Path != defaultConfig || current.Values.SleepBaseNeed != 495 || current.Values.StrainIntent != "restore" ||
+			current.Values.WakeTarget == nil || *current.Values.WakeTarget != "06:45" {
+			t.Fatal("default profile did not read its existing settings")
+		}
+	}
+	if raw, err := os.ReadFile(defaultConfig); err != nil || !bytes.Equal(raw, legacy) {
+		t.Fatalf("existing config changed: %v", err)
+	}
+
+	for _, tc := range []struct {
+		args []string
+		want int
+	}{
+		{[]string{"status"}, 495},
+		{[]string{"status", "--state-dir", other}, 510},
+	} {
+		var out, stderr bytes.Buffer
+		if code := Run(context.Background(), tc.args, nil, &out, &stderr, options); code != 0 {
+			t.Fatalf("status: exit %d: %s", code, stderr.String())
+		}
+		var body struct {
+			ScoreConfig config.Score `json:"score_config"`
+		}
+		if err := json.Unmarshal(out.Bytes(), &body); err != nil || body.ScoreConfig.SleepBaseNeed != tc.want {
+			t.Fatalf("report did not use its profile's settings: %v", err)
+		}
+	}
+}
+
+func TestScheduleChangesRequireDefaultProfile(t *testing.T) {
+	home := testutil.Dir(t)
+	t.Setenv("HOME", home)
+	other := testutil.Dir(t)
+	calls := 0
+	options := Options{Vault: &testutil.Vault{}, Launchctl: func(context.Context, ...string) error {
+		calls++
+		return nil
+	}}
+	for _, command := range []string{"install", "uninstall"} {
+		var out, stderr bytes.Buffer
+		args := []string{"schedule", command, "--state-dir", other}
+		exit := Run(context.Background(), args, nil, &out, &stderr, options)
+		if exit != 2 || !strings.Contains(stderr.String(), "schedule manages only the default profile") || calls != 0 {
+			t.Fatalf("%s: want usage error before launchctl, got exit %d and %d calls", command, exit, calls)
+		}
+	}
+	var out, stderr bytes.Buffer
+	if exit := Run(context.Background(), []string{"schedule", "status", "--state-dir", other}, nil, &out, &stderr, options); exit != 0 {
+		t.Fatalf("schedule status: exit %d: %s", exit, stderr.String())
+	}
+	var body v2report.Schedule
+	if err := json.Unmarshal(out.Bytes(), &body); err != nil || body.Profile != "default" || len(body.Agents) != 2 {
+		t.Fatalf("schedule status did not identify the managed profile: %v", err)
+	}
+}
 
 func TestConfigCommandsPersistAndRejectInvalidUsage(t *testing.T) {
 	t.Setenv("HOME", testutil.Dir(t))

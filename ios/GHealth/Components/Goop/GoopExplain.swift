@@ -40,14 +40,14 @@ struct GoopWindowBar: View {
     private var edge: some View { Rectangle().fill(Goop.Color.text1).frame(width: 2).padding(.vertical, -6) }
 }
 
-/// The dark inset that adds parts up to a total, after WHOOP's "how optimal sleep is calculated".
+/// The panel on a sheet that adds parts up to a total.
 struct GoopBreakdown<Content: View>: View {
     @ViewBuilder var content: () -> Content
     var body: some View {
         VStack(alignment: .leading, spacing: 0) { content() }
             .padding(.horizontal, 14).padding(.top, 12).padding(.bottom, 11)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Goop.Color.legendFill, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusLegend))
+            .background(Goop.Color.controlFill, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusLegend))
     }
 }
 

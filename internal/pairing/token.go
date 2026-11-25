@@ -22,7 +22,7 @@ type Tokens struct {
 
 func (t Tokens) Load() (Token, error) {
 	var token Token
-	data, err := t.Vault.Get(secure.Service(t.Dir) + ".serve-token")
+	data, err := t.Vault.Get(secure.ServeTokenItem.Service(t.Dir))
 	if err != nil {
 		return token, err
 	}
@@ -57,7 +57,7 @@ func (t Tokens) Pair(ctx context.Context, rotate bool, now time.Time) (Token, er
 	if err != nil {
 		return Token{}, err
 	}
-	if err = t.Vault.Set(secure.Service(t.Dir)+".serve-token", data); err != nil {
+	if err = t.Vault.Set(secure.ServeTokenItem.Service(t.Dir), data); err != nil {
 		return Token{}, err
 	}
 	return token, nil
@@ -68,7 +68,11 @@ func (t Tokens) Revoke(ctx context.Context) error {
 		return err
 	}
 	defer unlock()
-	err = t.Vault.Delete(secure.Service(t.Dir) + ".serve-token")
+	return t.revokeLocked()
+}
+
+func (t Tokens) revokeLocked() error {
+	err := t.Vault.Delete(secure.ServeTokenItem.Service(t.Dir))
 	if errors.Is(err, secure.ErrNotFound) {
 		return nil
 	}

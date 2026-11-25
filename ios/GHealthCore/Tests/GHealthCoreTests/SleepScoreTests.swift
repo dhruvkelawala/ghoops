@@ -14,7 +14,7 @@ import Testing
     #expect(snapshot.sleep.performanceComposite?.value == 94)
     #expect(snapshot.sleep.scoreConstants?.sleep.composite?.weights.efficiency == 0.15)
     #expect(snapshot.sleep.scoreConstants?.sleep.composite?.efficiencyFullPct == 90)
-    let score = SleepScore(day, composite: true)
+    let score = SleepScore(day)
     #expect(day.comparison?.metrics[score.comparisonKey]?.mean == 93.9)
     let row = try #require(days.days.first)
     #expect(SleepScore.rowValue(row, composite: true) == 98)
@@ -27,22 +27,18 @@ import Testing
     var composite = try compositeNight("odd_time_poor_efficiency")
     var day: Day = try fixture("composite/day_full.json")
     day.sleep.performanceComposite = composite.performanceComposite
-    for (enabled, value, band, key): (Bool, Int, Band3, String) in [
-        (true, 84, .medium, "sleep_performance_composite"),
-        (false, 94, .high, "sleep_performance")
-    ] {
-        for score in [SleepScore(composite, composite: enabled), SleepScore(day, composite: enabled)] {
-            #expect(score.performance.value == value && score.performance.band == band)
-            #expect(score.comparisonKey == key)
-        }
+    for score in [SleepScore(composite), SleepScore(day)] {
+        #expect(score.performance.value == 84 && score.performance.band == .medium)
+        #expect(score.comparisonKey == "sleep_performance_composite")
     }
     composite.scoreConfig?.sleepScoreMode = nil
-    #expect(SleepScore(composite, composite: true).performance.value == 94)
     day.sleep.performanceComposite = nil
-    let older = SleepScore(day, composite: true)
-    #expect(older.performance.value == 94 && older.comparisonKey == "sleep_performance")
+    for score in [SleepScore(composite), SleepScore(day)] {
+        #expect(score.performance.value == 94 && score.performance.band == .high)
+        #expect(score.comparisonKey == "sleep_performance")
+    }
     let pending = try compositeNight("no_sleep_today")
-    let score = SleepScore(pending, composite: true)
+    let score = SleepScore(pending)
     #expect(score.isComposite && score.performance.value == nil)
     #expect(score.performance.status == .pending && score.performance.reason == .noSleep)
 }
@@ -62,31 +58,34 @@ func compositeInsightUsesEachReportedBand(consistencyLow: Bool, efficiencyLow: B
     sleep.consistency.band = consistencyLow ? .low : .medium
     sleep.efficiencyBand = efficiencyLow ? .low : .medium
     let intro = "Your Sleep Performance is sufficient. "
-    #expect(SleepScore.insight(sleep, composite: true) == intro + "You got 7:24 of the 7:52 you needed." + ending)
-    #expect(SleepScore.insight(sleep, composite: false) == "Your Sleep Performance is optimal. You got 7:24 of the 7:52 you needed.")
+    #expect(Insights.sleep(sleep) == intro + "You got 7:24 of the 7:52 you needed." + ending)
+    var sufficiency = sleep
+    sufficiency.scoreConfig?.sleepScoreMode = nil
+    #expect(Insights.sleep(sufficiency) == "Your Sleep Performance is optimal. You got 7:24 of the 7:52 you needed.")
     sleep.performance.band = .medium
-    #expect(SleepScore.insight(sleep, composite: true) == intro + "You were 0:28 short of the 7:52 you needed." + ending)
+    #expect(Insights.sleep(sleep) == intro + "You were 0:28 short of the 7:52 you needed." + ending)
 }
 
 @Test func compositeBreakdownShowsTheNightsSharesAndReportedTotal() throws {
     var sleep = try compositeNight("odd_time_poor_efficiency")
-    let breakdown = try #require(SleepScore.breakdown(sleep, composite: true))
+    let breakdown = try #require(SleepScore.breakdown(sleep))
     #expect(breakdown.lines.map(\.label) == ["Hours vs. needed", "Consistency", "Efficiency"])
     #expect(breakdown.lines.map(\.note) == ["94% · 70% weight", "52% · 15% weight", "84% · scores 70 · 15% weight"])
     #expect(breakdown.lines.map(\.value) == ["+65.8", "+7.8", "+10.5"])
     #expect(breakdown.total == "84%")
-    #expect(SleepScore.breakdown(sleep, composite: false) == nil)
+    let defaultBody: Sleep = try fixture("sleep_full.json")
+    #expect(SleepScore.breakdown(defaultBody) == nil)
 
     sleep = try compositeNight("no_consistency")
-    let partial = try #require(SleepScore.breakdown(sleep, composite: true))
+    let partial = try #require(SleepScore.breakdown(sleep))
     #expect(partial.lines.map(\.note) == ["94% · 85% weight", "Not available · share moved to hours", "88% · scores 90 · 15% weight"])
     #expect(partial.lines.map(\.value) == ["+79.9", "—", "+13.5"])
     #expect(partial.total == "93%")
 
     let noSleep = try compositeNight("no_sleep")
-    let empty = try #require(SleepScore.breakdown(noSleep, composite: true))
+    let empty = try #require(SleepScore.breakdown(noSleep))
     #expect(empty.lines.map(\.value) == ["—", "—", "—"] && empty.total == "—")
-    let pending = try #require(SleepScore.breakdown(sleep, composite: true, pending: true))
+    let pending = try #require(SleepScore.breakdown(sleep, pending: true))
     #expect(pending.lines.map(\.value) == ["—", "—", "—"] && pending.total == "—")
 }
 
@@ -94,10 +93,10 @@ func compositeInsightUsesEachReportedBand(consistencyLow: Bool, efficiencyLow: B
     var sleep = try compositeNight("odd_time_poor_efficiency")
     sleep.scoreConstants?.sleep.composite?.efficiencyZeroPct = 71
     sleep.scoreConstants?.sleep.composite?.efficiencyFullPct = 93
-    let changed = try #require(SleepScore.breakdown(sleep, composite: true))
+    let changed = try #require(SleepScore.breakdown(sleep))
     #expect(changed.rule == "Efficiency scores nothing at 71% and full marks from 93%. The total is rounded to a whole percent.")
     sleep.scoreConstants?.sleep.composite = nil
-    let unknown = try #require(SleepScore.breakdown(sleep, composite: true))
+    let unknown = try #require(SleepScore.breakdown(sleep))
     #expect(unknown.rule == nil && unknown.lines.map(\.value) == ["—", "—", "—"])
     #expect(unknown.total == "84%")
 }

@@ -217,13 +217,18 @@ func TestClientFileSafetyAndLogout(t *testing.T) {
 	dir := testutil.Dir(t)
 	path := filepath.Join(dir, "synthetic-client.json")
 	content := `{"web":{"client_id":"synthetic","client_secret":"synthetic-secret","redirect_uris":["` + auth.Callback + `"]}}`
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(path, []byte(content), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0644); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := auth.LoadClient(path, auth.Callback); err == nil {
 		t.Fatal("accepted readable client secret")
 	}
-	_ = os.Chmod(path, 0600)
+	if err := os.Chmod(path, 0600); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := auth.LoadClient(path, auth.Callback); err != nil {
 		t.Fatal(err)
 	}

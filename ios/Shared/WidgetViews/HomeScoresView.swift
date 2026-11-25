@@ -16,7 +16,7 @@ struct HomeScoresView: View {
             else if metric.isHRV { HRVSmallView(data: data) }
             else if let score = metric.score {
                 VStack(spacing: 9) {
-                    ring(score, variant: .widgetSmall)
+                    ring(score, variant: .widgetSmall).privacySensitive()
                     Text(score.rawValue.uppercased()).goop(.labelWidget)
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay(alignment: .topTrailing) { if data.stale { age.padding(10) } }
@@ -30,7 +30,7 @@ struct HomeScoresView: View {
                     ring(score, variant: .widgetList)
                     Text(score.rawValue.uppercased()).goop(.labelWidgetSmall).frame(maxWidth: .infinity, alignment: .leading)
                     Text(data.text(score)).goop(.valueWidgetList).opacity(data.stale ? Goop.Opacity.stale : 1)
-                }.frame(maxHeight: .infinity)
+                }.frame(maxHeight: .infinity).privacySensitive()
             }
             if data.stale { age.frame(maxWidth: .infinity, alignment: .trailing) }
         }.padding(16)
@@ -48,7 +48,7 @@ struct HomeScoresView: View {
             HStack(spacing: 0) {
                 ForEach(GoopScore.allCases, id: \.self) { score in
                     VStack(spacing: 7) {
-                        ring(score, variant: .widgetMedium)
+                        ring(score, variant: .widgetMedium).privacySensitive()
                         Text(score.rawValue.uppercased()).goop(.labelWidgetSmall)
                     }.frame(maxWidth: .infinity)
                 }

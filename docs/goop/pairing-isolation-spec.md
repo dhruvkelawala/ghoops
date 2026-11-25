@@ -42,6 +42,10 @@ Already safe, and unchanged by this spec:
 | D10 | The edit queue is unchanged: a switch still discards unsent edits and ADDs. The Replace pairing and Unpair alerts now count them, and count the activities that stay for the old Mac. | Confirming the alert becomes the explicit discard. Keeping A's edits for later would mean replaying them against A's records and edit horizon after an unknown gap. |
 | D11 | Flag `GoopFeature.unsentActivities` covers the More row, the Unsent page and the new alert sentences. Everything else is the fix and ships unflagged. | With the flag off, unsent rows are kept and simply not listed. |
 
+- **D1.** When both pairings have a profile ID, the IDs determine whether they identify the same Mac. When either ID is absent, compare URLs.
+- **D2.** Activities and sessions store the profile ID when available. The first successful status or snapshot fills it in on pending rows and sessions for that address. The edit queue also keeps its changes when the same profile moves to a new address.
+- **D7.** The snapshot cache records the profile ID from its status body. Cache reads and writes use the same comparison as the queues. The app and widget read the paired Mac from the Keychain record.
+
 Rejected:
 - **Adopting unknown rows into the current pairing at first launch.** The release plan forbids it, and the phone can't tell the original Mac from the next one.
 - **Deleting the old Mac's cache on a switch.** Isolation doesn't need it, because the cache is never shown for another Mac. Clearing local data is part of the separate privacy-text item.
@@ -99,7 +103,9 @@ Rejected:
   - "<n> unsent activit(y|ies) stay(s) on this iPhone for <NAME>." when the current Mac has pending rows.
   - "<m> unsent change(s) to <NAME> (is|are) discarded." when the edit queue holds changes not yet accepted.
   A same-URL link keeps today's message.
+  - **Lead, 2026-11-24 (after the address check before contact and the profile binding):** the Replace alert opens before the phone contacts the new address, so the phone can't yet know whether that address serves the same Mac profile. If it does, the profile binding keeps the queued changes. Each counted sentence in the Replace alert therefore starts with "If this is a different Mac, " (for example, "If this is a different Mac, 2 unsent changes to <NAME> are discarded."). Address confirmation stays a single step. `PairingCopy` and test A9 follow this wording.
 - **Unpair alert.** Today's message, then the same two sentences.
+  - The Unpair alert keeps the counted sentences without the qualifier, because Unpair always leaves this Mac.
 - **Blocked switch (unflagged, D6).** The sentence appears where pairing errors appear today.
 
 The sentences are built by one Core function, `PairingCopy.switchMessage(base:activities:changes:mac:)`, so they can be tested.
@@ -126,7 +132,7 @@ The sentences are built by one Core function, `PairingCopy.switchMessage(base:ac
 ## 5. Out of scope
 
 - **The README and privacy-text corrections** in release plan §3, paragraph 2. They are a separate item.
-- **A Mac whose URL changes,** for example after a rename. Its rows show as SAVED FOR its old name, and SEND TO moves them.
+- **A Mac whose URL changes. Resolved.** Re-pairing after a rename delivers its pending work when both pairings identify the same profile.
 - **Clearing cached data on unpair.**
 
 ## 6. Calls for the lead

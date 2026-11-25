@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
+	"net/http"
 	"strings"
 	"sync"
 	"testing"
@@ -40,18 +42,25 @@ func TestConcurrentV2CollectExitsWithCollectInProgress(t *testing.T) {
 
 type collectionGateVault struct {
 	testutil.Vault
-	dir    string
-	read   chan error
-	resume chan struct{}
-	once   sync.Once
+	dir, item, lock string
+	read            chan error
+	resume          chan struct{}
+	once            sync.Once
+}
+
+func newCollectionGateVault(dir, suffix, lock string) *collectionGateVault {
+	return &collectionGateVault{
+		dir: dir, item: secure.Service(dir) + suffix, lock: lock,
+		read: make(chan error, 1), resume: make(chan struct{}),
+	}
 }
 
 func (v *collectionGateVault) Get(key string) ([]byte, error) {
-	if key == secure.Service(v.dir)+".oauth" {
+	if key == v.item {
 		v.once.Do(func() {
 			ctx, cancel := context.WithCancel(context.Background())
 			cancel()
-			unlock, err := secure.Lock(ctx, v.dir, "sync.lock")
+			unlock, err := secure.Lock(ctx, v.dir, v.lock)
 			if err == nil {
 				unlock()
 			}
@@ -74,7 +83,7 @@ func TestCLICollectionCancelledWaitingForLockDoesNotReadOAuth(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer unlock()
-	vault := &collectionGateVault{dir: dir, read: make(chan error, 1), resume: make(chan struct{})}
+	vault := newCollectionGateVault(dir, ".oauth", "sync.lock")
 	close(vault.resume)
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -104,7 +113,7 @@ func (f *credentialSyntheticFetcher) Fetch(ctx context.Context, _ health.Kind, _
 
 func TestCLIColdProfileOAuthReadIsProtectedFromConcurrentLogout(t *testing.T) {
 	dir := testutil.Dir(t)
-	vault := &collectionGateVault{dir: dir, read: make(chan error, 1), resume: make(chan struct{})}
+	vault := newCollectionGateVault(dir, ".oauth", "sync.lock")
 	session := auth.Session{Client: auth.ClientSpec{ID: "synthetic-client", Secret: "synthetic-secret"}, AccessToken: "synthetic-account-A-access", RefreshToken: "synthetic-refresh", ExpiresAt: time.Now().Add(time.Hour), Scopes: auth.Scopes, HealthUserID: "synthetic-account-A"}
 	encoded, err := json.Marshal(session)
 	if err != nil {
@@ -172,5 +181,67 @@ func TestCLIColdProfileOAuthReadIsProtectedFromConcurrentLogout(t *testing.T) {
 	}
 	if _, err := (cache.Store{Dir: dir, Vault: vault}).Load(); err != nil {
 		t.Fatal("logout did not retain the synthetic encrypted cache", err)
+	}
+}
+
+func TestCLIV2CollectBlocksLoginAndLogout(t *testing.T) {
+	dir := testutil.Dir(t)
+	now := time.Date(2026, 3, 10, 14, 30, 0, 0, time.UTC)
+	vault := newCollectionGateVault(dir, ".cache-key", "collect.lock")
+	if err := vault.Set(secure.Service(dir)+".oauth", syntheticSession(t, syntheticOwner)); err != nil {
+		t.Fatal(err)
+	}
+	state := store2.Empty()
+	state.Account = syntheticOwner
+	if err := (store2.Store{Dir: dir, Vault: &vault.Vault}).Save(state, now); err != nil {
+		t.Fatal(err)
+	}
+	options := syntheticCollection(t, dir, vault, now, func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") != "Bearer "+syntheticOwner+"-access" {
+			t.Error("collection did not use the original account")
+		}
+		_, _ = io.WriteString(w, "{}")
+	})
+	loginArgs := syntheticLoginArgs(t, options.Auth)
+	logoutArgs := []string{"--state-dir", dir, "auth", "logout"}
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+	defer cancel()
+	done := make(chan int, 1)
+	var collectErr bytes.Buffer
+	go func() {
+		done <- cli.Run(ctx, []string{"--state-dir", dir, "collect", "--days", "1", "--quiet"}, nil, io.Discard, &collectErr, options)
+	}()
+	var resume sync.Once
+	release := func() { resume.Do(func() { close(vault.resume) }) }
+	defer release()
+	select {
+	case lockErr := <-vault.read:
+		if lockErr == nil || lockErr.Error() != "timed out waiting for local state lock" {
+			t.Fatal("v2 did not hold collect.lock while loading the store", lockErr)
+		}
+	case <-ctx.Done():
+		t.Fatal("v2 did not reach the store read")
+	}
+
+	for _, args := range [][]string{loginArgs, logoutArgs} {
+		cancelled, stop := context.WithCancel(t.Context())
+		stop()
+		var stdout, stderr bytes.Buffer
+		code := cli.Run(cancelled, args, nil, &stdout, &stderr, options)
+		if code != 1 || stdout.Len() != 0 || !strings.Contains(stderr.String(), "waiting for local state lock") {
+			t.Errorf("%s did not wait for the collector: exit %d, consent or success output=%t", args[3], code, stdout.Len() != 0)
+		}
+	}
+	release()
+	select {
+	case code := <-done:
+		if code != 0 || collectErr.Len() != 0 {
+			t.Fatal("collection failed after releasing the gate", code, collectErr.String())
+		}
+	case <-ctx.Done():
+		t.Fatal("collection did not finish after releasing the gate")
+	}
+	if code, _, stderr := run(t, logoutArgs, options); code != 0 || stderr != "" {
+		t.Fatal("logout could not proceed after collection finished", code, stderr)
 	}
 }

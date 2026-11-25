@@ -144,8 +144,9 @@ type IRNProfile struct {
 	Enrolled  *bool `json:"enrolled"`
 }
 type Server struct {
-	Version  string `json:"version"`
-	Revision string `json:"revision"`
+	Version   string  `json:"version"`
+	Revision  string  `json:"revision"`
+	ProfileID *string `json:"profile_id"`
 }
 type Status struct {
 	Envelope
@@ -253,19 +254,36 @@ type Collect struct {
 type Pair struct {
 	Envelope
 	Paired bool `json:"paired"`
-	*PairDetails
 }
-type PairDetails struct {
-	URL        string    `json:"url"`
-	Name       string    `json:"name"`
-	Link       string    `json:"link"`
-	Created    time.Time `json:"token_created_at"`
-	Configured bool      `json:"tailscale_serve_configured"`
-	PNG        *string   `json:"png_path"`
+type PairRedeem struct {
+	Envelope
+	DeviceID         string    `json:"device_id"`
+	Credential       string    `json:"credential"`
+	VerificationCode string    `json:"verification_code"`
+	MacName          string    `json:"mac_name"`
+	ProfileID        string    `json:"profile_id"`
+	ExpiresAt        time.Time `json:"expires_at"`
+}
+type PairStatus struct {
+	Envelope
+	DeviceID string `json:"device_id"`
+	State    string `json:"state"`
+}
+type PairDevices struct {
+	Envelope
+	Devices []PairedDevice `json:"devices"`
+}
+type PairedDevice struct {
+	ID       string     `json:"id"`
+	Name     string     `json:"name"`
+	State    string     `json:"state"`
+	Created  time.Time  `json:"created_at"`
+	Approved *time.Time `json:"approved_at"`
 }
 type Schedule struct {
 	Envelope
-	Agents []schedule.Agent `json:"agents"`
+	Profile string           `json:"profile"`
+	Agents  []schedule.Agent `json:"agents"`
 }
 type Export struct {
 	Envelope

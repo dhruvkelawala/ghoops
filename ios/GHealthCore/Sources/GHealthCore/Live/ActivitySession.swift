@@ -18,7 +18,7 @@ public struct ActivitySession: Codable, Sendable, Identifiable {
     public var updatedAt: Date
     public var target: SessionTarget?
     /// The Mac this session was started for; nil for sessions written before pairing isolation.
-    public let mac: PairedMac?
+    public private(set) var mac: PairedMac?
     /// The Mac's shortest and longest active time, taken from `status.edit_limits` at start; nil when it sent none.
     public private(set) var activeMin: TimeInterval?
     public private(set) var activeMax: TimeInterval?
@@ -26,8 +26,8 @@ public struct ActivitySession: Codable, Sendable, Identifiable {
         self.id = id; exerciseType = sport.id; displayName = sport.name; start = Self.second(now); updatedAt = now; self.cycleDate = cycleDate; self.mac = mac
         activeMin = limits.map { Double($0.activeMinMinutes) * 60 }; activeMax = limits.map { Double($0.activeMaxMinutes) * 60 }
     }
-    /// True when pairing with `url` would move this running session to a different Mac.
-    public func blocksPairing(with url: String) -> Bool { mac?.url != url }
+    public func blocksPairing(with candidate: PairedMac) -> Bool { !candidate.matches(mac) }
+    public mutating func stampProfile(for current: PairedMac) { mac = mac?.stamped(with: current) }
     public func elapsed(at now: Date) -> TimeInterval {
         let until = end ?? min(now, start.addingTimeInterval(Self.recordingSpan))
         return max(0, until.timeIntervalSince(start) - pausedTotal(at: until))

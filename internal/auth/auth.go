@@ -40,6 +40,8 @@ var Scopes = []string{
 
 var ErrLogin = errors.New("authorization missing, expired or revoked; run ghoops auth login")
 var ErrPermissions = errors.New("requested read permissions are missing; run ghoops auth login and grant at least one requested read scope")
+var ErrProfileOwner = errors.New("another account already owns this profile; use a separate --state-dir")
+var ErrAccountChanged = errors.New("account changed during collection; cache unchanged")
 
 type ClientSpec struct {
 	ID        string   `json:"client_id"`
@@ -87,7 +89,7 @@ func New(v secure.Vault, dir string) *Manager {
 	return &Manager{Vault: v, Dir: dir, HTTP: netx.Client(), AuthorizeURL: authURL, TokenURL: tokenURL, IdentityURL: "https://health.googleapis.com/v4/users/me/identity", RevokeURL: "https://oauth2.googleapis.com/revoke", CallbackURL: Callback}
 }
 
-func (m *Manager) item() string { return secure.Service(m.Dir) + ".oauth" }
+func (m *Manager) item() string { return secure.OAuthSessionItem.Service(m.Dir) }
 
 func (m *Manager) load() (Session, error) {
 	var s Session
@@ -145,16 +147,24 @@ func (m *Manager) Status(ctx context.Context) (Status, error) {
 }
 
 func (m *Manager) Access(ctx context.Context, rejected string) (string, error) {
-	return m.access(ctx, rejected, false)
+	return m.access(ctx, rejected, false, "")
 }
 
-func (m *Manager) access(ctx context.Context, rejected string, force bool) (string, error) {
+// AccessForAccount checks the stored account under the same lock used to read or refresh its token.
+func (m *Manager) AccessForAccount(ctx context.Context, account, rejected string) (string, error) {
+	return m.access(ctx, rejected, false, account)
+}
+
+func (m *Manager) access(ctx context.Context, rejected string, force bool, account string) (string, error) {
 	unlock, err := secure.Lock(ctx, m.Dir, "auth.lock")
 	if err != nil {
 		return "", err
 	}
 	defer unlock()
 	s, err := m.load()
+	if account != "" && (errors.Is(err, ErrLogin) || (err == nil && s.HealthUserID != account)) {
+		return "", ErrAccountChanged
+	}
 	if err != nil {
 		return "", err
 	}
@@ -200,7 +210,7 @@ func (m *Manager) access(ctx context.Context, rejected string, force bool) (stri
 }
 
 func (m *Manager) Refresh(ctx context.Context) error {
-	_, err := m.access(ctx, "", true)
+	_, err := m.access(ctx, "", true, "")
 	return err
 }
 
@@ -367,7 +377,7 @@ func (m *Manager) Login(ctx context.Context, client ClientSpec, expectedAccount 
 		}
 		s.HealthUserID = id
 		if (old.HealthUserID != "" && old.HealthUserID != id) || (expectedAccount != "" && expectedAccount != id) {
-			return errors.New("another account already owns this profile; use a separate --state-dir")
+			return ErrProfileOwner
 		}
 		return m.save(s)
 	}

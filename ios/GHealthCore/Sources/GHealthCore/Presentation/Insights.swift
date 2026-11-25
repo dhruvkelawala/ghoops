@@ -68,7 +68,7 @@ public enum Insights {
 
     /// While a sleep edit waits for the Mac, only the phone's projected hours are shown.
     public static func sleep(_ sleep: Sleep, pending: Bool = false) -> String {
-        SleepScore.insight(sleep, composite: false, pending: pending)
+        SleepScore.insight(sleep, pending: pending)
     }
 
     /// The Trends week view's sentence from the Mac's weekly HRV position (scores.md §5.3), or nil for any other position.

@@ -192,7 +192,7 @@ Every `runs[]` entry has `pass`: `"hot"`, `"settle"` or `"explicit"`.
 ### 4.3 Request plan and concurrency
 
 1. Acquire `collect.lock` (non-blocking; if held, exit 1 with error code `collect_in_progress`).
-2. Resolve the account exactly as v1 (`auth.Access`, then `auth.Account`). Account or timezone mismatch with the store fails as in v1.
+2. Read the stored session's account and check it against the encrypted store. The collection gets or refreshes tokens only for this account. An account or timezone mismatch with the store stops the run.
 3. Build the job list. One job per (stream, request range):
    - `heart-rate/rollUp`: one job per London date.
    - list and reconcile streams: one job covering the whole window, paginated inside the job.
@@ -200,7 +200,9 @@ Every `runs[]` entry has `pass`: `"hot"`, `"settle"` or `"explicit"`.
    - user resources: one job each.
 4. Run jobs on a worker pool of **4**. Each job uses the existing `Client.do` retry rules (429 and 5xx with `Retry-After` within the 60 s budget, 401 refresh once). Do not add parallelism inside a job.
 5. The whole command keeps the v1 ten-minute context. A cancelled run saves nothing.
-6. Merge every job result into the loaded store in memory, recompute coverage, prune by retention, append a `runs[]` entry and save once, atomically.
+6. Merge the job results in memory and check the session's account again before saving. If it changed, collection exits with `account changed during collection; cache unchanged`. A completed write prunes by retention, appends a `runs[]` entry and saves once, atomically.
+
+`ghoops auth login` checks the owners of both encrypted stores. It accepts the account that owns the profile. If the two stores have different owners, login refuses the profile. Login and logout wait for collection to finish. Logout keeps both encrypted stores available for offline reads.
 
 Expected incremental run: 3 heart-rate + 9 list/reconcile + 4 roll-up + 1 to 4 user requests, about 20 requests, typically under 15 s.
 
@@ -231,7 +233,7 @@ Output: `ghoops collect --json` prints one object to stdout (full examples: `fix
 | `core_complete` | bool | §4.4 |
 | `streams[]` | array | one entry per stream of §2.1 and §2.2 in table order: `{stream, dates: int (London dates attempted), status, records: int (sum of coverage record_count), error: string? (first error code)}` |
 
-`streams[].status` is the worst status over its dates (`ok` < `permission_missing` < `unavailable` < `unsupported`). Counts only; never values. The object always goes to stdout (v2 `collect` has no text mode). Without `--quiet`, one progress line per finished job also goes to stderr, for example `heart-rate/rollUp 2026-03-10 ok 1312 windows`; `--quiet` suppresses those lines.
+`streams[].status` is the worst status over its dates (`ok` < `permission_missing` < `unavailable` < `unsupported`). Counts only; never values. A recorded run prints its object to stdout. If the account changes during collection, the command sends the error object to stderr. Without `--quiet`, one progress line per finished job also goes to stderr, for example `heart-rate/rollUp 2026-03-10 ok 1312 windows`; `--quiet` suppresses those lines.
 
 ### 4.5 Schedule (LaunchAgents)
 
@@ -283,6 +285,10 @@ These streams record `permission_missing`, never `unavailable`, so a run stays `
 `<state dir>/activities-v2.enc` uses the same AES-256-GCM envelope and Keychain key as `records-v2.enc`, with `{version: 1, activities: [...], edits: [...], sleep_edits: [...], ratings: [...]}`. Activity writes use atomic rename under their own advisory lock, `activities.lock`. The collector never touches it. Missing file means no activities. The server reloads on modification time or size changes. Retention is 400 days. Optional phone estimates are stored but never used as score inputs. See [activity-spec.md §8](../goop/activity-spec.md#8-mac-side-contract-additions-schema-2-additive) for validation and routes.
 
 `<state dir>/journal-v2.enc` holds the owner's journal answers with the same envelope and Keychain key: `{version: 1, behaviours: [key] or null, entries: [{date, answers: {key: bool}, updated_at}]}`. `behaviours` null means the defaults. Writes use atomic rename under `journal.lock`; the collector and the activity routes never touch it. Every write drops entries dated more than 400 days before the London date of now. A missing file means the defaults and no answers. No behaviour key or answer is ever written in plaintext. See [journal-spec.md](../goop/journal-spec.md) §5.
+
+Activity and journal writes allow up to 16 MiB of encrypted data per file. Readers accept files up to 64 MiB, including files made by earlier builds. `ghoops activities compact` can shrink the activity file under `activities.lock` by removing phone estimates from activities that ended more than 30 days ago. Compaction keeps the activities, edits and ratings. If the result still exceeds 16 MiB, the command leaves the file byte for byte as it was.
+
+New saves authenticate the file's role as well as its profile. Earlier activity files still open if they contain `activities`. Earlier journal files must contain both `entries` and `behaviours`. The next save adds the role using the existing key.
 
 Edits are overrides keyed by recorded workout id or `goop-<uuid>`, in the same file and under `activities.lock`. The collector never touches either array. `version` stays 1, and older readers ignore `edits`. Each edit stores `{id, exercise_type: string?, start: Time?, end: Time?, notes: string?, hidden: bool, merge_with: string[], updated_at: Time}`. Start and end are both null or both present. Notes are trimmed, 1–500 characters; null means none. `merge_with` has at most four recorded or goop ids. Identical PUTs keep `updated_at` unchanged.
 

@@ -64,10 +64,9 @@ Run this on the Mac. It lets your iPhone reach the local server over HTTPS withi
 
 ```sh
 tailscale serve --bg --https=8787 http://127.0.0.1:8787
-ghoops pair
 ```
 
-Keep the QR code and pairing link private. Leave the code open in the terminal while you build the app.
+Build the iPhone app before requesting a pairing code. Each code expires after five minutes.
 
 ## Build the iPhone app
 
@@ -86,7 +85,11 @@ open ios/GHealth.xcodeproj
 
 In Xcode, use automatic signing with your team for the app and widgets. Connect your iPhone, select it as the destination for the **GHealth** scheme and click **Run**. Enable Developer Mode on the iPhone if prompted.
 
-Scan the pairing code with the iPhone Camera and open it in ghoops. You can also paste the private link into the app's Pair screen. Today loads your available scores. You can add ghoops widgets from the iPhone's widget gallery.
+Run `ghoops pair` on the Mac. In ghoops on the iPhone, tap **Scan Code** and scan the QR, or paste the line printed below it. Check the Mac's address, then tap **Pair with this Mac**. When the six-digit code matches on both screens, type `y` on the Mac. Today loads your available scores.
+
+Use **More › Pair Again** to pair an already paired iPhone. On the Mac, `ghoops pair devices` lists pairings and `ghoops pair revoke <device-id>` removes one. You can add ghoops widgets from the iPhone's widget gallery.
+
+**More › Unpair** clears the phone's saved scores and pairing. If workouts are waiting for the Mac, you can keep or delete them. Kept workouts wait until you pair with that Mac again.
 
 ## Set your profile
 
@@ -125,7 +128,7 @@ Use `ghoops --json brief` for a local summary. It reports statuses and bands by 
 
 ## Privacy
 
-Health data stays on your Mac and iPhone. The Mac encrypts the store with a key in Keychain. The local server listens on loopback and requires the pairing token. [Privacy and security](docs/privacy-security.md)
+Health data stays on your Mac and iPhone. The Mac encrypts the store with a key in Keychain. The local server listens on loopback and requires a paired device credential for health data. [Privacy and security](docs/privacy-security.md)
 
 ## Contributing
 

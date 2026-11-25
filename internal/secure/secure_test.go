@@ -38,12 +38,19 @@ func TestPrivateDirectoryRejectsSymlinksAndPublicFiles(t *testing.T) {
 		t.Fatal("symlink ancestor accepted")
 	}
 	path := filepath.Join(dir, "public")
-	_ = os.WriteFile(path, []byte("synthetic"), 0644)
+	if err := os.WriteFile(path, []byte("synthetic"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0644); err != nil {
+		t.Fatal(err)
+	}
 	if f, err := secure.OpenPrivate(path, os.O_RDONLY); err == nil {
 		f.Close()
 		t.Fatal("public file accepted")
 	}
-	_ = os.Chmod(dir, 0755)
+	if err := os.Chmod(dir, 0755); err != nil {
+		t.Fatal(err)
+	}
 	if err := secure.PrivateDir(dir); err == nil {
 		t.Fatal("public directory accepted")
 	}
@@ -54,6 +61,9 @@ func TestTestBinaryCannotAccessKeychain(t *testing.T) {
 	}
 	if _, err := (secure.Keychain{}).Get("io.ghealth.synthetic-never-created"); err == nil {
 		t.Fatal("test executable accessed Keychain")
+	}
+	if err := (secure.Keychain{}).Create("io.ghealth.synthetic-never-created", nil); err == nil {
+		t.Fatal("test executable created a Keychain item")
 	}
 }
 

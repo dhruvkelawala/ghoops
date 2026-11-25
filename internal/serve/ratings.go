@@ -58,7 +58,7 @@ func (h *Handler) rating(w http.ResponseWriter, r *http.Request, now time.Time) 
 		if decodeErr != nil {
 			return fail(v2report.EditError(decodeErr))
 		}
-		state, loadErr := h.load()
+		state, _, loadErr := h.load()
 		if loadErr != nil {
 			return fail(v2report.NewError("store_unavailable"))
 		}

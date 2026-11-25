@@ -36,7 +36,7 @@ func (a *app) journalCommand(ctx context.Context, args []string) error {
 			return usageError{"expected journal behaviours [set KEY[,KEY...] | reset]"}
 		}
 		if err != nil {
-			return v2report.NewError("store_unavailable")
+			return v2report.JournalError(err)
 		}
 		return a.emit(v2report.JournalCatalogue(book, v2report.CommandEnvelope("journal_behaviours", a.now)))
 	case "set":

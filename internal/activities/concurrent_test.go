@@ -45,6 +45,16 @@ func (v *firstWriteVault) Set(_ string, key []byte) error {
 	v.writes++
 	return nil
 }
+func (v *firstWriteVault) Create(_ string, key []byte) error {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+	if v.key != nil {
+		return secure.ErrExists
+	}
+	v.key = append([]byte(nil), key...)
+	v.writes++
+	return nil
+}
 func (*firstWriteVault) Delete(string) error { return nil }
 
 func TestFirstActivityAndCollectorWritesShareOneKey(t *testing.T) {

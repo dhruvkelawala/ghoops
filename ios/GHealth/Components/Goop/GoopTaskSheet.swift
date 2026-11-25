@@ -13,7 +13,7 @@ struct GoopTaskSheet<Content: View>: View {
     var title: String
     var back: (() -> Void)? = nil
     var closeIdentifier = "sheet-close"
-    var commit: GoopCommit
+    var commit: GoopCommit? = nil
     @ViewBuilder var content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
@@ -31,11 +31,13 @@ struct GoopTaskSheet<Content: View>: View {
             ScrollView { content().padding(.horizontal, 16).padding(.bottom, 16) }.scrollDismissesKeyboard(.interactively).id(title)
         }
         .safeAreaInset(edge: .bottom) {
-            Button(action: commit.action) {
-                HStack(spacing: 10) { GoopSymbol(name: commit.symbol, size: 18, color: Goop.Color.text1); Text(commit.title).goop(.labelCommit) }
-                    .frame(maxWidth: .infinity).frame(height: 54).background(Goop.Color.strain, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusButton))
-            }.accessibilityIdentifier(commit.identifier).accessibilityLabel(commit.accessibilityLabel ?? commit.title).disabled(!commit.enabled).opacity(commit.enabled ? 1 : Goop.Opacity.disabled)
-                .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 8).background(Goop.Color.sheetBottom)
+            if let commit {
+                Button(action: commit.action) {
+                    HStack(spacing: 10) { GoopSymbol(name: commit.symbol, size: 18, color: Goop.Color.text1); Text(commit.title).goop(.labelCommit) }
+                        .frame(maxWidth: .infinity).frame(height: 54).background(Goop.Color.strain, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusButton))
+                }.accessibilityIdentifier(commit.identifier).accessibilityLabel(commit.accessibilityLabel ?? commit.title).disabled(!commit.enabled).opacity(commit.enabled ? 1 : Goop.Opacity.disabled)
+                    .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 8).background(Goop.Color.sheetBottom)
+            }
         }
         .foregroundStyle(Goop.Color.text1).buttonStyle(.plain).presentationDetents([.large]).presentationDragIndicator(.visible)
         .presentationCornerRadius(Goop.Metric.radiusSheet).presentationBackground(Goop.Gradient.sheet)

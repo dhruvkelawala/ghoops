@@ -13,6 +13,7 @@ public enum FixtureSet: String, CaseIterable, Sendable {
     case healthOneNight = "health_one_night", healthAttention = "health_attention"
     case journalFirst = "journal_first", journalNone = "journal_none"
     case missingValues = "missing_values"
+    case composite
 }
 
 public struct FixtureState: Sendable {
@@ -28,7 +29,13 @@ public enum FixtureLoader {
             return try JSONCoding.decoder().decode(T.self, from: Data(contentsOf: url))
         }
         if set == .unpaired { return FixtureState(cached: nil, now: .now, offline: false) }
-        let name = set == .parity ? "parity/snapshot" : set == .edit ? "edits/snapshot_edited" : set == .stale ? "snapshot_stale" : "snapshot_fresh"
+        let name = switch set {
+        case .parity: "parity/snapshot"
+        case .edit: "edits/snapshot_edited"
+        case .stale: "snapshot_stale"
+        case .composite: "snapshot_composite"
+        default: "snapshot_fresh"
+        }
         var snapshot = try body(name, Snapshot.self)
         switch set {
         case .healthOneNight, .healthAttention:

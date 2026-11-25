@@ -57,7 +57,7 @@ func (h *Handler) edit(w http.ResponseWriter, r *http.Request, now time.Time) in
 		if decodeErr != nil {
 			return fail(v2report.EditError(decodeErr))
 		}
-		state, loadErr := h.load()
+		state, _, loadErr := h.load()
 		if loadErr != nil {
 			return fail(v2report.NewError("store_unavailable"))
 		}

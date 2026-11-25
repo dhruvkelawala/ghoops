@@ -100,4 +100,5 @@ public struct IRNProfile: Codable, Sendable {
 public struct ServerVersion: Codable, Sendable {
     public var version: String
     public var revision: String
+    public var profileId: String?
 }

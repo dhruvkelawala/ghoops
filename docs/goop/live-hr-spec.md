@@ -242,6 +242,8 @@ The bpm and its `BPM` follow §4.1. In N the value is `—` in `text2` with no `
 - **`ActivityController.seedFixture`:** the source series is empty for `no_hr` and for the new `stale` seed.
 - **`HeartRateBanner`** (`ios/GHealth/Live/HeartRateBanner.swift`, the `.connected` message): with a reading, the text stays `Live heart rate \(bpm) bpm`. A number inside a sentence keeps the sentence's voice (#10 D4). Before the first reading, the text is `Waiting for the first heart rate reading.`, so it never shows `— bpm`. The new text comes from a GHealthCore function, `HeartRateBannerText.connected(bpm:)`, which `LiveReadoutTests` covers for both cases.
 
+The app reconnects to the last chosen heart-rate monitor when it finds it. Every unfamiliar monitor appears in **Choose your band**, even when it is the only one nearby. Tap its name to connect. The phone remembers it after a successful connection.
+
 ### 5.5 Preview host (Debug)
 
 - `AppModel`: `liveWidgetPreview` and `targetWidgetPreview` become `var livePreview: LivePreview?`. `-GHealthWidgetPreview <name>` sets it when `LivePreview(rawValue:)` matches, and sets `fixtureSet = .fresh` and `widgetPreview = true`, as today.

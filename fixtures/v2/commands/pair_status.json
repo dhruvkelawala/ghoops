@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "kind": "pair_status",
+  "source": "google_health_v4",
+  "generated_at": "2026-03-10T14:30:00Z",
+  "timezone": "Europe/London",
+  "synthetic_fixture": true,
+  "device_id": "dev_0123456789ab",
+  "state": "pending"
+}

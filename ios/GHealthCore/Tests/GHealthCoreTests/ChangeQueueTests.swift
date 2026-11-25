@@ -127,7 +127,7 @@ private actor QueueUpdates {
         (.unreadable, .accepted, false),
         (.error(.rejected), nil, true), (.error(.notFound), nil, true), (.error(.conflict), nil, true),
         (.error(.http(400)), nil, true), (.error(.http(404)), nil, true), (.error(.http(409)), nil, true), (.error(.http(413)), nil, true),
-        (.error(.unauthorized), .waiting, false), (.error(.rateLimited), .waiting, false),
+        (.error(.unauthorized), .waiting, false), (.error(.rateLimited(retryAfter: nil)), .waiting, false),
         (.error(.http(429)), .waiting, false), (.error(.http(500)), .waiting, false),
         (.error(.storeUnavailable), .waiting, false), (.error(.offline), .waiting, false)
     ]
@@ -159,6 +159,33 @@ private actor QueueUpdates {
     add.request = .postActivity(try fixture("edits/requests/add.json", as: ActivityUpload.self))
     try await queue.submit(add)
     #expect(try await queue.drain(api: QueueAPI(), uploads: {}).changes.first?.state == .accepted)
+}
+
+@Test(arguments: [TimeInterval?(5), nil])
+func changeQueueWaitsAfterRateLimit(_ retryAfter: TimeInterval?) async throws {
+    let directory = queueDirectory()
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let clock = QueueClock(queueTime)
+    let queue = ChangeQueue(directory: directory, serverURL: queueServer, clock: clock.now)
+    try await queue.load()
+    try await queue.submit(queueChange("first"))
+    try await queue.submit(queueChange("second"))
+    let limited = ClientError.rateLimited(retryAfter: retryAfter)
+    let api = QueueAPI([.error(limited)])
+    let first = try await queue.drain(api: api, uploads: {})
+    #expect(first.waitingError == limited)
+    #expect(first.changes.map(\.state) == [.waiting, .waiting])
+    #expect(await api.requests.count == 1)
+
+    clock.advance(by: (retryAfter ?? ChangeTiming.retryInterval) - 1)
+    let early = try await queue.drain(api: api, uploads: {})
+    #expect(early.changes.map(\.state) == [.waiting, .waiting])
+    #expect(await api.requests.count == 1)
+
+    clock.advance(by: 1)
+    let ready = try await queue.drain(api: api, uploads: {})
+    #expect(ready.changes.map(\.state) == [.accepted, .accepted])
+    #expect(await api.requests.count == 3)
 }
 
 @Test func queueRunsUploadsFirstSeriallyAndStopsAtWaiting() async throws {

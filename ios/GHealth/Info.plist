@@ -33,10 +33,12 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>ghoops reads your live heart rate from your Fitbit Air while you record an activity.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>ghoops scans the pairing code your Mac shows.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>SharedAppGroup</key>
 	<string>$(GHOOPS_APP_GROUP)</string>
 	<key>SharedKeychainGroup</key>

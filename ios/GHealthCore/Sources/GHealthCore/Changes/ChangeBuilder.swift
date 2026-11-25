@@ -33,6 +33,7 @@ public enum ChangeBuilder {
             request = .putEdit(kept.id, body)
         } else { request = .deleteEdit(kept.id) }
         var change = PendingChange(kind: .undo, request: request, targets: [kept.id], cycleDates: [kept.cycleDate], name: kept.displayName ?? "Activity", patch: patch(upsert: [kept], before: [kept]), serverURL: deletion.serverURL, createdAt: now)
+        change.profileId = deletion.profileId
         if kept.edit != nil && deletion.acceptedEdit == nil { change.replayBeforeUndo = deletion.request }
         return change
     }

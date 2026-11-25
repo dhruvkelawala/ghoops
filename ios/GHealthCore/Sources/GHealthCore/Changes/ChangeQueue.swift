@@ -11,14 +11,28 @@ public actor ChangeQueue {
     public private(set) var changes: [PendingChange] = []
     public private(set) var isLoaded = false
     private let directory: URL
-    private let serverURL: String
+    private var mac: PairedMac
     private let clock: @Sendable () -> Date
+    private var notBefore: Date?
     private var draining = false
     private var inFlight: UUID?
     private var generation = UUID()
 
-    public init(directory: URL, serverURL: String, clock: @escaping @Sendable () -> Date = { .now }) {
-        self.directory = directory; self.serverURL = serverURL; self.clock = clock
+    public init(directory: URL, serverURL: String, profileId: String? = nil, clock: @escaping @Sendable () -> Date = { .now }) {
+        self.directory = directory
+        self.mac = PairedMac(url: serverURL, name: "", profile: profileId)
+        self.clock = clock
+    }
+
+    public func bind(to mac: PairedMac) throws {
+        guard let profile = mac.profile, self.mac.profile == nil, self.mac.matches(mac) else { return }
+        if isLoaded {
+            var next = changes.filter { mac.matches($0.mac) }
+            for index in next.indices { next[index].bind(to: mac) }
+            try write(next)
+            changes = next
+        }
+        self.mac = PairedMac(url: mac.url, name: "", profile: profile)
     }
 
     @discardableResult public func load() throws -> [PendingChange] {
@@ -27,8 +41,12 @@ public actor ChangeQueue {
         var loaded: [PendingChange] = []
         if let data = try SavedFiles.read(file) {
             let saved = try JSONCoding.decoder().decode([PendingChange].self, from: data)
-            loaded = saved.filter { $0.serverURL == serverURL }
-            if loaded.count != saved.count { try write(loaded) }
+            loaded = saved.filter { mac.matches($0.mac) }
+            let needsWrite = loaded.count != saved.count || loaded.contains { $0.serverURL != mac.url || ($0.profileId == nil && mac.profile != nil) }
+            if needsWrite {
+                for index in loaded.indices { loaded[index].bind(to: mac) }
+                try write(loaded)
+            }
         }
         changes = loaded
         isLoaded = true
@@ -41,7 +59,9 @@ public actor ChangeQueue {
 
     public func submit(_ change: PendingChange) throws {
         guard isLoaded else { throw SavedDataError(area: .changes) }
-        guard change.serverURL == serverURL, !changes.contains(where: { $0.id == change.id }) else { return }
+        guard mac.matches(change.mac), !changes.contains(where: { $0.id == change.id }) else { return }
+        var change = change
+        change.bind(to: mac)
         let submitted = changes + [change]
         try write(submitted)
         changes = submitted
@@ -50,13 +70,15 @@ public actor ChangeQueue {
     public func drain(api: any EditAPI, uploads: @Sendable () async -> Void, onChange: @Sendable (DrainResult) async -> Void = { _ in }) async throws -> DrainResult {
         guard isLoaded else { throw SavedDataError(area: .changes) }
         guard !draining else { return DrainResult(changes: changes, rollbacks: [], refused: []) }
+        if let notBefore, clock() < notBefore { return DrainResult(changes: changes, rollbacks: [], refused: []) }
+        notBefore = nil
         draining = true
         defer { draining = false; inFlight = nil }
         let pass = generation
         var notices: [RollbackNotice] = []
         var refused: [PendingChange] = []
         await uploads()
-        while pass == generation, let index = changes.firstIndex(where: { $0.state != .accepted }) {
+        while !Task.isCancelled, pass == generation, let index = changes.firstIndex(where: { $0.state != .accepted }) {
             let id = changes[index].id
             changes[index].state = .sending
             changes[index].attempts += 1
@@ -64,7 +86,7 @@ public actor ChangeQueue {
             await onChange(DrainResult(changes: changes, rollbacks: notices, refused: refused))
             let result: Result<WorkoutEdit?, Error>
             do {
-                guard pass == generation else { break }
+                guard !Task.isCancelled, pass == generation else { break }
                 guard let attempt = changes.firstIndex(where: { $0.id == id }) else { continue }
                 inFlight = id
                 if let replay = changes[attempt].replayBeforeUndo {
@@ -92,16 +114,18 @@ public actor ChangeQueue {
                 if case .putEdit = changes[current].request, case .success = result {
                     for row in changes[current].patch.upsert.indices { changes[current].patch.upsert[row].edit = edit }
                 }
-                if changes[current].undoRequested, let undo = ChangeBuilder.undo(changes[current], now: clock()) {
+                if changes[current].undoRequested, var undo = ChangeBuilder.undo(changes[current], now: clock()) {
                     changes[current].patch.remove = changes[current].kept.map { [$0.id] } ?? []
                     changes[current].patch.upsert = []
+                    undo.bind(to: mac)
                     changes.append(undo)
                 }
             case .waiting:
+                let error: ClientError? = if case .failure(let error) = result { error as? ClientError } else { nil }
+                if let delay = error?.rateLimitDelay { notBefore = clock().addingTimeInterval(delay) }
                 if changes[current].undoRequested { changes.remove(at: current) }
                 for later in current..<changes.count where changes[later].state != .accepted { changes[later].state = .waiting }
                 try write(changes)
-                let error: ClientError? = if case .failure(let error) = result { error as? ClientError } else { nil }
                 let waiting = DrainResult(changes: changes, rollbacks: notices, refused: refused, waitingError: error)
                 await onChange(waiting)
                 return waiting
@@ -142,6 +166,8 @@ public actor ChangeQueue {
         changes = []
         try write(changes)
     }
+
+    public func suspend() { generation = UUID() }
 
     private func send(_ request: PendingChange.Request, api: any EditAPI) async throws -> WorkoutEdit? {
         switch request {

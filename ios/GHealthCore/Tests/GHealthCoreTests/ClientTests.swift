@@ -4,11 +4,19 @@ import Testing
 
 final class StubState: @unchecked Sendable {
     private let lock = NSLock()
-    private var reply: Result<(Int, Data), URLError> = .success((200, Data()))
+    private var reply: Result<(Int, Data, [String: String]), URLError> = .success((200, Data(), [:]))
+    private var destination: URL?
     private var requests: [URLRequest] = []
-    func set(_ code: Int, _ data: Data) { lock.withLock { reply = .success((code, data)); requests = [] } }
-    func fail(_ code: URLError.Code) { lock.withLock { reply = .failure(URLError(code)); requests = [] } }
-    func take(_ request: URLRequest) -> Result<(Int, Data), URLError> {
+    func set(_ code: Int, _ data: Data, headers: [String: String] = [:]) {
+        lock.withLock { reply = .success((code, data, headers)); destination = nil; requests = [] }
+    }
+    func fail(_ code: URLError.Code) {
+        lock.withLock { reply = .failure(URLError(code)); destination = nil; requests = [] }
+    }
+    func redirect(to url: URL, replyingWith data: Data) {
+        lock.withLock { reply = .success((200, data, [:])); destination = url; requests = [] }
+    }
+    func take(_ request: URLRequest) -> Result<(Int, Data, [String: String]), URLError> {
         var captured = request
         if captured.httpBody == nil, let stream = request.httpBodyStream {
             stream.open(); defer { stream.close() }
@@ -21,7 +29,13 @@ final class StubState: @unchecked Sendable {
             }
             captured.httpBody = data
         }
-        return lock.withLock { requests.append(captured); return reply }
+        return lock.withLock {
+            requests.append(captured)
+            if let destination, requests.count == 1 {
+                return .success((302, Data(), ["Location": destination.absoluteString]))
+            }
+            return reply
+        }
     }
     var seen: [URLRequest] { lock.withLock { requests } }
 }
@@ -32,20 +46,22 @@ final class StubProtocol: URLProtocol, @unchecked Sendable {
     override func startLoading() {
         switch Self.state.take(request) {
         case .failure(let error): client?.urlProtocol(self, didFailWithError: error)
-        case .success(let (code, data)):
-            client?.urlProtocol(self, didReceive: HTTPURLResponse(url: request.url!, statusCode: code, httpVersion: nil, headerFields: nil)!, cacheStoragePolicy: .notAllowed)
+        case .success(let (code, data, headers)):
+            let response = HTTPURLResponse(url: request.url!, statusCode: code, httpVersion: nil, headerFields: headers)!
+            if code == 302, let location = headers["Location"], let destination = URL(string: location) {
+                var next = request
+                next.url = destination
+                client?.urlProtocol(self, wasRedirectedTo: next, redirectResponse: response)
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+                client?.urlProtocolDidFinishLoading(self)
+                return
+            }
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
             client?.urlProtocol(self, didLoad: data)
             client?.urlProtocolDidFinishLoading(self)
         }
     }
     override func stopLoading() {}
-}
-final class MemoryTokens: TokenStore, @unchecked Sendable {
-    private let lock = NSLock()
-    private var value: String?
-    func load() -> String? { lock.withLock { value } }
-    func save(_ token: String) { lock.withLock { value = token } }
-    func delete() { lock.withLock { value = nil } }
 }
 func stubClient() -> APIClient {
     let config = URLSessionConfiguration.ephemeral
@@ -54,6 +70,90 @@ func stubClient() -> APIClient {
 }
 
 @Suite(.serialized) struct ClientTests {
+    @Test(arguments: [
+        ("https://fixture.invalid:8787/next", true),
+        ("https://mac-b.invalid:8787/next", false),
+        ("https://fixture.invalid:443/next", false),
+        ("http://fixture.invalid:8787/next", false),
+    ])
+    func redirectsStayAtTheOriginalOrigin(_ location: String, _ shouldFollow: Bool) async throws {
+        let body = try liveStatusBody()
+        let url = try #require(URL(string: location))
+        StubProtocol.state.redirect(to: url, replyingWith: body)
+        if shouldFollow {
+            #expect(try await stubClient().status().kind == "status")
+        } else {
+            await #expect(throws: ClientError.http(302)) { try await stubClient().status() }
+        }
+        let sent = StubProtocol.state.seen
+        #expect(sent.map { $0.url?.path } == (shouldFollow ? ["/v2/status", "/next"] : ["/v2/status"]))
+        #expect(sent.allSatisfy { $0.url?.host == "fixture.invalid" })
+    }
+
+    @Test func responseBodyLimitAppliesToBothClients() async throws {
+        let body = try liveStatusBody()
+        StubProtocol.state.set(200, padded(body, toMiB: 1))
+        #expect(try await stubClient().status().kind == "status")
+        StubProtocol.state.set(200, padded(body, toMiB: 9))
+        await #expect(throws: ClientError.incompatibleVersion) { try await stubClient().status() }
+
+        let pairing = PairingRecord(url: URL(string: "https://fixture.invalid:8787")!, credential: "ghv3_<redacted>",
+                                    name: "Fixture Mac", deviceId: "fixture-device")
+        let pending = PendingEnrolment(record: pairing, verificationCode: "<code>")
+        let state = Data("""
+        {"schema_version":2,"kind":"pair_status","source":"ghoops","generated_at":"2026-03-10T12:00:00Z","timezone":"UTC",
+        "device_id":"fixture-device","state":"active"}
+        """.utf8)
+        StubProtocol.state.set(200, padded(state, toMiB: 9))
+        await #expect(throws: ClientError.incompatibleVersion) {
+            try await EnrolmentClient(session: stubClient().session).state(for: pending)
+        }
+    }
+
+    private func padded(_ data: Data, toMiB size: Int) -> Data {
+        data + Data(repeating: 0x20, count: size * 1024 * 1024 - data.count)
+    }
+
+    private func liveStatusBody() throws -> Data {
+        let fixture = try Data(contentsOf: fixtureRoot.appendingPathComponent("status_full.json"))
+        var status = try #require(JSONSerialization.jsonObject(with: fixture) as? [String: Any])
+        status.removeValue(forKey: "synthetic_fixture")
+        return try JSONSerialization.data(withJSONObject: status)
+    }
+
+    @Test func enrolmentUsesTheCheckedOriginAndAuthenticatesOnlyStatus() async throws {
+        let redeem = Data("""
+        {"schema_version":2,"kind":"pair_redeem","source":"ghoops","generated_at":"2026-03-10T12:00:00Z","timezone":"UTC",
+        "device_id":"fixture-device","credential":"ghv3_<redacted>","verification_code":"482913","mac_name":"Mac A",
+        "profile_id":"fixture-profile","expires_at":"2026-03-10T12:05:00Z"}
+        """.utf8)
+        let status = Data("""
+        {"schema_version":2,"kind":"pair_status","source":"ghoops","generated_at":"2026-03-10T12:00:00Z","timezone":"UTC",
+        "device_id":"fixture-device","state":"active"}
+        """.utf8)
+        let client = EnrolmentClient(session: stubClient().session)
+        let code = String(repeating: "A", count: 43)
+        let parsed = try PairingCode("GHOOPS1 https://mac-a.invalid:8787 \(code)")
+        StubProtocol.state.set(201, redeem)
+        let pending = try await client.redeem(parsed, deviceName: "iPhone")
+        #expect(StubProtocol.state.seen.count == 1)
+        let post = try #require(StubProtocol.state.seen.first)
+        #expect(post.url?.absoluteString == "https://mac-a.invalid:8787/v2/pair/redeem")
+        #expect(post.httpMethod == "POST")
+        #expect(post.value(forHTTPHeaderField: "Authorization") == nil)
+        let postBody = try #require(post.httpBody)
+        let json = try JSONDecoder().decode([String: String].self, from: postBody)
+        #expect(json == ["code": code, "device_name": "iPhone"])
+
+        StubProtocol.state.set(200, status)
+        #expect(try await client.state(for: pending) == .active)
+        #expect(StubProtocol.state.seen.count == 1)
+        let get = try #require(StubProtocol.state.seen.first)
+        #expect(get.url?.absoluteString == "https://mac-a.invalid:8787/v2/pair/status")
+        #expect(get.httpMethod == "GET")
+        #expect(get.value(forHTTPHeaderField: "Authorization") == "Bearer ghv3_<redacted>")
+    }
+
     @Test func transportErrorsKeepTheirMeaning() async {
         for code: URLError.Code in [.timedOut, .cannotConnectToHost, .secureConnectionFailed, .cancelled] {
             StubProtocol.state.fail(code)
@@ -85,29 +185,22 @@ func stubClient() -> APIClient {
         #expect(APIClient(baseURL: url, token: "fixture", session: injected).session === injected)
     }
 
-    @Test func pairingLinkRules() throws {
-        let valid = "ghealth://pair?v=1&url=https%3A%2F%2Ffixture.invalid%3A8787&token=fixture&name=Fixture%20Mac"
-        let link = try PairingLink(URL(string: valid)!)
-        #expect(link.url.absoluteString == "https://fixture.invalid:8787")
-        #expect(link.name == "Fixture Mac")
-        #expect(throws: PairingError.self) { try PairingLink(URL(string: valid.replacingOccurrences(of: "&token=fixture", with: ""))!) }
-        #expect(throws: PairingError.self) { try PairingLink(URL(string: valid.replacingOccurrences(of: "https%3A", with: "http%3A"))!) }
-    }
-
     @Test func successfulFetchPersistsVerbatimAndRejectsBadReplacements() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedURL: { "https://fixture.invalid:8787" })
+        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedMac: { PairedMac(url: "https://fixture.invalid:8787", name: "Fixture Mac") })
         let data = try Data(contentsOf: fixtureRoot.appendingPathComponent("preview/snapshot_fresh.json"))
         StubProtocol.state.set(200, data)
         let date = Date(timeIntervalSince1970: 1000)
-        let cache = directory.appendingPathComponent("snapshot-cache.json")
+        let cacheDirectory = directory.appendingPathComponent("Cache")
+        let cache = cacheDirectory.appendingPathComponent("snapshot-cache.json")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         for old in ["snapshot.json", "snapshot-meta.json"] { try Data("{}".utf8).write(to: directory.appendingPathComponent(old)) }
         let fetched = try await stubClient().snapshot(into: store, now: date)
         #expect(fetched.meta.fetchedAt == date)
         let saved = try Data(contentsOf: cache)
         #expect(saved.range(of: data) != nil)
+        #expect(try cacheDirectory.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup == true)
         #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("snapshot.json").path))
         #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("snapshot-meta.json").path))
         let loaded = try await store.load()
@@ -117,11 +210,15 @@ func stubClient() -> APIClient {
         StubProtocol.state.set(200, Data("{}".utf8))
         await #expect(throws: ClientError.incompatibleVersion) { try await stubClient().snapshot(into: store) }
         #expect(try Data(contentsOf: cache) == saved)
-        let liveStore = SnapshotStore(directory: directory, pairedURL: { "https://fixture.invalid" })
-        await #expect(throws: ClientError.incompatibleVersion) { try await liveStore.save(data, serverURL: "https://fixture.invalid", fetchedAt: date) }
+        let liveStore = SnapshotStore(directory: directory, pairedMac: { PairedMac(url: "https://fixture.invalid", name: "Fixture Mac") })
+        await #expect(throws: ClientError.incompatibleVersion) { try await liveStore.save(data, from: PairedMac(url: "https://fixture.invalid", name: "Fixture Mac"), fetchedAt: date) }
         let badSchema = Data(String(decoding: data, as: UTF8.self).replacingOccurrences(of: "\"schema_version\": 2", with: "\"schema_version\": 3").utf8)
-        await #expect(throws: ClientError.incompatibleVersion) { try await store.save(badSchema, serverURL: "https://fixture.invalid:8787", fetchedAt: date) }
+        await #expect(throws: ClientError.incompatibleVersion) { try await store.save(badSchema, from: PairedMac(url: "https://fixture.invalid:8787", name: "Fixture Mac"), fetchedAt: date) }
         #expect(try Data(contentsOf: cache) == saved)
+        StubProtocol.state.set(200, data)
+        let updated = try await stubClient().snapshot(into: store, now: date.addingTimeInterval(1))
+        #expect(try await store.load()?.meta.fetchedAt == updated.meta.fetchedAt)
+        #expect(try directory.appendingPathComponent("Cache").resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup == true)
     }
 
     @Test(arguments: ["snapshot-cache.json", "directory"])
@@ -131,11 +228,11 @@ func stubClient() -> APIClient {
             try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: directory.path)
             try? FileManager.default.removeItem(at: directory)
         }
-        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedURL: { "https://fixture.invalid" })
+        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedMac: { PairedMac(url: "https://fixture.invalid", name: "Fixture Mac") })
         let data = try Data(contentsOf: fixtureRoot.appendingPathComponent("preview/snapshot_fresh.json"))
         let date = Date(timeIntervalSince1970: 1000)
-        try await store.save(data, serverURL: "https://fixture.invalid", fetchedAt: date)
-        let file = name == "directory" ? directory : directory.appendingPathComponent(name)
+        try await store.save(data, from: PairedMac(url: "https://fixture.invalid", name: "Fixture Mac"), fetchedAt: date)
+        let file = name == "directory" ? directory : directory.appendingPathComponent("Cache").appendingPathComponent(name)
         try FileManager.default.setAttributes([.posixPermissions: 0], ofItemAtPath: file.path)
         do {
             _ = try await store.load()
@@ -148,30 +245,26 @@ func stubClient() -> APIClient {
         #expect(try await store.load()?.meta.fetchedAt == date)
     }
 
-    @Test(arguments: [(401, "unauthorized", ClientError.unauthorized), (503, "store_unavailable", .storeUnavailable), (429, "rate_limited", .rateLimited)])
+    @Test(arguments: [(401, "unauthorized", ClientError.unauthorized), (503, "store_unavailable", .storeUnavailable), (429, "rate_limited", .rateLimited(retryAfter: nil))])
     func httpErrors(_ code: Int, _ file: String, _ expected: ClientError) async throws {
-        StubProtocol.state.set(code, try Data(contentsOf: fixtureRoot.appendingPathComponent("errors/\(file).json")))
-        await #expect(throws: expected) { try await stubClient().status() }
-    }
-
-    @Test func pairingIsSavedOnlyAfterSuccessfulConnection() async throws {
-        let tokens = MemoryTokens()
         let suite = "ghealth-test-\(UUID())"
         defer { UserDefaults(suiteName: suite)?.removePersistentDomain(forName: suite) }
-        let repository = PairingRepository(suiteName: suite, tokens: tokens)
-        let link = try PairingLink(URL(string: "ghealth://pair?v=1&url=https%3A%2F%2Ffixture.invalid&token=fixture&name=Fixture")!)
-        StubProtocol.state.set(401, Data())
-        await #expect(throws: ClientError.unauthorized) { try await repository.pair(link, client: stubClient()) }
-        #expect(try await repository.credentials() == nil)
-        var object = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: fixtureRoot.appendingPathComponent("status_full.json"))) as? [String: Any])
-        object.removeValue(forKey: "synthetic_fixture")
-        StubProtocol.state.set(200, try JSONSerialization.data(withJSONObject: object))
-        try await repository.pair(link, client: stubClient())
-        #expect(try await repository.credentials()?.name == "Fixture")
-        #expect(tokens.load() == "fixture")
-        try await repository.unpair()
-        #expect(tokens.load() == nil)
-        #expect(try await repository.credentials() == nil)
+        let marker = RevokedCredentials(suiteName: suite)
+        let credential = "fixture-credential"
+        let client = APIClient(baseURL: URL(string: "https://mac-a.invalid")!, token: credential, session: stubClient().session,
+                               onUnauthorized: { marker.insert(credential) })
+        StubProtocol.state.set(code, try Data(contentsOf: fixtureRoot.appendingPathComponent("errors/\(file).json")))
+        await #expect(throws: expected) { try await client.status() }
+        #expect(marker.contains(credential) == (code == 401))
+    }
+
+    @Test(arguments: [
+        ("5", TimeInterval?(5)), ("0", 1), ("500", 300), ("999999999999999999999999", 300),
+        ("5.5", nil), ("-1", nil), ("Tue, 10 Mar 2026 12:00:05 GMT", nil)
+    ])
+    func retryAfterAcceptsOnlyDeltaSeconds(_ header: String, _ expected: TimeInterval?) async {
+        StubProtocol.state.set(429, Data(), headers: ["Retry-After": header])
+        await #expect(throws: ClientError.rateLimited(retryAfter: expected)) { try await stubClient().status() }
     }
 }
 
@@ -179,7 +272,7 @@ extension ClientTests {
     @Test func concurrentRefreshesMakeOneRequest() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedURL: { "https://fixture.invalid:8787" })
+        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedMac: { PairedMac(url: "https://fixture.invalid:8787", name: "Fixture Mac") })
         let refresher = SnapshotRefresher()
         StubProtocol.state.set(200, try Data(contentsOf: fixtureRoot.appendingPathComponent("preview/snapshot_fresh.json")))
         let client = stubClient()

@@ -142,9 +142,14 @@ func TestMissingKeyUnsafeFilesAndNoFallback(t *testing.T) {
 	if err := failure.Save(state(t)); err == nil {
 		t.Fatal("plaintext fallback")
 	}
-	entries, _ := os.ReadDir(failure.Dir)
-	if len(entries) != 0 {
-		t.Fatal("wrote data despite Keychain failure")
+	entries, err := os.ReadDir(failure.Dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.Name() != "cache-key.lock" {
+			t.Fatal("wrote data despite Keychain failure")
+		}
 	}
 }
 

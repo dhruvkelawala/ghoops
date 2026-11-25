@@ -1,6 +1,7 @@
 package store2
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -19,6 +20,7 @@ import (
 
 const header = "ghealth-cache-v2\n"
 const MaxSize = 256 << 20
+const collectLock = "collect.lock"
 
 var ErrCollectInProgress = errors.New("collect_in_progress")
 
@@ -28,50 +30,69 @@ type Store struct {
 }
 
 func (s Store) Load() (State2, error) {
+	state, _, err := s.load()
+	return state, err
+}
+
+func (s Store) LoadWithProfile() (State2, *string, error) {
+	state, key, err := s.load()
+	if err != nil {
+		return state, nil, err
+	}
+	if key == nil && s.Vault != nil {
+		key, _ = secure.CacheKey(s.Dir, s.Vault, false)
+	}
+	if id := secure.ProfileID(key); id != "" {
+		return state, &id, nil
+	}
+	return state, nil, nil
+}
+
+func (s Store) load() (State2, []byte, error) {
 	empty := Empty()
 	if _, err := os.Lstat(s.Dir); errors.Is(err, os.ErrNotExist) {
-		return empty, nil
+		return empty, nil, nil
 	}
 	if err := secure.PrivateDir(s.Dir); err != nil {
-		return empty, err
+		return empty, nil, err
 	}
 	f, err := secure.OpenPrivate(filepath.Join(s.Dir, "records-v2.enc"), os.O_RDONLY)
 	if errors.Is(err, os.ErrNotExist) {
-		return empty, nil
+		return empty, nil, nil
 	}
 	if err != nil {
-		return empty, errors.New("cannot open private encrypted cache")
+		return empty, nil, errors.New("cannot open private encrypted cache")
 	}
 	defer f.Close()
 	b, err := io.ReadAll(io.LimitReader(f, MaxSize+1))
 	if err != nil || len(b) > MaxSize {
-		return empty, errors.New("encrypted cache exceeds size limit or cannot be read")
+		return empty, nil, errors.New("encrypted cache exceeds size limit or cannot be read")
 	}
 	k, err := secure.CacheKey(s.Dir, s.Vault, false)
 	if err != nil {
-		return empty, err
+		return empty, nil, err
 	}
 	block, err := aes.NewCipher(k)
 	if err != nil {
-		return empty, err
+		return empty, nil, err
 	}
 	aead, err := cipher.NewGCM(block)
 	if err != nil {
-		return empty, err
+		return empty, nil, err
 	}
 	if len(b) < len(header)+aead.NonceSize()+aead.Overhead() || string(b[:len(header)]) != header {
-		return empty, errors.New("invalid encrypted cache format")
+		return empty, nil, errors.New("invalid encrypted cache format")
 	}
 	nonce := b[len(header) : len(header)+aead.NonceSize()]
 	plain, err := aead.Open(nil, nonce, b[len(header)+aead.NonceSize():], []byte(header+secure.Service(s.Dir)))
 	if err != nil {
-		return empty, errors.New("encrypted cache authentication failed")
+		return empty, nil, errors.New("encrypted cache authentication failed")
 	}
 	var state State2
 	if json.Unmarshal(plain, &state) != nil || state.Version != 2 || state.Source != health.Source {
-		return empty, errors.New("invalid encrypted cache schema")
+		return empty, nil, errors.New("invalid encrypted cache schema")
 	}
-	return state, nil
+	return state, k, nil
 }
 
 func (s Store) Save(state State2, now time.Time) error {
@@ -143,7 +164,7 @@ func (s Store) Lock() (func(), error) {
 	if err := secure.PrivateDir(s.Dir); err != nil {
 		return nil, err
 	}
-	file, err := secure.OpenPrivate(filepath.Join(s.Dir, "collect.lock"), os.O_CREATE|os.O_RDWR)
+	file, err := secure.OpenPrivate(filepath.Join(s.Dir, collectLock), os.O_CREATE|os.O_RDWR)
 	if err != nil {
 		return nil, errors.New("cannot open private collect lock")
 	}
@@ -155,6 +176,10 @@ func (s Store) Lock() (func(), error) {
 		return nil, errors.New("cannot lock v2 store")
 	}
 	return func() { _ = syscall.Flock(int(file.Fd()), syscall.LOCK_UN); _ = file.Close() }, nil
+}
+
+func (s Store) WaitLock(ctx context.Context) (func(), error) {
+	return secure.Lock(ctx, s.Dir, collectLock)
 }
 
 func retained(state State2, now time.Time) State2 {

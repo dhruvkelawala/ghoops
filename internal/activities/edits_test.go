@@ -45,7 +45,8 @@ func TestEditRoundTripReplayNormalizationAndEncryption(t *testing.T) {
 		t.Fatal(err)
 	}
 	const header = "ghealth-cache-v2\n"
-	plain, err := aead.Open(nil, raw[len(header):len(header)+aead.NonceSize()], raw[len(header)+aead.NonceSize():], []byte(header+secure.Service(s.Dir)))
+	plain, err := aead.Open(nil, raw[len(header):len(header)+aead.NonceSize()], raw[len(header)+aead.NonceSize():],
+		[]byte(header+secure.Service(s.Dir)+"\nrole=activities"))
 	if err != nil {
 		t.Fatal(err)
 	}

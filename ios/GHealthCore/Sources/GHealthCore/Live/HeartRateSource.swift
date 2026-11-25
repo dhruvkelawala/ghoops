@@ -10,6 +10,16 @@ public struct HeartRateDevice: Identifiable, Sendable, Equatable {
     public var name: String
     public init(id: UUID, name: String) { self.id = id; self.name = name }
 }
+public enum SensorChoice: Sendable, Equatable {
+    case connect(UUID)
+    case ask([HeartRateDevice])
+
+    public static func decide(remembered: UUID?, discovered: [HeartRateDevice]) -> Self {
+        if let remembered, discovered.contains(where: { $0.id == remembered }) { return .connect(remembered) }
+        return .ask(discovered.sorted { $0.name < $1.name })
+    }
+}
+
 public enum HeartRateConnection: Sendable, Equatable {
     case searching, connected(String, Int?), notFound, poweredOff, denied
     case choosing([HeartRateDevice])

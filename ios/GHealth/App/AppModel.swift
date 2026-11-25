@@ -23,11 +23,19 @@ final class AppModel {
     var errorContext: ErrorCopy.Context?
     let activityDirectory: URL
     var paired = false
+    private var revokedMac: PairedMac?
+    var savedMac: PairedMac? { credentials?.mac ?? revokedMac }
     var credentials: Credentials?
+    private var verifiedPairing: Credentials?
+    var canSendToMac: Bool { !invalidPairing && credentials?.samePairing(as: verifiedPairing) == true }
     var error: String?
     var invalidPairing = false
     var now = Date.now
-    var pendingURL: URL?
+    var showsOldPairingLink = false
+    private(set) var pairingInProgress = false
+    private(set) var enrolment: PairingFlow?
+    private var enrolmentTask: Task<Void, Never>?
+    private var enrolmentRequestsPaused = false
     var tab = GoopTab.home
     var homePath: [Route] = []
     var healthPath: [Route] = []
@@ -52,6 +60,8 @@ final class AppModel {
     var sleepEditFixture: String?
     var parityFixture: String?
     var fixtureSet: FixtureSet?
+    private var enrolmentFixture: EnrolmentFixture?
+    private var enrolledFixtureMac: PairedMac?
     var livePreview: LivePreview?
     var widgetPreview = false
     var componentGallery = false
@@ -67,20 +77,26 @@ final class AppModel {
             preconditionFailure("The App Group is unavailable. Check the iOS identity and signing entitlements.")
         }
         #if DEBUG
-        let fixtureMode = ProcessInfo.processInfo.arguments.contains("-GHealthFixture") || ProcessInfo.processInfo.arguments.contains("-GHealthLiveFixture") || ProcessInfo.processInfo.arguments.contains("-GHealthWidgetPreview")
+        let args = ProcessInfo.processInfo.arguments
+        let fixtureMode = ["-GHealthFixture", "-GHealthLiveFixture", "-GHealthWidgetPreview", "-GHealthEnrolmentFixture"].contains(where: args.contains)
         let activityDirectory = fixtureMode ? FileManager.default.temporaryDirectory.appendingPathComponent("activity-fixture-\(UUID())") : group
         #else
         let activityDirectory = group
         #endif
         self.activityDirectory = activityDirectory
-        activity = ActivityController(directory: activityDirectory)
-        store = SnapshotStore(directory: group, pairedURL: { PairingRepository.pairedURL(suiteName: SharedAppGroup.id) })
-        pairing = PairingRepository(
-            suiteName: SharedAppGroup.id,
-            tokens: KeychainTokenStore(accessGroup: Bundle.main.object(forInfoDictionaryKey: "SharedKeychainGroup") as! String)
-        )
+        activity = ActivityController(directory: activityDirectory, defaultsSuiteName: activityDirectory == group ? SharedAppGroup.id : nil)
+        let accessGroup = Bundle.main.object(forInfoDictionaryKey: "SharedKeychainGroup") as! String
+        store = SnapshotStore(directory: group, pairedMac: {
+            PairingRepository.current(accessGroup: accessGroup, suiteName: SharedAppGroup.id)?.mac
+        })
+        pairing = PairingRepository(suiteName: SharedAppGroup.id, accessGroup: accessGroup)
         #if DEBUG
-        let args = ProcessInfo.processInfo.arguments
+        if let index = args.firstIndex(of: "-GHealthEnrolmentFixture") {
+            fixtureSet = .unpaired
+            if args.indices.contains(index + 1) {
+                enrolmentFixture = EnrolmentFixture(rawValue: args[index + 1])
+            }
+        }
         if let i = args.firstIndex(of: "-GHealthWidgetPreview"), args.indices.contains(i + 1), let preview = LivePreview(rawValue: args[i + 1]) {
             fixtureSet = .fresh; widgetPreview = true; livePreview = preview
         }
@@ -113,6 +129,7 @@ final class AppModel {
             if fixtureSet == .edit { await configureInstantFixture() }
             await configureSleepEditState()
             startSending()
+            needsStartupData = false
             return
         }
         #endif
@@ -126,23 +143,61 @@ final class AppModel {
     private func loadStartupData() async {
         guard needsStartupData, UIApplication.shared.isProtectedDataAvailable else { return }
         do {
+            try await store.prepareForBackup()
+            try await pairing.migrateLegacy()
             credentials = try await pairing.credentials()
             paired = credentials != nil
-            if let disk = try await store.load(), disk.meta.serverUrl == credentials?.url.absoluteString { applyServerSnapshot(disk) }
+            if let disk = try await store.load(), disk.meta.mac.matches(credentials?.mac) { applyServerSnapshot(disk) }
             needsStartupData = false
             clearError(.savedActivities)
+        } catch ClientError.unauthorized {
+            let mac = await pairing.deleteRevokedCache(from: store)
+            showRevokedPairing(mac)
+            needsStartupData = false
         } catch {
             reportError(error, context: .savedActivities)
         }
     }
 
     func protectedDataBecameAvailable() async {
-        guard started, !isFixture else { return }
+        guard started, !isFixture, !enrolmentRequestsPaused else { return }
         await loadStartupData()
         await configureChanges()
         await bindActivity()
         await activity.retrySavedData()
         startSending()
+    }
+
+    func receive(_ url: URL) {
+        switch (url.scheme, url.host) {
+        case ("ghealth", "activity"): showActivity()
+        case ("ghealth", "today"): showToday()
+        case ("ghealth", "pair"): showsOldPairingLink = true
+        default: break
+        }
+    }
+
+    func pairingSwitchMessage(_ base: String, replacing newURL: URL? = nil) -> String {
+        guard let mac = pairedMac, newURL?.absoluteString != mac.url else { return base }
+        return PairingCopy.switchMessage(
+            base: base,
+            activities: activity.local.count(where: { $0.uploadState == .pending }),
+            changes: pending.count(where: { $0.state != .accepted }),
+            mac: mac.name,
+            ifDifferentMac: newURL != nil
+        )
+    }
+
+    var pairedMac: PairedMac? {
+        guard paired else { return nil }
+        return isFixture ? activity.mac : savedMac
+    }
+
+    var pairedAddress: String? {
+        #if DEBUG
+        if isFixture, enrolmentFixture != nil { return pairedMac?.url }
+        #endif
+        return savedMac?.url ?? cached?.meta.serverUrl
     }
 
     private func configureActivity() async {
@@ -156,11 +211,66 @@ final class AppModel {
                 self.push(.workout(id: "goop-\(entry.id)", date: entry.cycleDate))
             }
         }
-        await activity.configure(day: cached?.snapshot.day, collectorMinutes: cached?.snapshot.status.collector.intervalMinutes, limits: cached?.snapshot.status.editLimits, mac: isFixture ? Self.fixtureMac : credentials?.mac, api: credentials.map { APIClient(baseURL: $0.url, token: $0.token) }, fixture: isFixture, now: now)
+        var mac = savedMac
+        #if DEBUG
+        if isFixture { mac = enrolledFixtureMac ?? (enrolmentFixture == nil ? Self.fixtureMac : EnrolmentFixture.originalMac) }
+        #endif
+        await activity.configure(day: cached?.snapshot.day, collectorMinutes: cached?.snapshot.status.collector.intervalMinutes, limits: cached?.snapshot.status.editLimits, mac: mac, api: nil, fixture: isFixture, now: now)
     }
     static let fixtureMac = PairedMac(url: "https://fixture.invalid", name: "Fixture Mac")
     private func bindActivity() async {
-        await activity.bind(credentials?.mac, api: credentials.map { APIClient(baseURL: $0.url, token: $0.token) })
+        let current = credentials
+        activity.onProfileMismatch = { [weak self] in
+            guard let self, current?.samePairing(as: self.credentials) == true else { return }
+            self.invalidatePairing()
+        }
+        let api = canSendToMac && !enrolmentRequestsPaused ? current.map { client(for: $0) } : nil
+        await activity.bind(savedMac, api: api)
+    }
+
+    func client(for credentials: Credentials) -> APIClient {
+        credentials.client(onUnauthorized: { [weak self] in
+            await self?.confirmedRevocation(of: credentials)
+        })
+    }
+
+    private func confirmedRevocation(of rejected: Credentials) async {
+        if rejected.samePairing(as: credentials) { showRevokedPairing(rejected.mac) }
+        await pairing.recordRevocation(of: rejected, cache: store)
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    private func showRevokedPairing(_ mac: PairedMac?) {
+        credentials = nil
+        revokedMac = mac
+        paired = mac != nil
+        invalidatePairing()
+        applyServerSnapshot(nil)
+        reportError(ClientError.unauthorized, context: .pair)
+    }
+
+    func invalidatePairing() {
+        invalidPairing = true
+        verifiedPairing = nil
+        stopChangePass()
+        Task { await bindActivity() }
+    }
+
+    private func acceptProfile(_ reported: String?, from current: Credentials) async throws {
+        guard !enrolmentRequestsPaused, let saved = credentials, current.samePairing(as: saved) else { throw CancellationError() }
+        var updated = saved
+        if let profile = reported ?? saved.profileId, !canSendToMac || saved.profileId != profile {
+            updated = try await pairing.stampProfile(profile, for: current)
+            guard current.samePairing(as: credentials) else { throw CancellationError() }
+            try await activity.stampProfile(for: updated.mac)
+            try await changeQueue?.bind(to: updated.mac)
+            if let changeQueue { pending = await changeQueue.changes }
+        }
+        guard current.samePairing(as: credentials) else { throw CancellationError() }
+        credentials = updated
+        verifiedPairing = updated
+        invalidPairing = false
+        await bindActivity()
     }
     func askRating(for id: String) {
         if GoopFeature.effortRating && EffortScale.supported(editLimits) { ratingPrompt = id }
@@ -183,10 +293,12 @@ final class AppModel {
         addDay = day
     }
     func loadActivityHistory() async {
-        guard !isFixture, let credentials else { return }
-        if let history = try? await APIClient(baseURL: credentials.url, token: credentials.token).workouts(days: 30), self.credentials?.url == credentials.url, pending.isEmpty { activity.recentWorkouts = displayedWorkouts(history.workouts) }
+        guard !isFixture, !enrolmentRequestsPaused, let credentials else { return }
+        if let history = try? await client(for: credentials).workouts(days: 30), !enrolmentRequestsPaused,
+           credentials.samePairing(as: self.credentials), pending.isEmpty { activity.recentWorkouts = displayedWorkouts(history.workouts) }
     }
     func refresh() async {
+        guard !enrolmentRequestsPaused else { return }
         defer { startSending() }
         #if DEBUG
         if let fixtureSet {
@@ -198,35 +310,38 @@ final class AppModel {
             return
         }
         #endif
-        await bindActivity()
-        await activity.retryUploads()
         guard let credentials else { return }
         loading = true
         defer { loading = false }
         do {
-            let fetched = try await SnapshotRefresher.shared.refresh(client: APIClient(baseURL: credentials.url, token: credentials.token), store: store)
-            guard self.credentials?.url == credentials.url else { return }
+            let fetched = try await SnapshotRefresher.shared.refresh(client: client(for: credentials), store: store)
+            try await acceptProfile(fetched.snapshot.status.server.profileId, from: credentials)
+            guard !enrolmentRequestsPaused, credentials.samePairing(as: self.credentials) else { return }
             applyServerSnapshot(fetched)
             now = .now
             clearError(.refresh)
-            invalidPairing = false
+            await activity.retryUploads()
             WidgetCenter.shared.reloadAllTimelines()
         } catch {
-            guard self.credentials?.url == credentials.url else { return }
+            guard !enrolmentRequestsPaused, credentials.samePairing(as: self.credentials) else { return }
             reportError(error, context: .refresh)
-            invalidPairing = (error as? ClientError) == .unauthorized
+            if (error as? ClientError)?.invalidatesPairing == true { invalidatePairing() }
         }
     }
 
     func becameActive() async {
-        guard started else { return }
+        guard started, !enrolmentRequestsPaused else { return }
         #if DEBUG
         if fixtureSet != nil { startSending(); return }
         #endif
+        if let current = credentials, await pairing.isRevoked(current), current.samePairing(as: credentials) {
+            await confirmedRevocation(of: current)
+            return
+        }
         tick()
         await protectedDataBecameAvailable()
-        await activity.retryUploads()
-        if RefreshPolicy().needsRefresh(fetchedAt: cached?.meta.fetchedAt, trigger: .active) { await refresh() }
+        if !canSendToMac || RefreshPolicy().needsRefresh(fetchedAt: cached?.meta.fetchedAt, trigger: .active) { await refresh() }
+        else { await activity.retryUploads() }
     }
 
     func tick() {
@@ -237,6 +352,7 @@ final class AppModel {
     }
 
     func backgroundRefresh() async -> Bool {
+        guard !enrolmentRequestsPaused else { return false }
         #if DEBUG
         if let fixtureSet {
             backgroundRuns += 1
@@ -253,61 +369,100 @@ final class AppModel {
         return !Task.isCancelled && error == nil
     }
 
-    func pair(_ url: URL) async {
-        #if DEBUG
-        if fixtureSet != nil { error = "Pairing is disabled in fixture mode"; return }
-        #endif
-        do {
-            let link = try PairingLink(url)
-            if let session = activity.session, session.blocksPairing(with: link.url.absoluteString) { throw PairingError.activityRunning }
-            try await pairing.pair(link)
-            let previousURL = credentials?.url
-            credentials = try await pairing.credentials()
-            if let previousURL, previousURL != credentials?.url { try await clearChanges() }
-            await bindActivity()
-            paired = true
-            await configureChanges()
-            applyServerSnapshot(nil)
-            invalidPairing = false
-            error = nil
-            errorContext = nil
-            await refresh()
-        } catch { reportError(error, context: .pair) }
+    private func prepareToPair(with candidate: PairedMac, leaving previous: PairedMac?) async throws {
+        if let previous { try await activity.stampProfile(for: previous) }
+        try checkPairingMac(candidate)
+    }
+
+    private func checkPairingMac(_ candidate: PairedMac) throws {
+        if let session = activity.session, session.blocksPairing(with: candidate) { throw PairingError.activityRunning }
+    }
+
+    private func useSavedPairing(leaving previous: PairedMac?) async throws {
+        credentials = try await pairing.credentials()
+        revokedMac = nil
+        verifiedPairing = nil
+        let sameProfile = previous?.matches(credentials?.mac) == true
+        if previous != nil && !sameProfile { try await clearChanges() }
+        else { await reloadChanges() }
+        await bindActivity()
+        paired = true
+        await configureChanges()
+        applyServerSnapshot(sameProfile ? serverCached : nil)
+        invalidPairing = false
+        error = nil
+        errorContext = nil
     }
 
     func testConnection() async -> String {
+        guard !enrolmentRequestsPaused else { return "" }
         #if DEBUG
         if let fixtureSet { return fixtureSet == .offline ? ErrorCopy.message(ClientError.offline, context: .testConnection) ?? "" : "200 · 0 ms" } // goop-lint: allow enginenumber: HTTP status and round-trip time
         #endif
         guard let credentials else { return ErrorCopy.message(ClientError.unauthorized, context: .testConnection) ?? "" }
         let start = Date.now
         do {
-            _ = try await APIClient(baseURL: credentials.url, token: credentials.token).status()
-            if self.credentials?.url == credentials.url { invalidPairing = false }
+            let status = try await client(for: credentials).status()
+            try await acceptProfile(status.server.profileId, from: credentials)
+            startSending()
             return "200 · \(Int(Date.now.timeIntervalSince(start) * 1000)) ms" // goop-lint: allow enginenumber: HTTP status and round-trip time
         } catch {
-            if (error as? ClientError) == .unauthorized, self.credentials?.url == credentials.url { invalidPairing = true }
+            if !enrolmentRequestsPaused, (error as? ClientError)?.invalidatesPairing == true,
+               credentials.samePairing(as: self.credentials) { invalidatePairing() }
             return ErrorCopy.message(error, context: .testConnection) ?? ""
         }
     }
 
-    func unpair() async {
+    var unpairMessage: String {
+        PairingCopy.unpairMessage(
+            workouts: activity.waitingForCurrentMac,
+            changes: pending.count(where: { $0.state != .accepted }),
+            mac: pairedMac?.name ?? "your Mac"
+        )
+    }
+
+    func unpair(deleteWorkouts: Bool = false) async {
+        guard !pairingInProgress else { return }
+        let mac = pairedMac
+        if let session = activity.session, mac?.matches(session.mac) != true {
+            error = PairingCopy.unpairDuringOtherWorkout
+            errorContext = .unpair
+            return
+        }
         #if DEBUG
         if fixtureSet != nil { useFixture(.unpaired); return }
         #endif
+        pairingInProgress = true
+        enrolmentRequestsPaused = true
+        defer {
+            pairingInProgress = false
+            startSending()
+        }
+        stopChangePass()
+        await SnapshotRefresher.shared.cancel()
+        await bindActivity()
         do {
-            try await pairing.unpair()
+            try await activity.clearForUnpair(discarding: deleteWorkouts ? mac : nil)
             try await clearChanges()
+            try await pairing.unpair(clearing: store)
             paired = false
-            applyServerSnapshot(nil)
             credentials = nil
+            revokedMac = nil
+            verifiedPairing = nil
+            enrolmentRequestsPaused = false
             await bindActivity()
+            applyServerSnapshot(nil)
             homePath = []; healthPath = []; trendsPath = []; morePath = []
             tab = .home
             error = nil
             errorContext = nil
             WidgetCenter.shared.reloadAllTimelines()
-        } catch { reportError(error, context: .unpair) }
+        } catch {
+            enrolmentRequestsPaused = false
+            await bindActivity()
+            await configureChanges()
+            reportError(error, context: .unpair)
+        }
     }
 
     var editLimits: EditLimits? { cached?.snapshot.status.editLimits }
@@ -345,7 +500,7 @@ final class AppModel {
     }
 
     func loadDay(_ date: String) async {
-        guard serverBundles[date] == nil else { return }
+        guard !enrolmentRequestsPaused, serverBundles[date] == nil else { return }
         #if DEBUG
         if fixtureSet == .edit || fixtureSet == .parity || fixtureSet == .sleepEdit || sleepEditFixture != nil, let snapshot = serverCached?.snapshot {
             var day = snapshot.day
@@ -362,7 +517,7 @@ final class AppModel {
         let revision = bundleRevision
         serverBundles[date] = .loading
         applyOverlay()
-        let client = APIClient(baseURL: credentials.url, token: credentials.token)
+        let client = self.client(for: credentials)
         do {
             async let day = client.day(date: date)
             async let sleep = client.sleep(date: date)
@@ -375,7 +530,6 @@ final class AppModel {
             guard revision == bundleRevision else { return }
             serverBundles[date] = .failed(error)
             applyOverlay()
-            if (error as? ClientError) == .unauthorized { invalidPairing = true }
         }
     }
     func applyServerSnapshot(_ value: CachedSnapshot?, keepBundles: Bool = false) {
@@ -388,7 +542,7 @@ final class AppModel {
         if previousDate != snapshot.defaultDate { selectedDate = snapshot.defaultDate }
         serverBundles[snapshot.defaultDate] = .loaded(DayBundle(day: snapshot.day, sleep: snapshot.sleep, workouts: snapshot.workouts.workouts.filter { $0.cycleDate == snapshot.defaultDate }))
         let client: any DaysFetching
-        if !isFixture, let credentials { client = APIClient(baseURL: credentials.url, token: credentials.token) }
+        if !isFixture, let credentials { client = self.client(for: credentials) }
         else { client = OfflineDaysClient() }
         trendStore = TrendStore(defaultDate: snapshot.defaultDate, seed: snapshot.days.days, client: client)
         applyOverlay()
@@ -429,5 +583,98 @@ final class AppModel {
     var valuesOpacity: Double {
         guard let cached else { return 1 }
         return now.timeIntervalSince(cached.meta.fetchedAt) >= 6 * 3600 ? Goop.Opacity.stale : 1
+    }
+}
+
+extension AppModel {
+    func openEnrolment(pasted text: String? = nil) {
+        guard started, !needsStartupData, enrolment == nil, !pairingInProgress else { return }
+        let flow: PairingFlow
+        #if DEBUG
+        if let enrolmentFixture { flow = PairingFlow(transport: enrolmentFixture) }
+        else { flow = PairingFlow() }
+        #else
+        flow = PairingFlow()
+        #endif
+        do {
+            if let text { try flow.scan(text) }
+            clearError(.pair)
+            enrolment = flow
+        } catch { reportError(error, context: .pair) }
+    }
+
+    func cancelEnrolment() {
+        guard enrolment != nil else { return }
+        enrolmentTask?.cancel()
+        enrolment = nil
+    }
+
+    func confirmEnrolment(_ flow: PairingFlow) {
+        guard enrolment === flow, !pairingInProgress, case .check(let code) = flow.step else { return }
+        #if DEBUG
+        if isFixture, enrolmentFixture == nil {
+            enrolment = nil
+            error = "Pairing is disabled in fixture mode"
+            errorContext = .pair
+            return
+        }
+        #endif
+        if let session = activity.session, session.mac?.profile == nil,
+           session.blocksPairing(with: PairedMac(url: code.origin.absoluteString, name: "")) {
+            enrolment = nil
+            reportError(PairingError.activityRunning, context: .pair)
+            return
+        }
+        pairingInProgress = true
+        enrolmentRequestsPaused = true
+        enrolmentTask = Task { await runEnrolment(flow) }
+    }
+
+    private func runEnrolment(_ flow: PairingFlow) async {
+        defer {
+            pairingInProgress = false
+            enrolmentTask = nil
+            startSending()
+        }
+        stopChangePass()
+        await SnapshotRefresher.shared.cancel()
+        if !isFixture { await bindActivity() }
+        let previous = savedMac
+        do {
+            try await flow.confirm(deviceName: UIDevice.current.name, checkMac: checkPairingMac) { record in
+                #if DEBUG
+                if isFixture {
+                    enrolledFixtureMac = record.mac
+                    useFixture(.fresh)
+                    await configureActivity()
+                    return
+                }
+                #endif
+                try await prepareToPair(with: record.mac, leaving: previous)
+                if let previous { try await changeQueue?.bind(to: previous) }
+                try await pairing.save(record)
+                try await useSavedPairing(leaving: previous)
+            }
+            enrolment = nil
+            enrolmentRequestsPaused = false
+            await refresh()
+        } catch {
+            enrolmentRequestsPaused = false
+            if !isFixture { await bindActivity() }
+            guard enrolment === flow else { return }
+            if (error as? PairingError)?.endsEnrolment == true {
+                enrolment = nil
+                reportError(error, context: .pair)
+            }
+        }
+    }
+}
+
+extension PairingError {
+    var endsEnrolment: Bool {
+        switch self {
+        case .enrolmentExpired, .enrolmentDeclined, .activityRunning: true
+        default: false
+        }
     }
 }

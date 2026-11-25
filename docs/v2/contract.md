@@ -47,7 +47,7 @@ For a measurement (vitals, activity) on date D, derived from the v2 store `cover
 
 ## 3. CLI commands
 
-New v2 commands. All read commands print exactly one JSON object followed by `\n` to stdout and never contact Google. `--json` is accepted on every v2 command and changes nothing (v2 read commands always print JSON). Global flags `--state-dir PATH` and `--json` keep their v1 meaning.
+V2 read commands print one JSON object followed by `\n` to stdout and make no Google requests. Global flags `--state-dir PATH` and `--json` keep their v1 meaning. Interactive enrolment requires a terminal response and returns usage exit 2 with `--json`.
 
 | Command | Flags | Output `kind` | Network |
 | --- | --- | --- | --- |
@@ -64,10 +64,11 @@ New v2 commands. All read commands print exactly one JSON object followed by `\n
 | `ghoops snapshot` | none | `snapshot` (§5.12) | none |
 | `ghoops brief` | `[--date D] [--include-values] [--part morning\|evening\|week]` | `brief` (§5.13) | none |
 | `ghoops serve` | `[--port P]` (default 8787; 1024 to 65535) | HTTP server (§7) | listens on 127.0.0.1 only |
-| `ghoops pair` | `[--rotate] [--url URL] [--png PATH]` | `pair` (§8) | runs `tailscale status --json` and `tailscale serve status --json` locally |
-| `ghoops pair revoke` | none | `pair` with `"paired": false` | none |
-| `ghoops schedule install \| uninstall \| status` | none | `schedule` (§5.14) | `launchctl` |
-| `ghoops config show \| set KEY VALUE \| unset KEY` | keys include `strain_intent` and `wake_target` (scores.md §0.1), and the weekly targets `week_sleep_minutes` (240 to 720, default 420), `week_sleep_nights` (1 to 7, default 5), `week_activity_minutes` (1 to 1000, default 150) and `week_strength_days` (1 to 7, default 2) (week-review-spec.md §3.3); `unset` restores the default | `config` (§5.14) | none |
+| `ghoops pair` | `[--url URL] [--png PATH]` | Interactive terminal flow (§8.3), exit 2 with `--json` | Checks Tailscale locally. The iPhone contacts the Mac after the address check. |
+| `ghoops pair devices` | `[--json]` | `pair_devices` in JSON mode | none |
+| `ghoops pair revoke` | `[DEVICE] [--json]` | `pair` with `"paired": false` | none |
+| `ghoops schedule install \| uninstall \| status` | Install and uninstall require the default state directory. Status reports the default profile's LaunchAgents and returns `profile: "default"`. | `schedule` (§5.14) | `launchctl` |
+| `ghoops config show \| set KEY VALUE \| unset KEY` | The default profile uses `~/.config/ghealth/config.json`. Other profiles use `<state-dir>/config.json`. Keys include `strain_intent` and `wake_target` (scores.md §0.1), and the weekly targets `week_sleep_minutes` (240 to 720, default 420), `week_sleep_nights` (1 to 7, default 5), `week_activity_minutes` (1 to 1000, default 150) and `week_strength_days` (1 to 7, default 2) (week-review-spec.md §3.3). `unset` restores the key's default. | `config` (§5.14) | none |
 | `ghoops workout export-tcx` | `--id ID --output PATH [--partial]` | `export` (§5.14) | Google, read-only (data.md §2.4) |
 
 Activity editing commands use the same validation as HTTP. They never write to Google Health.
@@ -81,6 +82,7 @@ Activity editing commands use the same validation as HTTP. They never write to G
 | `ghoops activity edits [--days N]` | Lists stored edits, `updated_at` within N days (default 30), each with `applies: bool`. | `edits` |
 | `ghoops activity rate --id ID --rpe N` / `--clear` | As `PUT` / `DELETE /v2/ratings/<id>` (§7.2). Exactly one of `--rpe` and `--clear`, else usage exit 2. | `rating` |
 | `ghoops activity add … [--origin added] [--notes S]` | Existing command, new optional flags; the default origin is `live`. | `activity` |
+| `ghoops activities compact [--json]` | Removes phone estimates from activities that ended more than 30 days ago. Reports `activities`, `live_removed`, `bytes_before` and `bytes_after`. If the file would still exceed 16 MiB, it reports `storage_full` and keeps the previous file. | `activities_compact` |
 | `ghoops heart-rate --date D \| --start T --end T` | The §5.15 body. | `heart_rate` |
 | `ghoops config set sport_alias.<TYPE> <TYPE>` / `config unset sport_alias.<TYPE>` | scores.md §0.1 | `config` |
 
@@ -99,6 +101,8 @@ Date rules (same as v1): `--date`, `--from`, `--to` are London dates; `--to` is 
 Exit codes (same as v1): `0` success; `1` operationally unavailable or incomplete (for example the store cannot be opened, or `collect` was partial); `2` invalid usage. On failure, v2 commands always write one error object (§6) to stderr, with or without `--json`.
 
 Every response is computed from the store at the moment of the call. A read command never syncs implicitly.
+
+Reports and `serve` use the selected state directory's settings. The status body identifies its store with `server.profile_id` when the store has a key. `collector.schedule_installed` describes the selected profile. LaunchAgents run only for the default profile.
 
 ## 4. Freshness and staleness
 
@@ -126,9 +130,9 @@ Every body starts with these keys, in this order:
 | Field | Type | Value |
 | --- | --- | --- |
 | `schema_version` | int | `2` |
-| `kind` | string | `day`, `sleep`, `days`, `workouts`, `status`, `snapshot`, `brief`, `collect`, `pair`, `schedule`, `config`, `export`, `activity`, `activity_deleted`, `edit`, `edits`, `heart_rate`, `sleep_edit`, `sleep_edits`, `journal`, `journal_entry`, `journal_behaviours`, `rating`, `week`, `error` |
+| `kind` | string | `day`, `sleep`, `days`, `workouts`, `status`, `snapshot`, `brief`, `collect`, `pair`, `pair_redeem`, `pair_status`, `pair_devices`, `schedule`, `config`, `export`, `activity`, `activity_deleted`, `activities_compact`, `edit`, `edits`, `heart_rate`, `sleep_edit`, `sleep_edits`, `journal`, `journal_entry`, `journal_behaviours`, `rating`, `week`, `error` |
 | `source` | string | `"google_health_v4"` |
-| `score_version` | string | `"2.4.1"`; `"2.4.1+composite.1"` (`<Version>+composite.1`) when `sleep_score_mode` is `composite` (scores.md §4.5a), on every body that carries it, `brief` included (omitted from `collect`, `pair`, `schedule`, `config`, `export`, `error`) |
+| `score_version` | string | `"2.4.1"`; `"2.4.1+composite.1"` (`<Version>+composite.1`) when `sleep_score_mode` is `composite` (scores.md §4.5a), on every body that carries it, `brief` included (omitted from `collect`, `pair`, `pair_redeem`, `pair_status`, `pair_devices`, `schedule`, `config`, `export`, `activities_compact`, `error`) |
 | `generated_at` | Time | when the body was built |
 | `timezone` | string | `"Europe/London"` |
 | `score_config` | object | `{max_hr_override_bpm: int?, sleep_base_need_minutes: int, trimp_profile: string, sport_aliases: {string: string}, strain_intent: string, wake_target: string?, sleep_score_mode: "composite" (present only when composite)}` (scores.md §0.1). Present on `day`, `sleep`, `days`, `workouts`, `status`, `snapshot` and `heart_rate`. |
@@ -476,7 +480,7 @@ Fixtures: `status_full.json`, `status_new_user.json`.
 | `calibration` | object | `{status: "insufficient"\|"calibrating"\|"ready", hrv_values, resting_hr_values, values_needed: 7, values_for_full_confidence: 14}` for `default_date` |
 | `user_resources` | object | `profile`, `settings`, `paired_devices`, `irn_profile`, each `{status, fetched_at}`; `irn_profile` adds `onboarded: bool?`, `enrolled: bool?` |
 | `provider_timezone` | string? | `settings.timeZone` when available |
-| `server` | object | `{version, revision}` of the binary |
+| `server` | object | `{version, revision, profile_id}`. The first two identify the binary. `profile_id` is a stable 22-character base64url identifier for the Mac's encrypted store, or null before the store has a key. Older builds omit it. |
 | `edit_limits` | object | The Mac's request limits, below. |
 
 | Field | Type | Rule |
@@ -565,7 +569,7 @@ The six trend keys are `recovery`, `hrv_rmssd_ms`, `resting_hr_bpm`, `sleep_perf
 | `kind` | Shape |
 | --- | --- |
 | `collect` | data.md §4.4 |
-| `schedule` | `{schema_version, kind, source, generated_at, timezone, agents: [{label: "io.ghealth.collect"\|"io.ghealth.serve", installed: bool, loaded: bool, path: string}]}` |
+| `schedule` | `{schema_version, kind, source, generated_at, timezone, profile: "default", agents: [{label: "io.ghealth.collect"\|"io.ghealth.serve", installed: bool, loaded: bool, path: string}]}` |
 | `config` | `{…envelope without score_version, values: {max_hr_override_bpm, sleep_base_need_minutes, trimp_profile, sport_aliases, strain_intent, wake_target, sleep_score_mode (only when "composite"), week_targets: {sleep_minutes, sleep_nights, activity_minutes, strength_days}}, defaults: {the first six keys and week_targets}, path: string}`. `week_targets` was added on 2026-11-22. It changes no score, so `score_config` (§5.1) does not carry it. |
 | `export` | `{…envelope without score_version, exported: "tcx", id, path, bytes: int, plaintext_export: true}` |
 | `pair` | §8.3 |
@@ -656,19 +660,22 @@ One object, on stderr for the CLI, as the HTTP body for the API (fixtures in `fi
 | --- | --- | --- | --- |
 | `invalid_request` | 400 | 2 | bad flag, query parameter or date |
 | `date_out_of_range` | 400 | 2 | future date, range over 90 days, `from > to` |
-| `unauthorized` | 401 | n/a | missing, malformed or wrong bearer token |
+| `unauthorized` | 401 | 1 for declined or expired enrolment | missing, invalid or revoked credential, a pending device calling a data route, or a wrong, used or expired pairing code |
 | `not_found` | 404 | 2 | unknown path or command |
 | `method_not_allowed` | 405 | n/a | unsupported method/path combination |
 | `conflict` | 409 | 2 | activity ID already exists with a different POST body, a merge-graph conflict, or an edit PUT whose `if_updated_at` no longer matches (§7.2) |
-| `payload_too_large` | 413 | 2 | activity POST or edit PUT exceeds 64 KiB; message `Request body exceeds 64 KiB.` |
-| `rate_limited` | 429 | n/a | more than 10 failed authentications from all clients within 60 s; lasts until the window clears; response has `Retry-After: 60` |
-| `store_unavailable` | 503 | 1 | the store cannot be opened (Keychain locked, key missing, corrupt file) |
+| `payload_too_large` | 413 | 2 | activity POST or edit PUT exceeds 64 KiB, or pairing redeem exceeds 1 KiB |
+| `rate_limited` | 429 | n/a | more than 10 failed authentications across all clients within 60 s. The response has `Retry-After: 60`. A request with a valid credential is never rate limited. Clients keep pending requests and retry after `Retry-After`. |
+| `store_unavailable` | 503 | 1 | the Mac cannot read the store or its pairing credentials |
+| `storage_full` | 507 | 1 | an activity or journal write would exceed 16 MiB |
 | `collect_in_progress` | n/a | 1 | `collect` while another holds `collect.lock` |
 | `permission_missing` | n/a | 1 | TCX export without the location scope |
-| `collect_failed` | n/a | 1 | `collect` run status `failed` (the `collect` body is still printed to stdout) |
+| `collect_failed` | n/a | 1 | a recorded `collect` run failed, or the account changed during collection |
 | `internal` | 500 | 1 | unexpected error; message is generic |
 
 `message` is a fixed English sentence per code plus, for `invalid_request`, which parameter was wrong. It never contains provider response bodies, tokens, health values or file contents. A missing store file is **not** an error: read commands return bodies whose metrics are `not_synced` and whose freshness says `"last_collect_status": "never"`.
+
+A recorded `collect` run prints its result to stdout even when it fails. An account change during collection keeps the store intact and returns `collect_failed` with message `account changed during collection; cache unchanged`.
 
 Edit validation returns `invalid_request` with `Invalid edit field: <field>.`, for `id`, `body`, `exercise_type`, `start`, `end`, `active_duration`, `duration`, `notes`, `hidden`, `merge_with` or `if_updated_at`. Merge conflicts say `This activity is merged into another.` when the target is absorbed, or `A merged activity is already part of another.` when a candidate is absorbed elsewhere or absorbs others. An edit PUT whose `if_updated_at` no longer matches says `This activity changed on your Mac.` Sleep edit precondition conflicts say `This night changed on your Mac.` Sleep validation uses `body`, `start`, `end`, `duration` and `if_updated_at`. Unknown targets, targets outside the edit horizon, and missing edits on DELETE are `not_found`. Heart-rate query failures are `invalid_request`; spans over 18 hours or ends over `now + 5 min` are `date_out_of_range`. Journal PUT validation returns `invalid_request` with `Invalid journal field: <field>.` for `body`, `answers` or `if_updated_at`; a stale `if_updated_at` is 409 `conflict` with `This day's journal changed on your Mac.`; a malformed date or one outside journal-spec §3 is `not_found`.
 
@@ -682,10 +689,12 @@ Edit validation returns `invalid_request` with `Invalid edit field: <field>.`, f
 | Public URL | `https://<mac>.<tailnet>.ts.net:8787`, provided by `tailscale serve --bg --https=8787 http://127.0.0.1:8787` (tailnet only, never Funnel). Ports 443 and 8443 are already used by other services on this Mac. |
 | TLS | terminated by Tailscale with its tailnet certificate |
 | Methods | GET on reads; POST `/v2/activities`; DELETE `/v2/activities/<id>`; PUT and DELETE `/v2/edits/<id>` and `/v2/sleep-edits/<date>`; PUT `/v2/journal/<date>` |
-| Request limits | header 8 KiB; body only on activity POST, edit PUT and journal PUT, `application/json`, at most 64 KiB; `ReadHeaderTimeout` 5 s; `WriteTimeout` 30 s; `IdleTimeout` 60 s |
+| Request limits | Header 8 KiB. JSON bodies are at most 64 KiB on activity POST and edit, rating, sleep edit and journal PUT, and 1 KiB on pairing redeem. `ReadHeaderTimeout` 5 s, `ReadTimeout` 15 s, `WriteTimeout` 30 s and `IdleTimeout` 60 s. |
 | Response headers | `Content-Type: application/json; charset=utf-8`, `Cache-Control: no-store`, `X-Ghealth-Schema: 2` |
 | Compression | gzip when the request's `Accept-Encoding` lists `gzip` with a non-zero q value and the body is at least 1,024 bytes. Such responses carry `Content-Encoding: gzip` and `Vary: Accept-Encoding`. Otherwise the body is identity. Applies to every route and to error bodies. |
-| Logging | one line per request to stderr: time, method, path without query, status, duration ms. Never the query string, headers or body. |
+| Logging | One JSON line per request to stderr with time, method, route template in `path`, status and duration in milliseconds. This applies to rejected requests too. |
+
+Logs use the fixed read and pairing paths, `/v2/activities/{id}`, `/v2/edits/{id}`, `/v2/ratings/{id}`, `/v2/sleep-edits/{date}` and `/v2/journal/{date}`. Other paths log as `other`. Logs contain no query strings, headers or bodies.
 
 A 405 sets `Allow` to `GET` on reads, `POST` on `/v2/activities`, `DELETE` on `/v2/activities/<id>`, `PUT, DELETE` on `/v2/edits/<id>` and `/v2/sleep-edits/<date>`, or `PUT` on `/v2/journal/<date>`. Mutation routes accept no query string. A DELETE body is `invalid_request`. `/v2/edits` and `/v2/edits/`, `/v2/sleep-edits` and `/v2/sleep-edits/` are `not_found`, and so is `/v2/journal/`.
 
@@ -704,9 +713,20 @@ A 405 sets `Allow` to `GET` on reads, `POST` on `/v2/activities`, `DELETE` on `/
 | `/v2/journal` | `days` (optional, 1 to 90, default 30; over 90 is `date_out_of_range`) | `journal` (§5.14) |
 | `/v2/week` | `date` (optional) | `week` |
 
+| Pairing route | Request | Success |
+| --- | --- | --- |
+| `POST /v2/pair/redeem` | `application/json`, at most 1 KiB, with `{code, device_name}`. An Authorization header returns 400. The device name defaults to `iPhone` and accepts up to 40 characters. | 201 with `kind: "pair_redeem"`, `device_id`, `credential`, `verification_code` (a six-digit string), `mac_name`, `profile_id` and `expires_at`. |
+| `GET /v2/pair/status` | Bearer credential for a pending or active device. | 200 with `kind: "pair_status"`, `device_id` and `state` (`pending` or `active`). |
+
+These routes take an empty query. A wrong, used or expired code returns 401 with `Pairing code expired or already used.`, or 429 when the failed-attempt limit applies. Status returns 401 for an expired, declined or revoked device.
+
 Activity routes accept no query parameters. POST `/v2/activities` accepts `{id, exercise_type, display_name, start, end, pauses?, live?, origin?, notes?}`. The ID is a lowercase UUID; sport is one of activity-spec.md §2.1; name is 1–40 characters. Start precedes end, active duration is 60 seconds through 12 hours, start is within the last 30 days, and end is at most 5 minutes ahead. Pauses have ends, lie inside the interval, and are ordered without overlap. Optional `live` holds the phone estimate only and never feeds scores. `origin` is `"live"` by default or `"added"`; `added` requires `live` to be absent, otherwise field `live` is invalid. Optional `notes` is 1–500 characters after trimming. Existing records without origin read as `live`. Past windows without live samples are valid, and pauses may be absent or `[]`. Invalid fields return `invalid_request` naming the field.
 
-Idempotency compares the whole body, including origin and notes. `origin` is always present and `notes` nullable in stored records and responses. A new ID returns 201; the same ID and body returns 200; a changed body returns 409 `conflict`. Success is the envelope with `kind: "activity"` and `activity: {id, exercise_type, display_name, start, end, pauses, origin, notes, created_at}`. DELETE `/v2/activities/<id>` returns 200 with `kind: "activity_deleted"` and `id`, or 404 `not_found`. Both require the usual bearer authentication. Logs never include bodies.
+Idempotency compares the whole body, including origin and notes. `origin` is always present and `notes` nullable in stored records and responses. A new ID returns 201; the same ID and body returns 200; a changed body returns 409 `conflict`. Success is the envelope with `kind: "activity"` and `activity: {id, exercise_type, display_name, start, end, pauses, origin, notes, created_at}`. The response omits `live`. DELETE `/v2/activities/<id>` returns 200 with `kind: "activity_deleted"` and `id`, or 404 `not_found`. Both require the usual bearer authentication. Logs never include bodies.
+
+Activity, edit, sleep edit, rating and journal mutations return 507 `storage_full` if the resulting encrypted file would exceed 16 MiB. The previous file stays in place. Clients keep the pending write for a later attempt.
+
+Clients keep a write that received 429 and retry it after `Retry-After`. A 429 pauses the retry queue and leaves the write pending.
 
 **Edits.** `PUT /v2/edits/<id>` replaces one override; `DELETE /v2/edits/<id>` restores the original by removing it. They use the same encrypted activities file and `activities.lock`. The stored shape is `{id, exercise_type: string?, start: Time?, end: Time?, notes: string?, hidden: bool, merge_with: string[], updated_at: Time}`. All-null fields with `hidden: false` and `merge_with: []` remove the override. Orphans remain stored and ignored. Edits older than 400 days are dropped on the next write. Permanent `DELETE /v2/activities/<uuid>` also removes `goop-<uuid>`'s edit and removes that id from every `merge_with`. Restoring an absorber makes its absorbed entries visible again. Google Health is never changed.
 
@@ -805,10 +825,10 @@ A successful PUT returns 200, envelope, `kind: "sleep_edit"`, `date`, and `sleep
 
 ### 7.3 Authentication
 
-- Every endpoint requires `Authorization: Bearer <token>`.
-- Compare the SHA-256 of the presented token with the SHA-256 of the stored token using `crypto/subtle.ConstantTimeCompare`.
-- The server reads the token from Keychain at start and caches it. On a mismatch, it re-reads Keychain at most once per 5 s before answering 401, so `ghoops pair --rotate` takes effect without restarting.
-- No token stored: every request gets 401 and the server logs `no pairing token; run ghoops pair` once at start.
+- Bearer authentication applies to every endpoint except enrolment redeem. The server reads the device list and legacy token from Keychain at start and refreshes its cached credentials every 5 s while handling requests. A successful redeem also refreshes the pending device for its first status request.
+- A credential read failure returns 503 `store_unavailable` and leaves the failed-attempt count unchanged. Missing Keychain items mean there is no saved pairing for that item.
+- The server compares credential hashes in constant time. An active device credential or a legacy token can read and write data. `/v2/pair/status` accepts a pending or active device credential. A pending credential on a data route returns 401 and leaves the failure count unchanged.
+- Missing and invalid credentials and unsuccessful code redemptions count towards the 60 s window, which holds up to 11 failure timestamps. The 11th failure and later failed attempts in the window return 429 with `Retry-After: 60`. A valid credential passes during the window.
 
 ### 7.4 Reading the store
 
@@ -816,36 +836,32 @@ The server opens the store read-only per request when the file's modification ti
 
 ## 8. Pairing
 
-### 8.1 Token
+### 8.1 Credentials
 
-- 32 bytes from `crypto/rand`, encoded base64url without padding, prefixed `ghv2_` (48 characters).
-- Mac: Keychain item `<secure.Service(stateDir)>.serve-token`, created through the existing `secure.Vault` (trusted only to the installed binary, no approval UI).
-- iPhone: Keychain (app.md §6).
-- One active token. `ghoops pair` reuses the existing token; `--rotate` replaces it; `pair revoke` deletes it.
+The Mac keeps device records and their SHA-256 credential hashes in the `<secure.Service(stateDir)>.serve-devices` Keychain item. Each device credential is 32 random bytes encoded as base64url without padding, with prefix `ghv3_`. The redeem response delivers the credential to the iPhone. The terminal displays the pairing and comparison codes. The iPhone stores its credential and Mac address together in Keychain (app.md §5).
 
-### 8.2 Pairing link
+An existing pairing can keep using its `ghv2_` credential from the Mac's `<secure.Service(stateDir)>.serve-token` item. The first device approval retires that credential. Until then `pair devices` lists it as `legacy`.
 
-```
-ghealth://pair?v=1&url=<percent-encoded https base URL>&token=<token>&name=<percent-encoded Mac name>
-```
+### 8.2 Pairing code
 
-- `url` default: `https://` + `Self.DNSName` from `tailscale status --json` with the trailing dot removed + `:8787`. `--url` overrides it (must start with `https://`).
-- `name` = `Self.HostName` from the same output.
-- `tailscale` binary: `tailscale` on `PATH`, else `/Applications/Tailscale.app/Contents/MacOS/Tailscale`. Pass no secrets in its arguments.
+The QR and pasteable line contain `GHOOPS1 <origin> <code>`. The origin is an HTTPS URL with a host, an optional port from 1 to 65535, and no path, credentials, query or fragment. The code is 32 random bytes encoded as 43 base64url characters without padding. The line fits in 200 bytes.
 
-### 8.3 `ghoops pair` output
+The default origin is `https://` plus `Self.DNSName` from `tailscale status --json` without the trailing dot, plus `:8787`. Use `--url` to choose a different HTTPS origin. The command finds `tailscale` on PATH or uses `/Applications/Tailscale.app/Contents/MacOS/Tailscale`. With the default origin and no matching HTTPS handler, it prints the setup command in §7.1 and exits 1.
 
-Text mode (default): prints a QR code of the link in the terminal (Unicode half-block characters, quiet zone of 2 modules, error correction M), the link itself, and one line: `Scan with the iPhone camera, or AirDrop/paste this link into the app.` If `tailscale serve status --json` shows no HTTPS handler on port 8787 that proxies to `http://127.0.0.1:8787`, it prints the exact command from §7.1 and exits 1 after printing the QR. `--png PATH` also writes a PNG (new `0600` file, refuses overwrite).
+### 8.3 Commands
 
-QR generation: CoreImage `CIQRCodeGenerator` through cgo (the binary already uses cgo for Keychain), no third-party Go modules.
-
-`--json` mode: `{schema_version: 2, kind: "pair", source, generated_at, timezone, paired: true, url, name, link, token_created_at: Time, tailscale_serve_configured: bool, png_path: string?}`. The link contains the token: it is a secret. `pair revoke --json` prints `{…, paired: false}`.
+- `ghoops pair [--url URL] [--png PATH]` opens a five-minute enrolment and replaces any open enrolment. It prints the QR and pasteable line, waits for the iPhone, then shows a six-digit code and asks for `y`. Approval activates the pending device and exits 0. Decline or expiry removes the pending device and exits 1. `pair --json` is a usage error.
+- `--png PATH` writes the same QR to a new `0600` file and refuses overwrite. QR generation uses Core Image via cgo, with error correction M.
+- `ghoops pair devices [--json]` lists paired and pending devices and prunes expired enrolments. The JSON body has `kind: "pair_devices"` and `devices` entries with `id`, `name`, `state`, `created_at` and nullable `approved_at`. A device ID has prefix `dev_` followed by 12 lowercase hex characters.
+- `ghoops pair revoke <device-id> [--json]` revokes that device. Omitting the ID revokes all pairings and closes any enrolment. The response envelope has `kind: "pair"` and `paired: false`. Revocation takes effect within five seconds.
 
 ### 8.4 Pairing flow
 
-1. Owner runs `ghoops pair` on the Mac.
-2. iPhone camera reads the QR and offers to open ghoops; or the owner pastes the link in Settings → Pair.
-3. The app parses `url`, `token`, `name`, calls `GET <url>/v2/status` with the token, and on 200 stores url and name in the App Group defaults and the token in Keychain. On 401 it shows "This phone is no longer paired with your Mac. Run ghoops pair on your Mac, then scan its code." On a network error it shows "Can't reach your Mac over Tailscale. Is Tailscale on?".
+1. Run `ghoops pair` on the Mac. In ghoops on the iPhone, scan the QR or paste the printed line.
+2. Check the Mac's address and port before tapping **Pair with this Mac**. For an address change, confirm **Replace pairing**.
+3. The phone redeems the code at `POST /v2/pair/redeem`. The code closes on its first successful use. The app shows the six-digit code and polls `GET /v2/pair/status` with the pending credential every two seconds (§7.2).
+4. Compare the codes and type `y` on the Mac. When the device becomes active, the app saves the pairing in Keychain and refreshes.
+5. An expired or used code asks you to run `ghoops pair` again. A declined approval returns to Pairing or More with a message. Opening an old pairing link shows a dismissible banner and keeps the saved pairing.
 
 ## 9. v1 compatibility and agents
 

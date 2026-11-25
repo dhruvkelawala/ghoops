@@ -33,7 +33,7 @@ func Discover(ctx context.Context, override string) (Tailnet, error) {
 		return Tailnet{}, errors.New("Tailscale status unavailable")
 	}
 	var status struct {
-		Self struct{ DNSName, HostName string }
+		Self struct{ DNSName string }
 	}
 	if json.Unmarshal(raw, &status) != nil {
 		return Tailnet{}, errors.New("invalid Tailscale status")
@@ -51,7 +51,7 @@ func Discover(ctx context.Context, override string) (Tailnet, error) {
 	}
 	raw, err = exec.CommandContext(ctx, binary, "serve", "status", "--json").Output()
 	configured := err == nil && ServeConfigured(raw)
-	return Tailnet{URL: strings.TrimRight(base, "/"), Name: status.Self.HostName, Configured: configured}, nil
+	return Tailnet{URL: strings.TrimRight(base, "/"), Configured: configured}, nil
 }
 func ServeConfigured(raw []byte) bool {
 	var status struct {
@@ -70,10 +70,6 @@ func ServeConfigured(raw []byte) bool {
 	}
 	return false
 }
-func Link(tailnet Tailnet, token Token) string {
-	return "ghealth://pair?" + url.Values{"v": {"1"}, "url": {tailnet.URL}, "token": {token.Value}, "name": {tailnet.Name}}.Encode()
-}
-
 func validateURL(base string) error {
 	parsed, err := url.Parse(base)
 	if err != nil || parsed.Scheme != "https" || parsed.Hostname() == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" {

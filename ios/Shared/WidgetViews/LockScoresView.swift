@@ -31,6 +31,7 @@ struct LockScoresView: View {
                     }.opacity(data.stale ? Goop.Opacity.stale : 1)
                         .overlay(alignment: .bottomTrailing) { if data.stale { clock } }
                         .accessibilityElement(children: .ignore).accessibilityLabel((metric.isHRV ? "HRV, \(circularText) milliseconds" : "\(metric.score?.rawValue ?? "Recovery"), \(data.pastWake ? "—" : data.text(metric.score ?? .recovery))") + data.spoken)
+                        .privacySensitive()
                 case .accessoryRectangular:
                     VStack(spacing: line == .none ? 2 : 0) {
                         ForEach(GoopScore.allCases, id: \.self) { score in
@@ -43,7 +44,7 @@ struct LockScoresView: View {
                         if data.stale { clock }
                         if data.pastWake { Text("Scores from \(data.age)") }
                         else { Text("Sleep \(data.text(.sleep)) · Rec \(data.text(.recovery)) · Strain \(data.text(.strain))").monospacedDigit().opacity(data.stale ? Goop.Opacity.stale : 1) }
-                    }.font(.caption)
+                    }.font(.caption).privacySensitive()
                 }
             }
         }.foregroundStyle(.white).widgetAccentable().dynamicTypeSize(.large)
@@ -57,7 +58,7 @@ struct LockScoresView: View {
                 clock
                 if data.pastWake { Text(data.age).goop(.captionWidget) }
             }
-        }
+        }.privacySensitive()
     }
     /// The circular face has no room for a day, so scores from before a possible wake show a dash.
     private var circularText: String {
@@ -69,7 +70,7 @@ struct LockScoresView: View {
             Text(line == .hrv ? "HRV" : "BED BY").goop(.labelLockRow)
             Spacer(minLength: 0)
             Text(line == .hrv ? data.hrvText : data.bedtimeText).goop(.valueWidgetList).opacity(data.stale ? Goop.Opacity.stale : 1)
-        }.accessibilityElement(children: .ignore).accessibilityLabel(line == .hrv ? "HRV, \(data.hrvText) milliseconds" : "Bed by \(data.bedtimeText)")
+        }.accessibilityElement(children: .ignore).accessibilityLabel(line == .hrv ? "HRV, \(data.hrvText) milliseconds" : "Bed by \(data.bedtimeText)").privacySensitive()
     }
     private var clock: some View { Image(systemName: "clock").font(.system(size: 10)) }
 }

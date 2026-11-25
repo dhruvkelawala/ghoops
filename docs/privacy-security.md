@@ -12,6 +12,8 @@ Keychain holds one OAuth session with access/refresh tokens, client credentials,
 
 The bridge calls Apple's Security framework directly from the actual installed `~/.local/bin/ghealth`. It does not shell out to `security`, pass secrets as command-line arguments or trust a helper executable. New items trust only this installed executable through `SecTrustedApplicationCreateFromPath` and `SecAccessCreate`. Updating an item changes data only, with no ACL update. Every operation sets `SecKeychainSetUserInteractionAllowed(false)`. A locked Keychain or missing approval returns a failure without approval UI or a plaintext fallback. Rebuilding can require the owner to authorize a changed binary through Keychain Access; ghoops does not automate that approval.
 
+`ghoops doctor --keychain [--json]` reports `exists` and `only_installed_binary` for the selected profile's cache key, OAuth session, serve token and serve devices. A missing item reports both as false. The command inspects access controls without reading item values or changing Keychain.
+
 `doctor --keychain-test` uses a cryptographically random `io.ghealth.probe.<id>` service with a dummy secret supplied to child stdin. Fresh installed-binary processes add it, read/compare it, delete it after comparison, and verify absence. Add refuses an existing service. Deletion requires the expected dummy value. Failure cleanup targets only that service. The probe cannot read or delete a production credential/key namespace or weaken any ACL. It emits no secret values. It proves dummy item access for this executable, not real-item authorization.
 
 Production updates and cross-build probes use the same exclusive advisory installation lock, private candidates and recoverable backup. Candidates must have a certificate-backed stable `io.ghealth.cli` signature compatible with production. Empty and ad-hoc identities are refused. Target fingerprints and lock ownership are checked before effects; arbitrary noncooperating filesystem writers can still race these checks.
@@ -40,13 +42,19 @@ Explicit `data export` produces plaintext. Its output is private health data and
 
 ## Local HTTP server and pairing
 
-`ghoops serve` binds only IPv4 `127.0.0.1`, default port 8787. Tailscale Serve provides HTTPS within your tailnet. Keep Funnel off. Every endpoint requires the pairing bearer token. The server compares its SHA-256 hash in constant time. The random token lives in the `<Service>.serve-token` Keychain item and appears in the pairing link and QR code. Rotation or revocation takes effect within five seconds.
+`ghoops serve` binds only to IPv4 `127.0.0.1`, port 8787 by default. Tailscale Serve provides HTTPS within your tailnet. Keep Funnel off. Health requests use bearer credentials. The Mac stores one credential hash per device in Keychain and compares hashes in constant time.
 
-A paired iPhone can read the health history available from your Mac, including scores, heart rate, workouts, sleep and journal answers. It can add and edit workouts, save sleep edits, rate effort and save journal answers on the Mac. Anyone with the pairing link who can reach the Mac over Tailscale has the same access until you revoke pairing. Treat the link and QR code like a password.
+Run `ghoops pair` on the Mac. Scan the QR inside ghoops or paste the line on the Pairing screen. The code can be used once within five minutes. Check the address on the iPhone, then compare the six-digit codes and approve on the Mac. The iPhone saves its address and device credential together in a Keychain record that stays on that phone. An existing pairing works until the first device approval retires its old credential.
 
-Tap **Unpair** to remove the saved pairing from that iPhone. Run `ghoops pair revoke` on the Mac to invalidate the link for everyone using it. `ghoops auth logout` removes the Mac's Google credentials and stops new imports. Paired devices can still use the data already on the Mac.
+A paired iPhone can read the health history available from your Mac, including scores, heart rate, workouts, sleep and journal answers. It can add and edit workouts, save sleep edits, rate effort and save journal answers on the Mac.
 
-The server caps request sizes, uses timeouts and sends `Cache-Control: no-store`. Logs contain only time, method, path, HTTP status and duration.
+Tap **Unpair** to remove the pairing, saved scores, uploaded workout copies and waiting edits from that iPhone. The alert asks whether to keep or delete workouts still waiting for that Mac, including a running session. Kept workouts wait for the same Mac profile to pair again. The iPhone can back up work that is still waiting. The phone excludes saved scores and uploaded workout copies from backup.
+
+To revoke access from the Mac, list devices with `ghoops pair devices`, then run `ghoops pair revoke <device-id>`. Omitting the ID revokes all pairings. Revocation takes effect within five seconds. The next confirmed 401 clears the phone's saved snapshot. Widget and Live Activity health readings follow iOS access settings for the locked phone.
+
+`ghoops auth logout` removes the Mac's Google credentials and stops new imports. Paired devices can still use the data already on the Mac.
+
+The server caps request sizes, reads each request within 15 seconds and sends `Cache-Control: no-store`. Logs contain time, method, route template, HTTP status and duration.
 
 ## LaunchAgents and logs
 

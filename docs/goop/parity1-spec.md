@@ -119,7 +119,7 @@ A new detail card, `GoopTonightCard` (`ios/GHealth/Components/Goop/GoopTonightCa
 3. **Card:** `GoopCard` (padding 16), id `tonight-card`.
    1. **Title row**, as the need card's: `TONIGHT'S SLEEP` (`labelCard`) and an `info.circle` 19 pt `iconMuted` button in a 44×44 target (id `tonight-info`, label "How tonight's sleep is planned") that opens the Sleep info sheet.
    2. **Key row**, 16 pt below, inset 10 pt each side: left `NEED` (`labelSmall` `textSoft`) + 4 pt + `need_minutes` as `h:mm` (`valueSmall` `text1`, id `tonight-need`); right `WAKE` + `wake_target` as `HH:mm` (id `tonight-wake`). At accessibility sizes the two stack, leading, 8 apart, as the sleep card's footer does.
-   3. **Goal strip**, 12 pt below: `legendFill`, radius `Goop.Metric.radiusLegend` (8), padding 6 vertical and 14 horizontal, built like the need legend (spec.md §5.19 item 7).
+   3. **Goal strip.** Place a 1 pt `cardDivider` 12 pt below the key row. The table sits directly on the card with 10 pt horizontal inset and 7 pt top padding after the divider, like the need legend (spec.md §5.19 item 7).
       - A header row and three goal rows, each 5 pt vertical padding, in a three-column grid of equal widths: column 1 leading, columns 2 and 3 trailing.
       - Header: `GOAL`, `IN BED`, `BED BY` in `labelSmall` `textSoft`.
       - Goal rows, in `goals` order (100, 85, 70): `<pct>%` in `valueSmall` `legendText`; `in_bed_minutes` as `h:mm` in `valueSmall` `text1`; `bedtime` as `HH:mm` in `valueSmall` `text1`.

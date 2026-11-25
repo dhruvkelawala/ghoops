@@ -53,7 +53,7 @@ func (h *Handler) journalPut(w http.ResponseWriter, r *http.Request, now time.Ti
 	if err != nil {
 		return fail(v2report.JournalError(err))
 	}
-	state, err := h.load()
+	state, _, err := h.load()
 	if err != nil {
 		return fail(v2report.NewError("store_unavailable"))
 	}

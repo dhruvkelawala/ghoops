@@ -176,7 +176,6 @@ enum Goop {
             ("insightFillBottom", insightFillBottom),
             ("contributorBorder", contributorBorder),
             ("notchBorder", notchBorder),
-            ("legendFill", legendFill),
             ("insightFillTop", insightFillTop),
             ("insightBorderStart", insightBorderStart),
             ("insightBorderEnd", insightBorderEnd),

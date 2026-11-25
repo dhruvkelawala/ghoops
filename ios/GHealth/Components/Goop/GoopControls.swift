@@ -212,7 +212,7 @@ struct GoopBanner<Accessory: View>: View {
             accessory()
         }.padding(.vertical, neutral ? 12 : 11).padding(.horizontal, neutral ? 14 : 13).frame(maxWidth: .infinity, alignment: .leading)
             .background {
-                if neutral { RoundedRectangle(cornerRadius: Goop.Metric.radiusBanner).fill(Goop.Color.legendFill) }
+                if neutral { RoundedRectangle(cornerRadius: Goop.Metric.radiusBanner).fill(Goop.Gradient.tile) }
                 else { RoundedRectangle(cornerRadius: Goop.Metric.radiusBannerTinted).fill(tone.color.opacity(0.12)) }
             }
             .overlay {

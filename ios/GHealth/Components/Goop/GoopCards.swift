@@ -9,8 +9,9 @@ struct GoopHomeDials: View {
     var dimmed = false
     var action: (GoopScore) -> Void
     var body: some View {
+        let sleep = day.map { SleepScore($0).performance }
         HStack(alignment: .top, spacing: 0) {
-            dial(.sleep, value: day?.sleep.performance.value.map(Double.init), caption: day.flatMap { $0.sleep.performance.value == nil ? ReasonText.score($0.sleep.performance.reason, status: $0.sleep.performance.status) : nil })
+            dial(.sleep, value: sleep?.value.map(Double.init), caption: sleep.flatMap { $0.value == nil ? ReasonText.score($0.reason, status: $0.status) : nil })
             Spacer(minLength: 0)
             dial(.recovery, value: day?.recovery.value.map(Double.init), caption: recoveryCaption)
             Spacer(minLength: 0)
@@ -263,17 +264,24 @@ struct GoopLegend: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         let layout = sleep && typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout(spacing: 18))
-        layout {
-            if sleep {
-                ForEach(SleepLevel.allCases, id: \.rawValue) { level in
-                    HStack(spacing: 8) { RoundedRectangle(cornerRadius: Goop.Metric.radiusHairline).fill(Goop.color(level.color)).frame(width: 12, height: 4); Text(level.rawValue) }
+        VStack(spacing: 0) {
+            GoopDivider()
+            layout {
+                if sleep {
+                    ForEach(SleepLevel.allCases, id: \.rawValue) { level in
+                        HStack(spacing: 8) { RoundedRectangle(cornerRadius: Goop.Metric.radiusHairline).fill(Goop.color(level.color)).frame(width: 12, height: 4); Text(level.rawValue) }
+                    }
+                } else {
+                    HStack(spacing: 2) { GoopComparison(direction: .up, metric: .hrv); GoopComparison(direction: .down, metric: .hrv) }
+                    HStack(spacing: 4) { Text("Today"); Text(EngineText.comparisonLegend(windowDays: windowDays)).foregroundStyle(Goop.Color.iconMuted) }.padding(.leading, -10)
                 }
-            } else {
-                HStack(spacing: 2) { GoopComparison(direction: .up, metric: .hrv); GoopComparison(direction: .down, metric: .hrv) }
-                HStack(spacing: 4) { Text("Today"); Text(EngineText.comparisonLegend(windowDays: windowDays)).foregroundStyle(Goop.Color.iconMuted) }.padding(.leading, -10)
+                if !sleep || !typeSize.isAccessibilitySize { Spacer(minLength: 0) }
             }
-            if !sleep || !typeSize.isAccessibilitySize { Spacer(minLength: 0) }
-        }.goop(.legend).foregroundStyle(Goop.Color.legendText).padding(.horizontal, 14).padding(.vertical, typeSize.isAccessibilitySize ? 10 : 0).frame(maxWidth: .infinity, minHeight: 40, alignment: .leading).background(Goop.Color.legendFill, in: RoundedRectangle(cornerRadius: Goop.Metric.radiusLegend)).padding(.top, 8)
+            .goop(.legend)
+            .foregroundStyle(Goop.Color.legendText)
+            .padding(.vertical, typeSize.isAccessibilitySize ? 10 : 0)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        }
     }
 }
 

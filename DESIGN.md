@@ -435,7 +435,7 @@ components:
     padding: "0 12px"
     height: "40px"
   banner:
-    backgroundColor: "{colors.legendFill}"
+    backgroundColor: "{colors.tileTop}"
     textColor: "{colors.legendText}"
     typography: "{typography.bodyMid}"
     rounded: "{rounded.picker}"
@@ -520,7 +520,7 @@ A cool slate neutral world in which saturated colour appears only when it stands
 ### Neutral
 - **Text ramp:** `text1` (white; values, titles), `bodyText` (Home wordmark, trend sentence), `legendText` (banner and legend text, sheet body), `textSoft` (secondary values, subtitles, disclosure chevrons), `text2` (captions, placeholders, `—`), `iconMuted` (icons, section titles in More, footnotes), `chevronDial`, and `text3` (inactive tabs and input placeholders only).
 - **Backgrounds:** `GoopBackground` draws home (`#293339` at 0 → `#1A222B` 224 → `#13171C` 459 → `backgroundHomeBase` 740pt) and detail (`#273238` → `#1D252B` → `#14191D` → `backgroundDetailBase`). Both are fixed behind the scroll content.
-- **Surfaces, light to dark:** `activityRow` > `tileTop`/`monitorTop` > `dateOuter` > `cardTop` > `controlFill`/`zoneRowFill`/`chipFill` > `activitiesFill` > `contributorFillTop` > `sheetFill`/`tabTop` > `legendFill` (the darkest, used for legend strips and banners).
+- **Surfaces, light to dark:** `activityRow` > `tileTop`/`monitorTop` > `dateOuter` > `cardTop` > `controlFill`/`zoneRowFill`/`chipFill` > `activitiesFill` > `contributorFillTop` > `sheetFill`/`tabTop`. Reserve `legendFill` for the nap-credit mark inside the need bar (The Lighter-Inside Rule).
 - **Lines:** `ringTrack`, `divider`, `cardDivider`, `contributorBorder`, `plotGrid`, `chartGrid`, `outlineBorder` (outline buttons).
 
 ### Named Rules
@@ -562,6 +562,7 @@ A cool slate neutral world in which saturated colour appears only when it stands
 - **A number inside words keeps the words' voice.** Labels, row notes, chip phrases and sentences are Nunito even when they hold a number: "ZONE 5", "100% of need", "56 ms · usual 52 · 55% weight", "7 nights to start". Never split them into Sofia and Nunito runs.
 - **Status text is Nunito.** The band battery (`85%`) and "Synced 14:08" describe the device and the sync, not a measurement.
 - **Dates, and clock times in rows and footers, are Nunito.** Weekday, day and month labels on charts use `axisDay`, `axisDayNumber` or Nunito Canvas text. Clock times in activity rows and footers use `time`. A clock time shown as a value, such as the ends of a `GoopWindowBar` or Tonight's wake, stays Sofia.
+- **The pairing comparison code** in the pairing task uses Sofia `valueAverage` on a `controlFill` panel. It shows six digits in two groups so people can compare them at a glance.
 
 The goop lint's `sofiaword` rule fails `make check` when a string literal with a letter reaches Sofia text.
 
@@ -608,6 +609,8 @@ The only overlays are system sheets and the full-screen live cover.
 
 ### Named Rules
 **The Tone-Not-Shadow Rule.** Lift a surface by moving one step lighter on the surface ladder (see Colors → Neutral), never with a drop shadow, blur or glow. Floating elements such as toasts, FABs and popovers have no place here.
+
+**The Lighter-Inside Rule.** A surface is never darker than the surface that holds it. A card holds no second box. A group of rows inside a card (a breakdown, a goal table, the band legend) sits straight on the card after a 1pt hairline, and its rows keep the card's own inset. The hairline is `cardDivider` in a `GoopCard` and `divider` in the notched card. On a sheet, a calculation or a code sits on one `controlFill` panel with radius 8, the same slab that inputs and list rows use. On the page, a neutral banner is a `tile` slab. The owner called the old near-black insets "black bg boxes" on 2026-11-24.
 
 ## Shapes
 
@@ -689,14 +692,14 @@ Heart rate, zone and pause are separate facts on every live surface: the Live Ac
 
 ### Cards / Containers
 - **Corner Style:** 12–14 according to the Radius Ladder.
-- **Background:** the `card`, `tile`, `monitor`, `contributorFill` or `insightFill` gradient. Flat fills are used for `activitiesFill`, `activityRow`, `zoneRowFill`, `controlFill` and `legendFill`.
+- **Background:** the `card`, `tile`, `monitor`, `contributorFill` or `insightFill` gradient. Flat fills are used for `activitiesFill`, `activityRow`, `zoneRowFill` and `controlFill`. A card holds no inner box (The Lighter-Inside Rule).
 - **Shadow Strategy:** none (see Elevation & Depth).
 - **Border:** none, except the notched card (1pt) and the insight card (1.5pt gradient).
 - **Internal Padding:** 16 standard, 13–14 for dense cards.
 - **Interaction:** tappable cards and rows are a single `Button` with `.plain` style and a `chevron.right` (12pt, `textSoft`) at the right end of the title line, vertically centred on it, when they push. Rows never contain a second button.
 
 ### Inputs / Fields
-- **Style:** a `controlFill` slab with radius 10. The search field is 40 tall with `magnifyingglass` 15pt `chevronDial`, `bodyMid` text and the cursor tinted `strain`. The Pairing link field is a multi-line variant with a 50pt minimum height and `radiusPicker` (10).
+- **Style:** a `controlFill` slab with radius 10. The search field is 40 tall with `magnifyingglass` 15pt `chevronDial`, `bodyMid` text and the cursor tinted `strain`. The pairing code field is a multi-line variant with a 50pt minimum height and `radiusPicker` (10).
 - **Focus:** the system cursor only. There is no glow and no border change.
 - **Error / Disabled:** error text below the field in `bodyMid` `caution`. Disabled controls are at 40% opacity.
 
@@ -726,13 +729,14 @@ Two sheet types exist. A third presentation, the full-screen cover, is reserved 
 - **Never:** text buttons in a header (Cancel, Save, Back, Done), a nested navigation stack inside a sheet, or a sheet drawn to fill the screen without its grabber.
 
 **The Numbers-In-Rows Rule.** An explanation sheet shows its numbers in rows, breakdowns and scales, never inside sentences. The owner called the sentence version of the Sleep sheet "a wall of text" on 2026-11-16, and the Recovery and Strain sheets had the same problem.
-- **A calculation** is a `GoopBreakdown`, after WHOOP's "how optimal sleep is calculated": a `legendFill` inset, radius 8, holding the parts as `GoopBreakdownRow`s (`legend` label, optional `rowNote` note, Sofia 14 value; a `GoopSwatch` when a bar above shows the parts), a hairline between groups, and a 1.5pt `bodyText` rule above the result. The result is a `GoopBreakdownTotal` in `labelCard` with a `valueHours` value; a subtotal at the top uses `valueRow`. The shown parts add up to the shown total.
+- **A calculation** uses `GoopBreakdown`, a `controlFill` panel on the sheet with radius 8, after WHOOP's "how optimal sleep is calculated". Inside a card the rows sit on the card (The Lighter-Inside Rule). The panel holds the parts as `GoopBreakdownRow`s with a `legend` label, an optional `rowNote` note and a Sofia 14 value. Use a `GoopSwatch` when a bar above shows the parts. A hairline divides groups and a 1.5pt `bodyText` rule sits above the result. The result is a `GoopBreakdownTotal` in `labelCard` with a `valueHours` value. A subtotal at the top uses `valueRow`. The shown parts add up to the shown total.
 - **A span between two clock times** is a `GoopWindowBar`: the times in `valueZone` above each end with a `labelTiny` caption, and a block between them in the score's colour that names the length. Its end marks are solid 2pt white lines, not dashes.
 - **Score bands** are a `GoopLevelScale`: equal 4pt segments in the band colours with their ranges under them in `valueTiny`, written as numbers only (`0–69%`, `70–84%`, `85–100%`). The band that today's value is in is lit and white; the others sit at `Goop.Opacity.otherBand` with `text2` ranges. `GoopLevelHeader` names the bands once above a group of scales. This dimming marks position on a scale; it never stands for a missing or stale value.
 - **Two to four related values**, such as breathing rate by stage, sit side by side in `GoopStatCells`, split by 1×23 `plotGrid` rules as on the Live Activity, and stack as rows at accessibility sizes.
 - **A detail of a row**, such as the disturbance split or where a value comes from, is that row's note, never a line of its own.
 - **Sentences** are left for the rule and the source: one `GoopFootnote` (`bodySmall`, `iconMuted`) of one or two short sentences per section. Metadata such as the score version is `GoopFinePrint`.
-- **Task sub-steps:** `GoopTaskSheet(title:back:closeIdentifier:commit:content:)` takes a `GoopCommit` and the caller's content. A new task uses this component. A sub-choice replaces its title, content and commit from caller state, with `chevron.left` 21pt on the left and `xmark` on the right. It stays in the same sheet.
+- **Task sub-steps:** `GoopTaskSheet(title:back:closeIdentifier:commit:content:)` takes the caller's content and an optional `GoopCommit`. A new task uses this component. A sub-choice replaces its title, content and commit from caller state, with `chevron.left` 21pt on the left and `xmark` on the right. It stays in the same sheet.
+- **Pairing task:** SCAN CODE opens with a camera or a paste field. CHECK ADDRESS pins the PAIR WITH THIS MAC commit with a checkmark. CONFIRM ON MAC waits for approval and keeps × available to close. SCAN CODE and CONFIRM ON MAC have no pinned commit.
 
 ### Primary and secondary actions
 - One filled action per screen, at most. On a task sheet it is the pinned commit button. On a page it is usually absent, because the page itself is the content.
@@ -742,16 +746,19 @@ Two sheet types exist. A third presentation, the full-screen cover, is reserved 
 - A header right slot holds at most one `GoopHeaderButton`. `.info` draws `info.circle` 25pt; `.edit` draws `pencil` 21pt, `iconMuted`, in a 44×44 target labelled "Edit activity". `GoopDetailHeader` and `GoopWorkoutHeader` accept both. No screen uses the pencil yet.
 
 ### Destructive actions
-- **What exists:** DELETE ACTIVITY and UNPAIR use `GoopButton(role: .destructive)`, a full-width `zone5` outline, 50 tall, with `labelCard`. UNPAIR is after ABOUT at the end of More, before Debug's DEVELOPER section. Delete activity, Unpair and Replace pairing all use `goopDestructiveAlert`, a centred system `.alert` with a destructive verb and Cancel. The D8 probe could not make the destructive verb orange while preserving its system role. The owner approved iOS's own alert colours in cleanup spec §13.5; the trigger buttons remain orange.
+- **What exists:** DELETE ACTIVITY, UNPAIR and DISCARD ALL use `GoopButton(role: .destructive)`, a full-width `zone5` outline, 50 tall, with `labelCard`. UNPAIR is after ABOUT at the end of More, before Debug's DEVELOPER section. DISCARD ALL is last on the Unsent page under More. Its alert counts the activities it deletes from the iPhone. Delete activity, Unpair, Replace pairing and Discard unsent activities use centred system alerts with a destructive verb and Cancel. Replace pairing names the new Mac's host and port. The D8 probe could not make the destructive verb orange while preserving its system role. The owner approved iOS's own alert colours in cleanup spec §13.5; the trigger buttons remain orange.
 - **The rule:**
   - **Trigger:** a destructive action is a full-width outline button in `zone5` (stroke and label), 50 tall with radius 12. It is the **last item** on its page or sheet, alone on its row, and only for things that can be destroyed. Red (`recoveryLow`) is never used.
   - **Confirm:** a **system** dialog is always used, never a drawn one. Its title is a question naming the object ("Delete this activity?"). Its message says where the change applies (phone, Mac, Google Health). The buttons are a destructive verb and Cancel.
-  - **The dialog is a centred system `.alert`** for every destructive action: Delete activity, Unpair and Replace pairing (owner decision 2026-11-12). Never `.confirmationDialog`.
+  - **Unpair with waiting workouts.** Use two verbs only when the current Mac has a waiting workout or a session in progress. Show “Unpair, keep workouts”, “Unpair, delete workouts” and “Cancel”. The message says the phone deletes its saved scores and gives the number of workouts still waiting for that Mac.
+  - **The dialog is a centred system `.alert`** for every destructive action (owner decision 2026-11-12). Never `.confirmationDialog`.
 - **No undo toast.** If an undo is ever wanted, it is a `GoopBanner` with a trailing text action in the Home banner slot, using the same slot as "Too short to save.".
 
 ### Form rows and pickers
 - **What exists:**
   - **More rows:** `GoopRow` replaced the private `line()` helper. Each row is a `controlFill` slab with radius 10 and a 48 minimum height, an uppercase `labelCard` label on the left and the value on the right in `bodySmall` `textSoft`. A row can be a button, such as TEST CONNECTION or the FIXTURE MODE `Menu`.
+  - **PAIR AGAIN** follows TEST CONNECTION under MAC and opens the pairing task sheet.
+  - **UNSENT ACTIVITIES** follows PAIR AGAIN under MAC when the iPhone holds activities for another or unknown Mac. It shows their count and a push chevron that opens Unsent.
   - **`GoopSheetRow`:** an unfilled key–value row inside info sheets.
   - **`GoopMetricPicker`:** a `controlFill` radius-10 label with `chevron.down`. It opens a `GoopSheet` titled `METRIC` that groups `GoopChoiceRow` rows under `GoopSectionLabel` headings. Tapping a row applies it and closes the sheet.
   - **`GoopRangeSelector`:** exclusive options, 2–4 of them.
@@ -776,7 +783,7 @@ Two roles have separate treatments. Above rows and controls, `GoopSectionLabel` 
 
 `GoopBanner(tone:)` has five tones: `.neutral`, `.strain`, `.positive`, `.caution` and `.muted`. All can show an optional `labelStatus` title, a trailing `GoopBannerAction` in white `labelCard`, a dismiss ×, and accessory content below. Accessory content can hold the heart-rate Settings link or device choices.
 
-- **Neutral:** `legendFill`, `radiusBanner` (10), 12pt vertical and 14pt horizontal padding. A 15pt light symbol uses `symbolColor`, defaulting to `caution`; the text is `bodyMid` in `legendText`. Home banners stack 8pt apart under the header.
+- **Neutral.** The `tile` gradient fills the banner, with `radiusBanner` (10), 12pt vertical and 14pt horizontal padding. A 15pt light symbol uses `symbolColor`, defaulting to `caution`. The text is `bodyMid` in `legendText`. Home banners stack 8pt apart under the header. An old pairing link shows a neutral info banner with a dismiss button.
 - **Tinted:** base colour at 12% fill, a 1pt stroke at 25%, `radiusBannerTinted` (12), 11pt vertical and 13pt horizontal padding. The symbol is 18pt semibold, the title `labelStatus`, and text `bodySmall` in `textSoft`. `.strain` uses `strainLight` ink over `strain`; `.positive` and `.caution` use their named colours; `.muted` uses `text2`.
 - **Wrappers:** `HeartRateBanner` maps connection states onto these tones. The workout save banner uses `.strain`. Both retain their identifiers.
 - **Placement:** banners are inline and never float. There are no toasts, snackbars or popovers.

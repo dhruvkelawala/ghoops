@@ -72,8 +72,12 @@ func TestActivityHTTPPersistenceAndValidation(t *testing.T) {
 		{"POST", "/v2/activities", valid, "application/json", token.Value, 200},
 		{"POST", "/v2/activities", bytes.Replace(valid, []byte("Boxing"), []byte("Changed"), 1), "application/json", token.Value, 409},
 	} {
-		if status, _ := request(tc.method, tc.path, tc.body, tc.content, tc.auth); status != tc.status {
+		status, body := request(tc.method, tc.path, tc.body, tc.content, tc.auth)
+		if status != tc.status {
 			t.Fatalf("%s %s: status %d want %d", tc.method, tc.path, status, tc.status)
+		}
+		if (status == 201 || status == 200) && bytes.Contains(body, []byte(`"live":`)) {
+			t.Fatal("activity response echoed the phone's estimates")
 		}
 	}
 	entries, _ := os.ReadDir("../../fixtures/v2/activities")

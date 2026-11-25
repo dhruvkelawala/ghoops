@@ -105,7 +105,7 @@ public enum TrendMetricKey: String, CaseIterable, Sendable, Identifiable {
         default: rawValue
         }
     }
-    public func value(_ row: DayRow) -> Double? {
+    public func value(_ row: DayRow, composite: Bool = false) -> Double? {
         switch self {
         case .recovery: row.recovery.map(Double.init)
         case .hrv: row.hrvRmssdMs
@@ -116,7 +116,7 @@ public enum TrendMetricKey: String, CaseIterable, Sendable, Identifiable {
         case .zones45: row.zones45Minutes.map(Double.init)
         case .strength: row.strengthMinutes.map(Double.init)
         case .steps: row.steps.map(Double.init)
-        case .sleepPerformance: row.sleepPerformance.map(Double.init)
+        case .sleepPerformance: SleepScore.rowValue(row, composite: composite)
         case .hours: row.asleepMinutes.map(Double.init)
         case .restorative: row.restorativeMinutes.map(Double.init)
         case .consistency: row.sleepConsistency.map(Double.init)

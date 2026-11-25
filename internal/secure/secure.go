@@ -12,15 +12,30 @@ import (
 )
 
 var ErrNotFound = errors.New("Keychain item not found")
+var ErrExists = errors.New("Keychain item already exists")
 
 type Vault interface {
 	Get(string) ([]byte, error)
 	Set(string, []byte) error
+	Create(string, []byte) error
 	Delete(string) error
 }
 
 func Service(dir string) string {
 	return fmt.Sprintf("io.ghealth.signed.v1.%x", sha256.Sum256([]byte(dir)))
+}
+
+type KeychainItem string
+
+const (
+	CacheKeyItem     KeychainItem = ".cache-key"
+	OAuthSessionItem KeychainItem = ".oauth"
+	ServeTokenItem   KeychainItem = ".serve-token"
+	ServeDevicesItem KeychainItem = ".serve-devices"
+)
+
+func (item KeychainItem) Service(dir string) string {
+	return Service(dir) + string(item)
 }
 
 func PrivateDir(path string) error {

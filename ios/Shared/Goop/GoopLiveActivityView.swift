@@ -79,6 +79,7 @@ struct GoopLiveActivityView: View {
                 }.opacity(readout.opacity)
                     .accessibilityElement(children: .ignore).accessibilityLabel(readout.spoken)
                     .accessibilityIdentifier("live-activity-bpm")
+                    .privacySensitive()
                 Spacer(minLength: 8)
                 VStack(spacing: 1) {
                     HStack(spacing: 7) {
@@ -90,11 +91,12 @@ struct GoopLiveActivityView: View {
             }.frame(height: 48)
             if showZone {
                 ActivityZoneMeter(zone: readout.zone, marker: true).opacity(readout.opacity).padding(.top, 14)
-                    .accessibilityIdentifier("live-activity-zone-meter")
+                    .accessibilityIdentifier("live-activity-zone-meter").privacySensitive()
             }
             if showZone || readout.status == .reconnecting || readout.status == .noHeartRate {
                 Text(readout.statusText).goop(.labelTiny).foregroundStyle(readout.statusColor).padding(.top, 7)
                     .accessibilityLabel(readout.statusSpoken).accessibilityIdentifier("live-activity-status")
+                    .privacySensitive()
             }
             Group {
                 if let low = state.targetLow, let high = state.targetHigh {
@@ -128,13 +130,13 @@ struct GoopLiveActivityView: View {
                 if reached { Image(systemName: "checkmark").font(.system(size: 8, weight: .semibold)).foregroundStyle(Goop.Color.positive) }
                 Text(label).goop(.labelMicro).foregroundStyle(Goop.Color.iconMuted)
             }
-        }.frame(maxWidth: .infinity)
+        }.frame(maxWidth: .infinity).privacySensitive()
     }
     private func stat(_ label: String, value: String, color: Color) -> some View {
         VStack(spacing: 0) {
             Text(value).goop(.scoreWidgetMedium).foregroundStyle(value == "—" ? Goop.Color.text2 : color)
             Text(label).goop(.labelMicro).foregroundStyle(Goop.Color.iconMuted)
-        }.frame(maxWidth: .infinity)
+        }.frame(maxWidth: .infinity).privacySensitive()
     }
 }
 
@@ -147,6 +149,7 @@ struct GoopIslandLeading: View {
         }.opacity(readout.opacity)
             .accessibilityElement(children: .ignore).accessibilityLabel(readout.spoken)
             .accessibilityIdentifier("live-island-bpm")
+            .privacySensitive()
     }
 }
 
@@ -154,6 +157,6 @@ struct GoopIslandMinimal: View {
     var readout: LiveReadout
     var body: some View {
         Image(systemName: "heart.fill").foregroundStyle(readout.heartColor).opacity(readout.opacity)
-            .accessibilityLabel(readout.chipSpoken).accessibilityIdentifier("live-island-minimal")
+            .accessibilityLabel(readout.chipSpoken).accessibilityIdentifier("live-island-minimal").privacySensitive()
     }
 }

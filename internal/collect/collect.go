@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dhruvkelawala/ghoops/internal/auth"
 	"github.com/dhruvkelawala/ghoops/internal/health"
 	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
@@ -49,7 +50,7 @@ type Stream struct {
 }
 
 // Run owns collect.lock from account resolution through the atomic v2 save.
-func Run(ctx context.Context, store store2.Store, client *health.Client, resolve func(context.Context) (string, error), options Options) (Result, error) {
+func Run(ctx context.Context, store store2.Store, provider *health.Client, manager *auth.Manager, options Options) (Result, error) {
 	unlock, err := store.Lock()
 	if err != nil {
 		return Result{}, err
@@ -63,22 +64,31 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 		now = time.Now
 	}
 	started, clock := now().UTC(), time.Now()
-	account, authErr := resolve(ctx)
+	account, authErr := manager.Account(ctx)
+	if authErr != nil && !errors.Is(authErr, auth.ErrLogin) {
+		return Result{}, authErr
+	}
 	state, err := store.Load()
 	if err != nil {
 		return Result{}, err
 	}
-	if authErr == nil && account == "" {
-		return Result{}, errors.New("collection account missing")
-	}
 	if state.Account != "" && state.Account != account && authErr == nil {
-		return Result{}, errors.New("cache belongs to another account")
+		return Result{}, auth.ErrProfileOwner
 	}
 	if state.Timezone != "" && state.Timezone != "Europe/London" {
 		return Result{}, errors.New("cache uses another timezone")
 	}
 	from, until, pass := plan(state, started, options)
 	result := Result{Version: 2, Kind: "collect", Source: health.Source, Timezone: "Europe/London", Status: "ok", Pass: pass, From: from.Format("2006-01-02"), Until: until.Format("2006-01-02"), CoreComplete: true, Streams: []Stream{}}
+	access := func(ctx context.Context, rejected string) (string, error) {
+		return manager.AccessForAccount(ctx, account, rejected)
+	}
+	if authErr == nil {
+		_, authErr = access(ctx, "")
+	}
+	if errors.Is(authErr, auth.ErrAccountChanged) {
+		return Result{}, authErr
+	}
 	if authErr != nil {
 		result.Status, result.CoreComplete = "failed", false
 		for _, stream := range Streams() {
@@ -86,18 +96,15 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 			result.Streams = append(result.Streams, Stream{Stream: stream, Status: "unavailable", Error: &code})
 		}
 		result.GeneratedAt, result.DurationMS = now().UTC(), time.Since(clock).Milliseconds()
-		if ctx.Err() != nil {
-			return Result{}, errors.New("collect cancelled; cache unchanged")
-		}
 		state.Runs = append(state.Runs, store2.Run{StartedAt: started, FinishedAt: result.GeneratedAt, Pass: pass, Status: "failed", FailedStreams: []string{}, CoreComplete: false})
-		if err := store.Save(state, result.GeneratedAt); err != nil {
+		if err := save(ctx, store, manager, account, state, result.GeneratedAt); err != nil {
 			return Result{}, err
 		}
 		return result, ErrFailed
 	}
 	state.Account, state.Timezone = account, "Europe/London"
+	client := &health.Client{HTTP: provider.HTTP, BaseURL: provider.BaseURL, Access: access}
 	jobs := jobsFor(state, from, until, pass, started)
-	before := client.RequestCount()
 	outputs := runJobs(ctx, client, jobs, options.Progress)
 	if ctx.Err() != nil {
 		return Result{}, errors.New("collect cancelled; cache unchanged")
@@ -105,6 +112,9 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 	failed := []string{}
 	seenFailed := map[string]bool{}
 	for _, output := range outputs {
+		if errors.Is(output.err, auth.ErrAccountChanged) {
+			return Result{}, output.err
+		}
 		status, code := jobStatus(output.err)
 		if output.err != nil {
 			if !seenFailed[output.job.stream()] {
@@ -119,7 +129,7 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 		}
 		merge(&state, output, status, code, now().UTC())
 	}
-	result.GeneratedAt, result.DurationMS, result.Requests = now().UTC(), time.Since(clock).Milliseconds(), client.RequestCount()-before
+	result.GeneratedAt, result.DurationMS, result.Requests = now().UTC(), time.Since(clock).Milliseconds(), client.RequestCount()
 	for _, stream := range Streams() {
 		summary := Stream{Stream: stream, Status: "ok"}
 		for _, c := range state.Coverage {
@@ -139,10 +149,7 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 	}
 	state.Runs = append(state.Runs, store2.Run{StartedAt: started, FinishedAt: result.GeneratedAt, Pass: pass, Status: result.Status, CoreComplete: result.CoreComplete, Requests: result.Requests, FailedStreams: failed})
 	sortState(&state)
-	if ctx.Err() != nil {
-		return Result{}, errors.New("collect cancelled; cache unchanged")
-	}
-	if err := store.Save(state, result.GeneratedAt); err != nil {
+	if err := save(ctx, store, manager, account, state, result.GeneratedAt); err != nil {
 		return Result{}, err
 	}
 	switch result.Status {
@@ -152,6 +159,20 @@ func Run(ctx context.Context, store store2.Store, client *health.Client, resolve
 		return result, ErrPartial
 	}
 	return result, nil
+}
+
+func save(ctx context.Context, store store2.Store, manager *auth.Manager, account string, state store2.State2, now time.Time) error {
+	current, err := manager.Account(ctx)
+	if ctx.Err() != nil {
+		return errors.New("collect cancelled; cache unchanged")
+	}
+	if err != nil && !errors.Is(err, auth.ErrLogin) {
+		return err
+	}
+	if current != account {
+		return auth.ErrAccountChanged
+	}
+	return store.Save(state, now)
 }
 
 func Streams() []string {
@@ -246,6 +267,8 @@ func jobsFor(state store2.State2, from, until time.Time, pass string, now time.T
 }
 
 func runJobs(ctx context.Context, client *health.Client, jobs []job, progress func(string, string, int)) []output {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	type indexed struct {
 		index  int
 		output output
@@ -279,6 +302,9 @@ func runJobs(ctx context.Context, client *health.Client, jobs []job, progress fu
 						stream = "reconciled"
 					}
 					o.records, o.err = client.FetchV2(ctx, j.kind, stream, j.from, j.until)
+				}
+				if errors.Is(o.err, auth.ErrAccountChanged) {
+					cancel()
 				}
 				done <- indexed{i, o}
 			}

@@ -18,7 +18,14 @@ import (
 // FileName is the encrypted journal beside activities-v2.enc.
 const FileName = "journal-v2.enc"
 
-const header = "ghealth-cache-v2\n"
+const (
+	MaxFileBytes = 16 << 20
+	MaxReadBytes = 64 << 20
+	header       = "ghealth-cache-v2\n"
+	fileRole     = "journal"
+)
+
+var ErrCapacity = errors.New("journal file exceeds capacity")
 
 // Store reads and writes journal-v2.enc with the activities envelope and Keychain key.
 type Store struct {
@@ -43,8 +50,8 @@ func (s Store) Load() (Book, error) {
 		return Book{}, err
 	}
 	defer f.Close()
-	b, err := io.ReadAll(io.LimitReader(f, 16<<20+1))
-	if err != nil || len(b) > 16<<20 {
+	b, err := io.ReadAll(io.LimitReader(f, MaxReadBytes+1))
+	if err != nil || len(b) > MaxReadBytes {
 		return Book{}, errors.New("cannot read journal")
 	}
 	aead, err := s.aead(false)
@@ -55,7 +62,8 @@ func (s Store) Load() (Book, error) {
 	if len(b) < n+aead.NonceSize()+aead.Overhead() || string(b[:n]) != header {
 		return Book{}, errors.New("invalid journal envelope")
 	}
-	plain, err := aead.Open(nil, b[n:n+aead.NonceSize()], b[n+aead.NonceSize():], []byte(header+secure.Service(s.Dir)))
+	plain, err := secure.OpenFileRole(aead, b[n:n+aead.NonceSize()], b[n+aead.NonceSize():],
+		header+secure.Service(s.Dir), fileRole, "entries", "behaviours")
 	if err != nil {
 		return Book{}, errors.New("journal authentication failed")
 	}
@@ -172,7 +180,10 @@ func (s Store) save(book Book, now time.Time) error {
 		return err
 	}
 	b := append([]byte(header), nonce...)
-	b = aead.Seal(b, nonce, plain, []byte(header+secure.Service(s.Dir)))
+	b = aead.Seal(b, nonce, plain, secure.FileRoleAAD(header+secure.Service(s.Dir), fileRole))
+	if len(b) > MaxFileBytes {
+		return ErrCapacity
+	}
 	path := filepath.Join(s.Dir, FileName)
 	if info, e := os.Lstat(path); e == nil && (!info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0) {
 		return errors.New("unsafe journal file")

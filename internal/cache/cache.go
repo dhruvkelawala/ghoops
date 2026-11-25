@@ -50,28 +50,7 @@ type Store struct {
 }
 
 func (s Store) key(create bool) ([]byte, error) {
-	item := secure.Service(s.Dir) + ".cache-key"
-	k, err := s.Vault.Get(item)
-	if errors.Is(err, secure.ErrNotFound) && create {
-		k = make([]byte, 32)
-		if _, err := rand.Read(k); err != nil {
-			return nil, errors.New("cannot generate encryption key")
-		}
-		if err := s.Vault.Set(item, k); err != nil {
-			return nil, err
-		}
-		return k, nil
-	}
-	if err != nil {
-		if errors.Is(err, secure.ErrNotFound) {
-			return nil, errors.New("cache encryption key missing; encrypted records cannot be opened")
-		}
-		return nil, err
-	}
-	if len(k) != 32 {
-		return nil, errors.New("invalid cache encryption key")
-	}
-	return k, nil
+	return secure.CacheKey(s.Dir, s.Vault, create)
 }
 
 func (s Store) Load() (State, error) {

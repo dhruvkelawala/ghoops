@@ -49,7 +49,7 @@ func (a *app) rateActivity(ctx context.Context, args []string) error {
 	if err != nil {
 		return v2report.NewError("store_unavailable")
 	}
-	file, err := configFile()
+	file, err := configFile(a.dir)
 	if err != nil {
 		return err
 	}

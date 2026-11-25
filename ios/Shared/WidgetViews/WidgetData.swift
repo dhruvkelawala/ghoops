@@ -30,7 +30,7 @@ struct WidgetData {
         switch score {
         case .recovery: return day.recovery.value.map(Double.init)
         case .strain: return day.strain.value
-        case .sleep: return day.sleep.performance.value.map(Double.init)
+        case .sleep: return SleepScore(day).performance.value.map(Double.init)
         }
     }
     func text(_ score: GoopScore, percent: Bool = true) -> String {

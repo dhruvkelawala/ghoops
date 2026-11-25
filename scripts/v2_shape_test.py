@@ -43,11 +43,13 @@ class ShapeTest(unittest.TestCase):
     def test_strings_identifiers_dates_and_numeric_strings_are_redacted(self):
         body = {"schema_version": 2, "kind": "day", "value": "918273.4", "name": "Private tracker",
                 "date": "2026-03-10", "at": "2026-03-10T12:34:56Z", "nullable": None,
-                "ok": True, "empty": [], "series": [918273.4, 918274.5]}
+                "ok": True, "empty": [], "series": [918273.4, 918274.5],
+                "server": {"profile_id": "ghoops-fixture-profile"}}
         self.assertEqual(MODULE.shape(body), {
             "schema_version": "<num>", "kind": "day", "value": "<str>", "name": "<str>",
             "date": "<date>", "at": "<time>", "nullable": None, "ok": True,
             "empty": {"array": "<array len=0>"}, "series": {"array": "<array len=2>", "first": "<num>"},
+            "server": {"profile_id": "<str>"},
         })
 
 

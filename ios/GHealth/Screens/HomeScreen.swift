@@ -11,6 +11,9 @@ struct HomeScreen: View {
                 GoopHomeHeader(date: model.selectedDate, defaultDate: model.defaultDate, oldestDate: model.oldestDate, battery: model.cached.flatMap { cached in
                     cached.snapshot.status.device.status == "ok" && !cached.snapshot.freshness.bandSyncStale ? cached.snapshot.status.device.batteryLevel : nil
                 }, select: { model.selectedDate = $0 }, more: { model.tab = .more })
+                if model.showsOldPairingLink {
+                    OldPairingLinkBanner().padding(.horizontal, 16).padding(.top, 8)
+                }
                 GoopHomeBanners()
                 VStack(spacing: 8) {
                     if let undo = model.activityUndo {
@@ -94,8 +97,10 @@ struct HomeScreen: View {
             VStack(spacing: 10) {
                 tile(.hrv, value: bundle.day.vitals.metrics.hrvRmssd, day: bundle.day)
                 let scores = model.sleepScores(on: bundle.day.date)
-                tile(.sleepPerformance, value: scores.contains("sleep") ? nil : bundle.day.sleep.performance.value.map(Double.init),
-                     status: scores.contains("sleep") && model.sleepScores(on: bundle.day.date, delayed: true).contains("sleep") ? "UPDATING" : nil, day: bundle.day)
+                let sleep = SleepScore(bundle.day)
+                tile(.sleepPerformance, value: scores.contains("sleep") ? nil : sleep.performance.value.map(Double.init),
+                     status: scores.contains("sleep") && model.sleepScores(on: bundle.day.date, delayed: true).contains("sleep") ? "UPDATING" : nil,
+                     day: bundle.day, comparisonKey: sleep.comparisonKey)
                 tile(.hours, value: bundle.day.sleep.asleepMinutes.map(Double.init), day: bundle.day)
                 tile(.restingHR, value: bundle.day.vitals.metrics.restingHr, day: bundle.day)
                 tile(.steps, value: bundle.day.activity.steps.status == .available ? bundle.day.activity.steps.value : nil, hint: bundle.day.activity.steps.status == .available ? "" : ReasonText.metric(bundle.day.activity.steps.status), day: bundle.day)
@@ -115,8 +120,8 @@ struct HomeScreen: View {
     private func tile(_ metric: TrendMetricKey, value: VitalMetric, day: Day) -> some View {
         tile(metric, value: value.status == .available ? value.value : nil, hint: value.status == .available ? "" : ReasonText.metric(value.status), day: day)
     }
-    private func tile(_ metric: TrendMetricKey, value: Double?, hint: String = "", status: String? = nil, day: Day) -> some View {
-        GoopMetricRow(metric: metric, value: value, mean: day.comparison?.metrics[metric.comparisonKey]?.mean, windowDays: day.comparison?.windowDays, tile: true, hint: hint, status: status, dimmed: model.valuesOpacity < 1) {
+    private func tile(_ metric: TrendMetricKey, value: Double?, hint: String = "", status: String? = nil, day: Day, comparisonKey: String? = nil) -> some View {
+        GoopMetricRow(metric: metric, value: value, mean: day.comparison?.metrics[comparisonKey ?? metric.comparisonKey]?.mean, windowDays: day.comparison?.windowDays, tile: true, hint: hint, status: status, dimmed: model.valuesOpacity < 1) {
             model.push(.trend(metric: metric, end: model.selectedDate))
         }
     }

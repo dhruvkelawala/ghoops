@@ -204,7 +204,7 @@ The ended session goes into `activities-local.json` in the App Group. It holds:
 - the live summary: `strain_estimate`, `avg_hr_bpm`, `max_hr_bpm`, `zones_minutes` and a 5 s-resolution HR series;
 - `upload_state` (`pending` or `uploaded`).
 
-**Uploading:** pending entries are retried when the app comes to the foreground, on pull to refresh, on background refresh, and 30 s after a failure while the app is active. A 4xx other than 401 and 409 marks the entry `rejected`, and F shows `Your Mac could not save this activity.` A 409 counts as uploaded. A 401 leaves the entry pending and ends the pass, so pairing again after `ghoops pair --rotate` sends it ([pairing-isolation-spec.md](pairing-isolation-spec.md) D5). Only the paired Mac's entries are sent; an entry saved for another Mac waits for that Mac (D4).
+**Uploading:** the app retries pending entries when it comes to the foreground, on pull to refresh, on background refresh, and 30 s after a failure while active. A 429 keeps the entry pending, ends the pass and defers retries until `Retry-After` has elapsed. If the header has no usable delay, the app waits 30 s. A 409 counts as uploaded. A 401 keeps the entry pending and ends the pass so it can go after pairing again ([pairing-isolation-spec.md](pairing-isolation-spec.md) D5). Other 4xx responses mark the entry `rejected` and F shows `Your Mac could not save this activity.` An entry saved for another Mac waits for that Mac (D4). The first launch after the update resets previously rejected entries to pending once.
 
 **Clean-up:** entries are removed 7 days after `end` once uploaded.
 

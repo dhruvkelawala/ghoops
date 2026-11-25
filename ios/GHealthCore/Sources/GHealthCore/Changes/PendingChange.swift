@@ -23,6 +23,7 @@ public struct PendingChange: Codable, Sendable, Identifiable {
     public var journalPatch: JournalPatch?
     public var kept: Workout?
     public var serverURL: String
+    var profileId: String?
     public var createdAt: Date
     public var acceptedAt: Date?
     public var attempts: Int
@@ -32,7 +33,7 @@ public struct PendingChange: Codable, Sendable, Identifiable {
     public var replayBeforeUndo: Request?
 
     private enum CodingKeys: String, CodingKey {
-        case id, kind, request, targets, cycleDates, name, patch, sleepPatch, journalPatch, kept, createdAt, acceptedAt, attempts, state, undoRequested, acceptedEdit, replayBeforeUndo
+        case id, kind, request, targets, cycleDates, name, patch, sleepPatch, journalPatch, kept, createdAt, acceptedAt, attempts, state, undoRequested, acceptedEdit, replayBeforeUndo, profileId
         case serverURL = "serverUrl"
     }
 
@@ -43,6 +44,13 @@ public struct PendingChange: Codable, Sendable, Identifiable {
         self.serverURL = serverURL; self.createdAt = createdAt
         acceptedAt = nil; attempts = 0; state = .sending; undoRequested = false
         acceptedEdit = nil; replayBeforeUndo = nil
+    }
+
+    var mac: PairedMac { PairedMac(url: serverURL, name: "", profile: profileId) }
+
+    mutating func bind(to mac: PairedMac) {
+        serverURL = mac.url
+        profileId = profileId ?? mac.profile
     }
 }
 

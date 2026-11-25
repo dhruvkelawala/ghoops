@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"crypto/rand"
-	"errors"
 	"flag"
 	"fmt"
 	"strings"
@@ -98,16 +97,25 @@ func (a *app) activity(ctx context.Context, args []string) error {
 	default:
 		return v2report.NewError("not_found")
 	}
-	var invalid *activities.ValidationError
-	if errors.As(err, &invalid) {
-		return &v2report.Error{Code: "invalid_request", Message: invalid.Error(), HTTP: intPointer(400)}
-	}
-	if errors.Is(err, activities.ErrNotFound) {
-		return v2report.NewError("not_found")
-	}
 	if err != nil {
-		return v2report.NewError("store_unavailable")
+		return v2report.ActivityError(err)
 	}
 	return a.emit(result)
 }
+
+func (a *app) compactActivities(ctx context.Context, args []string) error {
+	if len(args) != 1 || args[0] != "compact" {
+		return usageError{"expected activities compact"}
+	}
+	store := activities.Store{Dir: a.dir, Vault: a.store.Vault}
+	result, err := store.Compact(ctx, a.now)
+	if err != nil {
+		return v2report.ActivityError(err)
+	}
+	return a.emit(struct {
+		v2report.Envelope
+		activities.Compaction
+	}{v2report.CommandEnvelope("activities_compact", a.now), result})
+}
+
 func intPointer(n int) *int { return &n }

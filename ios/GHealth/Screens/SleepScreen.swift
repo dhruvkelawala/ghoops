@@ -14,13 +14,14 @@ struct SleepScreen: View {
         GoopDetailPage(identifier: "sleep-screen", info: { info = true }) { bundle in
             let sleep = bundle?.sleep
             let hasSleep = sleep?.asleepMinutes != nil
+            let score = bundle.map { SleepScore($0.day).performance }
             if let notice = model.rollbacks.first(where: { model.rollbackTargets[$0.id]?.contains("sleep-\(model.selectedDate)") == true }) {
                 GoopRollbackBanner(notice: notice).padding(.horizontal, 16).padding(.top, 12).accessibilityIdentifier("change-rollback-banner")
             }
             if model.pending.contains(where: { $0.state == .waiting && $0.targets.contains("sleep-\(model.selectedDate)") }) {
                 GoopBanner(text: "Saved on your phone. It will be sent to your Mac when it can be reached.", symbol: "arrow.triangle.2.circlepath", tone: .strain).padding(.horizontal, 16).padding(.top, 12).accessibilityIdentifier("change-waiting-banner")
             }
-            GoopDetailDial(score: .sleep, value: pending ? nil : bundle?.day.sleep.performance.value.map(Double.init), secondary: updating ? "UPDATING" : nil, level: pending ? nil : SleepLevel(bundle?.day.sleep.performance.band), fixture: model.isFixture, dimmed: model.valuesOpacity < 1).padding(.top, 16)
+            GoopDetailDial(score: .sleep, value: pending ? nil : score?.value.map(Double.init), secondary: updating ? "UPDATING" : nil, level: pending ? nil : SleepLevel(score?.band), fixture: model.isFixture, dimmed: model.valuesOpacity < 1).padding(.top, 16)
             GoopNotchedCard {
                 if bundle != nil {
                     contributor(.sleepPerformance, title: "HOURS VS. NEEDED", value: hasSleep ? sleep?.performance.value : nil, level: hasSleep ? SleepLevel(bundle?.day.sleep.performance.band) : nil, day: bundle?.day)
@@ -210,9 +211,18 @@ private struct SleepInfo: View {
 
     private var howItWorks: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sleep Performance = time asleep ÷ sleep need, capped at 100%.") // goop-lint: allow enginenumber: schema: performance is 0 to 100, contract §5.5
+            let breakdown = SleepScore.breakdown(sleep, pending: pending)
+            if let breakdown {
+                compositeBreakdown(breakdown)
+            } else {
+                Text("Sleep Performance = time asleep ÷ sleep need, capped at 100%.") // goop-lint: allow enginenumber: schema: performance is 0 to 100, contract §5.5
+            }
             GoopLevelHeader(scale: .hours(sleep.scoreConstants))
             let scored = hasSleep && !pending
+            if breakdown != nil {
+                let performance = SleepScore(sleep).performance
+                scale("Sleep performance", scored ? performance.value : nil, .hours(sleep.scoreConstants), band: scored ? performance.band : nil, identifier: "scale-sleep-performance")
+            }
             scale("Hours vs. needed", scored ? sleep.performance.value : nil, .hours(sleep.scoreConstants), band: scored ? sleep.performance.band : nil, identifier: "scale-hours")
             scale("Consistency", scored ? sleep.consistency.value : nil, .consistency(sleep.scoreConstants), band: scored ? sleep.consistency.band : nil, identifier: "scale-consistency")
             scale("Efficiency", hasSleep ? sleep.efficiencyPct : nil, .efficiency(sleep.scoreConstants), band: hasSleep ? sleep.efficiencyBand : nil, identifier: "scale-efficiency")
@@ -226,6 +236,19 @@ private struct SleepInfo: View {
             GoopFootnote.recalculation
             GoopFinePrint(text: "Score version \(sleep.scoreVersion ?? "—")")
         }
+    }
+
+    @ViewBuilder private func compositeBreakdown(_ breakdown: SleepScore.Breakdown) -> some View {
+        Text("Sleep Performance blends hours vs. needed, consistency and efficiency.")
+        GoopBreakdown {
+            ForEach(breakdown.lines, id: \.label) { line in
+                GoopBreakdownRow(label: line.label, note: line.note, value: line.value)
+            }
+            GoopBreakdownRule(strong: true)
+            GoopBreakdownTotal(label: "SLEEP PERFORMANCE", spoken: "Sleep performance", value: breakdown.total, result: true, identifier: "sleep-performance-total")
+        }
+        if let rule = breakdown.rule { GoopFootnote(text: rule) }
+        GoopFootnote(text: "Set on your Mac with ghoops config. Without it, Sleep Performance is hours vs. needed.")
     }
 
     private func scale(_ title: String, _ value: Int?, _ scale: LevelScale, band: Band3?, identifier: String) -> some View {

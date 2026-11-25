@@ -155,6 +155,8 @@ func JournalError(err error) *Error {
 		return e
 	case errors.Is(err, journal.ErrNotFound):
 		return NewError("not_found")
+	case errors.Is(err, journal.ErrCapacity):
+		return NewError("storage_full")
 	default:
 		return NewError("store_unavailable")
 	}

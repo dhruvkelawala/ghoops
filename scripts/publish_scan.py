@@ -13,6 +13,11 @@ import sys
 
 SHAPES = {
     "pairing link": (b"ghealth://pair?", rb"ghealth://pair\?[^\s\"'<>]+"),
+    "ghoops bearer": (b"ghv", rb"ghv[23]_[A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])"),
+    "ghoops pairing code": (
+        b"GHOOPS1 ",
+        rb"GHOOPS1 https://[^\s\"'<>]+ [A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])",
+    ),
     "Google access token": (b"ya29.", rb"ya29\.[A-Za-z0-9._~-]+"),
     "Google refresh token": (b"1//", rb"(?<![A-Za-z0-9_])1//[A-Za-z0-9_-]{6,}"),
     "Google client secret": (b"GOCSPX-", rb"GOCSPX-[A-Za-z0-9_-]+"),
@@ -20,6 +25,11 @@ SHAPES = {
         b".apps.googleusercontent.com",
         rb"(?<![A-Za-z0-9_-])[A-Za-z0-9_-]+\.apps\.googleusercontent\.com\b",
     ),
+}
+
+FIXTURE_BEARERS = {
+    b'ghv2_' b'SYNTHETICSYNTHETICSYNTHETICSYNTHETICSYNTHET',
+    b'ghv2_' b'synthetic_00000000000000000000000000000000000',
 }
 
 
@@ -76,7 +86,7 @@ class Scan:
                 hits[line] = count
         for label, prefix, pattern in self.shapes:
             if prefix in data:
-                if count := sum(1 for _ in pattern.finditer(data)):
+                if count := sum(1 for match in pattern.finditer(data) if match.group() not in FIXTURE_BEARERS):
                     hits[label] = count
         return hits
 

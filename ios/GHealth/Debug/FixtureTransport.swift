@@ -58,8 +58,8 @@ enum FixtureTransport {
         let client = APIClient(baseURL: URL(string: "https://fixture.invalid:8787")!, token: "fixture", session: URLSession(configuration: config))
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("ghealth-fixture-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        let server = client.baseURL.absoluteString
-        _ = try await SnapshotRefresher.shared.refresh(client: client, store: SnapshotStore(directory: directory, allowSynthetic: true, pairedURL: { server }), now: cached.meta.fetchedAt)
+        let mac = PairedMac(url: client.baseURL.absoluteString, name: "Fixture Mac")
+        _ = try await SnapshotRefresher.shared.refresh(client: client, store: SnapshotStore(directory: directory, allowSynthetic: true, pairedMac: { mac }), now: cached.meta.fetchedAt)
         return FixtureProtocol.reply.requests
     }
 }

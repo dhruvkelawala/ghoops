@@ -2,7 +2,7 @@ import SwiftUI
 import GHealthCore
 
 enum Route: Hashable {
-    case recovery, strain, sleep
+    case recovery, strain, sleep, unsent
     case workout(id: String, date: String)
     case trend(metric: TrendMetricKey, end: String)
 }
@@ -52,6 +52,7 @@ struct GoopTabs: View {
                 case .recovery: RecoveryScreen()
                 case .strain: StrainScreen()
                 case .sleep: SleepScreen()
+                case .unsent: UnsentScreen()
                 case .workout(let id, let date): WorkoutScreen(id: id, date: date)
                 case .trend(let metric, let end): GoopTrendScreen(metric: metric, end: end)
                 }

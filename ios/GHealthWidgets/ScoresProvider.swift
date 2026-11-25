@@ -32,19 +32,37 @@ struct ScoresProvider<Configuration: ScoresConfiguration>: AppIntentTimelineProv
         let now = Date.now
         guard let directory = SharedAppGroup.directory,
               let keychainGroup = Bundle.main.object(forInfoDictionaryKey: "SharedKeychainGroup") as? String else { return WidgetData(cached: nil, paired: false, date: now) }
-        let pairing = PairingRepository(suiteName: SharedAppGroup.id, tokens: KeychainTokenStore(accessGroup: keychainGroup))
-        guard let credentials = try? await pairing.credentials() else { return WidgetData(cached: nil, paired: false, date: now) }
-        let pairedURL: @Sendable () -> String? = { PairingRepository.pairedURL(suiteName: SharedAppGroup.id) }
-        let store = SnapshotStore(directory: directory, pairedURL: pairedURL)
+        let pairing = PairingRepository(suiteName: SharedAppGroup.id, accessGroup: keychainGroup)
+        try? await pairing.migrateLegacy()
+        let pairedMac: @Sendable () -> PairedMac? = {
+            PairingRepository.current(accessGroup: keychainGroup, suiteName: SharedAppGroup.id)?.mac
+        }
+        let store = SnapshotStore(directory: directory, pairedMac: pairedMac)
+        guard let credentials = try? await pairing.credentials() else {
+            await pairing.deleteRevokedCache(from: store)
+            return WidgetData(cached: nil, paired: false, date: now)
+        }
         var cached = try? await store.load()
-        if cached?.meta.serverUrl != credentials.url.absoluteString { cached = nil }
+        if cached?.meta.mac.matches(credentials.mac) != true { cached = nil }
         if RefreshPolicy(now: { now }).needsRefresh(fetchedAt: cached?.meta.fetchedAt, trigger: .widget) {
-            if let fetched = try? await SnapshotRefresher.shared.refresh(client: APIClient(baseURL: credentials.url, token: credentials.token, widget: true), store: store, now: now) {
-                cached = fetched
+            do {
+                cached = try await SnapshotRefresher.shared.refresh(client: credentials.client(widget: true), store: store, now: now)
                 WidgetCenter.shared.reloadAllTimelines()
+            } catch {
+                switch WidgetRefreshOutcome(error: error) {
+                case .revoke:
+                    await pairing.recordRevocation(of: credentials, cache: store)
+                    WidgetCenter.shared.reloadAllTimelines()
+                    return WidgetData(cached: nil, paired: pairedMac() != nil, date: now)
+                case .unpaired:
+                    return WidgetData(cached: nil, paired: false, date: now)
+                case .keepCache:
+                    break
+                }
             }
         }
-        if cached?.meta.serverUrl != pairedURL() { cached = nil }
-        return WidgetData(cached: cached, paired: true, date: now)
+        let current = pairedMac()
+        if cached?.meta.mac.matches(current) != true { cached = nil }
+        return WidgetData(cached: cached, paired: current != nil, date: now)
     }
 }

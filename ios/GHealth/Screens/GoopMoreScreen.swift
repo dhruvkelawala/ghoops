@@ -12,8 +12,8 @@ struct GoopMoreScreen: View {
                 GoopDetailHeader(title: "MORE")
                 VStack(spacing: 0) {
                     section("MAC") {
-                        GoopRow("PAIRED MAC", value: model.credentials?.name ?? (model.isFixture ? "Fixture Mac" : "—"))
-                        GoopRow("ADDRESS", value: model.credentials?.url.absoluteString ?? model.cached?.meta.serverUrl ?? "—").textSelection(.enabled)
+                        GoopRow("PAIRED MAC", value: model.pairedMac?.name ?? "—")
+                        GoopRow("ADDRESS", value: model.pairedAddress ?? "—").textSelection(.enabled)
                         GoopRow("LAST FETCH", value: model.cached.map { Format.relative($0.meta.fetchedAt, now: model.now) } ?? "never")
                         Button {
                             Task { testing = true; connection = await model.testConnection(); testing = false }
@@ -23,6 +23,15 @@ struct GoopMoreScreen: View {
                                 if let connection { Text(connection).goop(.bodySmall).foregroundStyle(Goop.Color.textSoft).accessibilityIdentifier("connection-result") }
                             }
                         }.disabled(testing).accessibilityIdentifier("test-connection")
+                        Button { model.openEnrolment() } label: {
+                            GoopRow("PAIR AGAIN", value: "", disclosure: .push)
+                        }.accessibilityIdentifier("pair-again")
+                        if model.errorContext == .pair, let error = model.error { warning(error) }
+                        if !model.activity.held.isEmpty {
+                            Button { model.push(.unsent) } label: {
+                                GoopRow("UNSENT ACTIVITIES", value: "\(model.activity.held.count)", disclosure: .push)
+                            }.accessibilityIdentifier("unsent-row")
+                        }
                     }
                     if let status = model.cached?.snapshot.status {
                         section("BAND") {
@@ -50,9 +59,11 @@ struct GoopMoreScreen: View {
                     }
                     section("ABOUT") {
                         GoopRow("VERSION", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")
-                        caption("Data stays on your Mac and this iPhone. ghoops is not a medical device.")
+                        caption(PairingCopy.backup)
+                        caption("ghoops is not a medical device.")
                         GoopRow("OPEN-SOURCE FONTS", value: "Sofia Sans Condensed and Nunito Sans, SIL Open Font License 1.1") // goop-lint: allow enginenumber: licence version
                     }
+                    if model.errorContext == .unpair, let error = model.error { warning(error) }
                     GoopButton(title: "UNPAIR", role: .destructive) { confirmUnpair = true }
                     #if DEBUG
                     section("DEVELOPER") {
@@ -66,8 +77,16 @@ struct GoopMoreScreen: View {
         }.contentMargins(.bottom, 84, for: .scrollContent)
             .background(Goop.Gradient.homeBackground.ignoresSafeArea()).foregroundStyle(.white).buttonStyle(.plain)
             .accessibilityElement(children: .contain).accessibilityIdentifier("more-screen")
-            .goopDestructiveAlert("Unpair from your Mac?", isPresented: $confirmUnpair, verb: "Unpair", message: "This iPhone stops reading from your Mac until you pair again. Nothing is deleted on your Mac.") {
-                Task { await model.unpair() }
+            .alert(PairingCopy.unpairTitle, isPresented: $confirmUnpair) {
+                if model.activity.waitingForCurrentMac > 0 {
+                    Button(PairingCopy.unpairKeep, role: .destructive) { Task { await model.unpair() } }
+                    Button(PairingCopy.unpairDelete, role: .destructive) { Task { await model.unpair(deleteWorkouts: true) } }
+                } else {
+                    Button(PairingCopy.unpair, role: .destructive) { Task { await model.unpair() } }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(model.unpairMessage)
             }
     }
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

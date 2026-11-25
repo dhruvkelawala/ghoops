@@ -53,10 +53,7 @@ struct GoopWeeklySection: View {
                 rows = nil; failed = false
                 guard let store = model.trendStore else { failed = true; return }
                 do { rows = try await store.rows(from: GoopFormat.addingDays(-6, to: model.selectedDate), to: model.selectedDate) }
-                catch {
-                    if (error as? ClientError) == .unauthorized { model.invalidPairing = true }
-                    failed = true
-                }
+                catch { failed = true }
             }
     }
 }

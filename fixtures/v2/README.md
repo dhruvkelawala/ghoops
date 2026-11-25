@@ -63,6 +63,7 @@ Made from a richer 31-day synthetic store that is not committed. Use them for Sw
 | Fixture | Notes |
 | --- | --- |
 | `preview/snapshot_fresh.json` | 30 days of trends, 14 days of workouts, everything fresh |
+| `preview/snapshot_composite.json` | Fresh preview with the composite Sleep mockup night, its Recovery input and sample composite trend rows. The comparison means are mockup values. |
 | `preview/snapshot_stale.json` | same store, `now` 2026-03-10T21:00:00Z: `collector_stale` and `device_stale` both true, flags `collector_stale` and `device_sync_stale` |
 | `preview/days_30.json` | `days --from 2026-02-09 --to 2026-03-10` |
 | `preview/week_this.json` | `week` for Mon 9 to Tue 10 Mar, written by `scripts/goop_preview_fixtures.py` from `snapshot_fresh.json`'s rows and workouts: every target `open` (1 of 5 nights, 145 zone minutes, 0 of 2 strength days) |
@@ -74,7 +75,7 @@ Preview workout names use the ghoops sport list too. The fresh and stale snapsho
 
 ## Command outputs and errors
 
-`commands/` (`collect_ok`, `collect_partial`, `pair`, `schedule_status`, `config_show`, `export_tcx`) and `errors/` (one file per HTTP error code in contract §6). Shape references for decoders; the pairing token in `commands/pair.json` is a fake 48-character value.
+`commands/` (`collect_ok`, `collect_partial`, `pair`, `pair_redeem`, `pair_status`, `pair_devices`, `schedule_status`, `config_show`, `export_tcx`) and `errors/` (one file per HTTP error code in contract §6). These fixtures document the response shapes. The `pair` fixture shows the response to `pair revoke --json`. The redeem fixture uses placeholders for the credential and verification code.
 
 ## ghoops activities
 

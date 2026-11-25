@@ -65,6 +65,44 @@ class PublishScanTest(unittest.TestCase):
         clean.write_bytes(b"fixture only")
         self.assertEqual(self.report(self.scan(clean), 0)["hits"], [])
 
+    def test_reports_ghoops_bearer_shape_without_printing_the_value(self):
+        value = b"ghv3_" + b"X" * 43
+        longer_value = b"ghv2_" + b"Y" * 44
+        path = self.target / "notes.txt"
+        path.write_bytes(b"\n".join([value, longer_value]))
+        result = self.scan(path)
+        report = self.report(result, 1)
+        self.assertEqual(report["hits"], [
+            {"path": "notes.txt", "shape": "ghoops bearer", "count": 1},
+        ])
+        self.assertFalse(value.decode("ascii") in result.stdout)
+
+    def test_reports_ghoops_pairing_code_shape_without_printing_the_line(self):
+        code = b"B" * 43
+        path = self.target / "notes.txt"
+        path.write_bytes(b"GHOOPS1 https://mac-a.invalid:18780 " + code + b"\n")
+        result = self.scan(path)
+        report = self.report(result, 1)
+        self.assertEqual(report["hits"], [
+            {"path": "notes.txt", "shape": "ghoops pairing code", "count": 1},
+        ])
+        self.assertFalse(code.decode("ascii") in result.stdout)
+
+    def test_fixture_values_are_allowed_but_a_different_bearer_is_reported(self):
+        examples = (
+            b'ghv2_' b'SYNTHETICSYNTHETICSYNTHETICSYNTHETICSYNTHET',
+            b'ghv2_' b'synthetic_00000000000000000000000000000000000',
+        )
+        path = self.target / "notes.txt"
+        path.write_bytes(b"\n".join(examples))
+        self.assertEqual(self.report(self.scan(path), 0)["hits"], [])
+
+        altered = examples[0][:-1] + (b"A" if examples[0][-1:] != b"A" else b"B")
+        path.write_bytes(b"\n".join([*examples, altered]))
+        self.assertEqual(self.report(self.scan(path), 1)["hits"], [
+            {"path": "notes.txt", "shape": "ghoops bearer", "count": 1},
+        ])
+
     def test_refuses_short_needles_without_echoing_them(self):
         self.needles.write_text("synthetic-alpha\nznq7x\n", encoding="utf-8")
         result = self.scan(self.target)

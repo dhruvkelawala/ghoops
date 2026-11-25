@@ -39,7 +39,7 @@ struct HRVSmallView: View {
                         Text(data.age).foregroundStyle(Goop.Color.text2)
                     }.goop(.captionWidget).padding(10)
                 }
-            }.accessibilityElement(children: .ignore).accessibilityLabel(accessible)
+            }.accessibilityElement(children: .ignore).accessibilityLabel(accessible).privacySensitive()
     }
     private var accessible: String {
         let state = vital?.status != .available ? ReasonText.metric(vital?.status ?? .missing) : ranged ? "\(vital?.position ?? "within") typical range \(GoopFormat.number(vital?.rangeLow)) to \(GoopFormat.number(vital?.rangeHigh))" : "building baseline"

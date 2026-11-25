@@ -71,7 +71,7 @@ func editInput(t *testing.T) store2.State2 {
 }
 func editBuilder(t *testing.T, state store2.State2, book activities.Book, cfg config.Values) *v2report.Builder {
 	t.Helper()
-	b, err := v2report.New(state, fixtureTime("2026-03-12T20:30:00Z"), cfg, v2report.Options{Activities: book.Activities, Edits: book.Edits, Ratings: book.Ratings, Auth: v2report.Auth{Authorized: true, State: "authorized", Refreshable: true, Missing: []string{}}, ScheduleInstalled: true, Server: v2report.Server{Version: "0.2.0", Revision: "synthetic"}})
+	b, err := v2report.New(state, fixtureTime("2026-03-12T20:30:00Z"), cfg, v2report.Options{Activities: book.Activities, Edits: book.Edits, Ratings: book.Ratings, Auth: v2report.Auth{Authorized: true, State: "authorized", Refreshable: true, Missing: []string{}}, ScheduleInstalled: true, Server: v2report.Server{Version: "0.2.0", Revision: "synthetic", ProfileID: fixturePointer(fixtureProfileID)}})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,12 +2,12 @@ import SwiftUI
 import GHealthCore
 
 extension AppModel {
-    var changeServerURL: String { credentials?.url.absoluteString ?? serverCached?.meta.serverUrl ?? "https://fixture.invalid" }
+    var changeServerURL: String { savedMac?.url ?? serverCached?.meta.serverUrl ?? "https://fixture.invalid" }
     var lockedWorkouts: Set<String> { Set(pending.flatMap(\.targets)) }
 
     func configureChanges() async {
-        guard credentials != nil || isFixture && paired else { return }
-        let queue = changeQueue ?? ChangeQueue(directory: activityDirectory, serverURL: changeServerURL)
+        guard savedMac != nil || isFixture && paired else { return }
+        let queue = changeQueue ?? ChangeQueue(directory: activityDirectory, serverURL: changeServerURL, profileId: savedMac?.profile)
         changeQueue = queue
         guard !(await queue.isLoaded), UIApplication.shared.isProtectedDataAvailable else { return }
         do {
@@ -46,7 +46,7 @@ extension AppModel {
     }
 
     func startSending() {
-        guard started, let queue = changeQueue, let api = editAPI else { return }
+        guard started, !pairingInProgress, isFixture || canSendToMac, let queue = changeQueue, let api = editAPI else { return }
         if changeTask != nil { sendAgain = true; return }
         let pass = changePass
         changeTask = Task { [weak self] in
@@ -63,14 +63,14 @@ extension AppModel {
                     await self?.receiveChanges(result, pass: pass)
                 })
                 receiveChanges(result, pass: pass)
-                guard changePass == pass else { return }
+                guard changePass == pass, isFixture || canSendToMac else { return }
                 let settled = try await settleAccepted()
                 clearError(.syncChanges)
                 if settled { sendAgain = true }
             } catch {
                 if changePass == pass {
                     reportError(error, context: .syncChanges)
-                    if (error as? ClientError) == .unauthorized { invalidPairing = true }
+                    if (error as? ClientError)?.invalidatesPairing == true { invalidatePairing() }
                 }
             }
         }
@@ -79,7 +79,7 @@ extension AppModel {
     func receiveChanges(_ result: ChangeQueue.DrainResult, pass: UUID) {
         guard changePass == pass else { return }
         clearError(.waitingChanges)
-        if result.waitingError == .unauthorized { invalidPairing = true }
+        if result.waitingError?.invalidatesPairing == true { invalidatePairing() }
         pending = result.changes
         if let deletion = activityUndo?.change, let updated = pending.first(where: { $0.id == deletion.id }) { activityUndo?.change = updated }
         applyOverlay()
@@ -136,7 +136,7 @@ extension AppModel {
     private func readAccepted(dates: Set<String>) async throws -> (CachedSnapshot, [String: DayBundle]) {
         guard let credentials else { throw ClientError.unauthorized }
         let pass = changePass
-        let client = APIClient(baseURL: credentials.url, token: credentials.token)
+        let client = self.client(for: credentials)
         async let snapshot = client.snapshotData()
         let loaded = try await withThrowingTaskGroup(of: (String, DayBundle).self) { group in
             for date in dates {
@@ -153,7 +153,7 @@ extension AppModel {
         }
         let data = try await snapshot
         guard pass == changePass else { throw CancellationError() }
-        return try await (store.save(data, serverURL: credentials.url.absoluteString, fetchedAt: .now), loaded)
+        return try await (store.save(data, from: credentials.mac, fetchedAt: .now), loaded)
     }
 
     private func repairRoute(after change: PendingChange, tab: GoopTab) {
@@ -178,9 +178,19 @@ extension AppModel {
         }
     }
 
-    func clearChanges() async throws {
+    func stopChangePass() {
         changePass = UUID(); sendAgain = false
         changeTask?.cancel(); changeTask = nil
+    }
+
+    func reloadChanges() async {
+        stopChangePass()
+        await changeQueue?.suspend()
+        changeQueue = nil
+    }
+
+    func clearChanges() async throws {
+        stopChangePass()
         try await changeQueue?.clear()
         changeQueue = nil; pending = []; rollbacks = []; rollbackTargets = [:]
         markerTask?.cancel(); markerTask = nil; changeMarkers = [:]

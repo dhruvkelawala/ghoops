@@ -111,24 +111,27 @@ struct GoopTrendChart: View {
     var metric: TrendMetricKey
     var window: TrendWindow
     var typical: ClosedRange<Double>?
+    var composite = false
     var dimmed = false
     private var dates: [String] { GoopFormat.dates(from: window.start, to: window.end) }
     var body: some View {
         Canvas { context, size in
             draw(context: context, size: size)
         }.frame(height: 294).opacity(dimmed ? Goop.Opacity.stale : 1)
-            .accessibilityChartDescriptor(ChartAccessibility(title: metric.name, unit: metric.unit, categories: dates, series: [.init(name: metric.name, continuous: metric.chart == .line, values: dates.compactMap { date in rows.first { $0.date == date }.flatMap { row in metric.value(row).map { (date, $0) } } })]))
+            .accessibilityChartDescriptor(ChartAccessibility(title: metric.name, unit: metric.unit, categories: dates, series: [.init(name: metric.name, continuous: metric.chart == .line, values: dates.compactMap { date in rows.first { $0.date == date }.flatMap { row in metricValue(row).map { (date, $0) } } })]))
     }
     private var scale: (low: Double, high: Double, step: Double) {
         if [.recovery, .sleepPerformance, .consistency, .efficiency].contains(metric) { return (0, 100, 20) }
         if metric == .strain { return (0, 21, 4) }
-        let values = rows.filter { $0.date >= window.start && $0.date <= window.end }.compactMap { metric.value($0) } + (typical.map { [$0.lowerBound, $0.upperBound] } ?? [])
+        let values = rows.filter { $0.date >= window.start && $0.date <= window.end }.compactMap { metricValue($0) } + (typical.map { [$0.lowerBound, $0.upperBound] } ?? [])
         let low = values.min() ?? 0, high = values.max() ?? 1, span = max(high - low, 1)
         let steps: [Double] = [1, 2, 4, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000]
         let step = steps.first { floor((low - 0.15 * span) / $0) * $0 + 5 * $0 >= high + 0.15 * span } ?? 5000
         let bottom = floor((low - 0.15 * span) / step) * step
         return (bottom, bottom + 5 * step, step)
     }
+    private func metricValue(_ row: DayRow) -> Double? { metric.value(row, composite: composite) }
+
     private func draw(context: GraphicsContext, size: CGSize) {
         var plot = context; plot.translateBy(x: 30, y: 18)
         let w = max(1, size.width - 30), h = 232.0, step = w / Double(window.range.length), scale = scale
@@ -150,7 +153,7 @@ struct GoopTrendChart: View {
             plot.stroke(GoopPlot.path(points), with: .color(Goop.Color.trendLine.opacity(window.range == .sixMonths ? 0.3 : 1)), lineWidth: window.range == .sixMonths ? 1 : 1.6)
         }
         for (index, date) in dates.enumerated() {
-            guard let row = indexed[date], let value = metric.value(row) else { strokeRun(run); run = []; continue }
+            guard let row = indexed[date], let value = metricValue(row) else { strokeRun(run); run = []; continue }
             let point = CGPoint(x: x(index), y: y(value)), color = metric == .recovery ? Goop.recoveryColor(row.recoveryBand) : Goop.color(metric.color)
             if metric.chart == .line {
                 run.append(point)
@@ -163,7 +166,7 @@ struct GoopTrendChart: View {
         strokeRun(run)
         if metric.chart == .line && window.range != .sixMonths {
             for (index, date) in dates.enumerated() {
-                guard let row = indexed[date], let value = metric.value(row) else { continue }
+                guard let row = indexed[date], let value = metricValue(row) else { continue }
                 let radius: CGFloat = window.range == .week ? 5 : 3
                 let circle = Path(ellipseIn: CGRect(x: x(index) - radius, y: y(value) - radius, width: radius * 2, height: radius * 2))
                 plot.fill(circle, with: .color(Goop.Color.dotHole))
@@ -183,7 +186,7 @@ struct GoopTrendChart: View {
             for month in months.values {
                 let first = month.map(\.offset).min()!, last = month.map(\.offset).max()!
                 let cx = (x(first) + x(last)) / 2
-                let values = month.compactMap { indexed[$0.element].flatMap { metric.value($0) } }
+                let values = month.compactMap { indexed[$0.element].flatMap { metricValue($0) } }
                 if !values.isEmpty {
                     let mean = values.reduce(0, +) / Double(values.count), cy = y(mean), color = Goop.color(metric.color)
                     GoopPlot.line(context: plot, from: CGPoint(x: x(first) - step / 2, y: cy), to: CGPoint(x: x(last) + step / 2, y: cy), color: color, width: 2)

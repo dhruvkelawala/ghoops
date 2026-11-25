@@ -1,15 +1,36 @@
 import Foundation
 
-/// The Mac a piece of phone-side work belongs to. Two values are the same Mac when their URLs match,
-/// so a rotated token or a renamed Mac stays the same pairing.
-public struct PairedMac: Codable, Sendable, Hashable {
+public struct PairedMac: Codable, Sendable, Equatable {
     public let url: String
     public let name: String
-    public init(url: String, name: String) { self.url = url; self.name = name }
-    public static func == (lhs: Self, rhs: Self) -> Bool { lhs.url == rhs.url }
-    public func hash(into hasher: inout Hasher) { hasher.combine(url) }
+    public let profile: String?
+
+    public init(url: String, name: String, profile: String? = nil) {
+        self.url = url
+        self.name = name
+        self.profile = profile
+    }
+
+    public func matches(_ other: Self?) -> Bool {
+        guard let other else { return false }
+        if let profile, let otherProfile = other.profile { return profile == otherProfile }
+        return url == other.url
+    }
+
+    func stamped(with current: Self) -> Self {
+        guard profile == nil, url == current.url, let profile = current.profile else { return self }
+        return Self(url: url, name: name, profile: profile)
+    }
+
+    func checkProfile(_ reported: String?) throws {
+        if let profile, let reported, profile != reported { throw ClientError.profileMismatch }
+    }
 }
 
 extension Credentials {
-    public var mac: PairedMac { PairedMac(url: url.absoluteString, name: name) }
+    public var mac: PairedMac { PairedMac(url: url.absoluteString, name: name, profile: profileId) }
+}
+
+extension PairingRecord {
+    public var mac: PairedMac { PairedMac(url: url.absoluteString, name: name, profile: profileId) }
 }

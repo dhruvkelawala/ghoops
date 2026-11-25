@@ -9,13 +9,23 @@ import (
 	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
 
-func configFile() (config.File, error) {
+func defaultStateDir(home string) string {
+	return filepath.Join(home, ".local", "share", "ghealth")
+}
+
+func configFile(stateDir string) (config.File, error) {
 	home, err := os.UserHomeDir()
-	return config.File{Path: filepath.Join(home, ".config", "ghealth", "config.json")}, err
+	if err != nil {
+		return config.File{}, err
+	}
+	if stateDir == defaultStateDir(home) {
+		return config.File{Path: filepath.Join(home, ".config", "ghealth", "config.json")}, nil
+	}
+	return config.File{Path: filepath.Join(stateDir, "config.json")}, nil
 }
 
 func (a *app) configure(args []string) error {
-	file, err := configFile()
+	file, err := configFile(a.dir)
 	if err != nil {
 		return err
 	}

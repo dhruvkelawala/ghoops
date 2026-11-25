@@ -38,16 +38,7 @@ struct GHealthApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     Task { await model.protectedDataBecameAvailable() }
                 }
-                .onOpenURL { url in
-                    if url.scheme == "ghealth" && url.host == "activity" { model.showActivity() }
-                    else if url.scheme == "ghealth" && url.host == "today" { model.showToday() }
-                    else if model.paired { model.pendingURL = url }
-                    else { Task { await model.pair(url) } }
-                }
-                .goopDestructiveAlert("Replace the current pairing?", isPresented: Binding(get: { model.pendingURL != nil }, set: { if !$0 { model.pendingURL = nil } }), verb: "Replace pairing", message: "This iPhone switches to the Mac in the new link. Nothing is deleted on your Mac.") {
-                    if let url = model.pendingURL { Task { await model.pair(url) } }
-                    model.pendingURL = nil
-                }
+                .onOpenURL { model.receive($0) }
         }
     }
 }
@@ -65,9 +56,18 @@ struct AppRoot: View {
             tabs
             #endif
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if model.showsOldPairingLink && !showsHomeBanner {
+                OldPairingLinkBanner().padding(.horizontal, 16).padding(.bottom, 8)
+            }
+        }
         .sheet(isPresented: Binding(get: { model.activity.pickerPresented }, set: { model.activity.pickerPresented = $0 }), onDismiss: { model.activity.closePicker() }) { ActivityPicker().environment(model) }
         .sheet(isPresented: Binding(get: { model.addDay != nil }, set: { if !$0 { model.addDay = nil } }), onDismiss: { model.addDay = nil }) {
             if let day = model.addDay { AddActivitySheet(day: day).environment(model) }
+        }
+        .sheet(isPresented: Binding(get: { model.enrolment != nil },
+                                    set: { if !$0 { model.cancelEnrolment() } })) {
+            if let flow = model.enrolment { PairingSheet(flow: flow).environment(model) }
         }
         .fullScreenCover(isPresented: Binding(get: { model.activity.livePresented }, set: { model.activity.livePresented = $0 })) { LiveActivityScreen().environment(model) }
         #if DEBUG
@@ -82,6 +82,10 @@ struct AppRoot: View {
         }
         #endif
     }
+    private var showsHomeBanner: Bool {
+        model.paired && !model.invalidPairing && model.cached != nil && model.tab == .home && model.homePath.isEmpty
+    }
+
     private var tabs: some View {
         Group {
             if !model.paired || model.invalidPairing { PairingScreen() }

@@ -28,10 +28,19 @@ func (v *Vault) Get(key string) ([]byte, error) {
 	return append([]byte{}, data...), nil
 }
 func (v *Vault) Set(key string, data []byte) error {
+	return v.put(key, data, false)
+}
+func (v *Vault) Create(key string, data []byte) error {
+	return v.put(key, data, true)
+}
+func (v *Vault) put(key string, data []byte, createOnly bool) error {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 	if v.FailSet != nil {
 		return v.FailSet
+	}
+	if _, exists := v.items[key]; createOnly && exists {
+		return secure.ErrExists
 	}
 	if v.items == nil {
 		v.items = map[string][]byte{}

@@ -15,11 +15,78 @@ import (
 
 	"github.com/dhruvkelawala/ghoops/internal/config"
 	"github.com/dhruvkelawala/ghoops/internal/pairing"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/serve"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
 	"github.com/dhruvkelawala/ghoops/internal/testutil"
 	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
+
+func TestStatusProfileIDAcrossHandlerStarts(t *testing.T) {
+	now := time.Date(2026, 3, 10, 14, 30, 0, 0, time.UTC)
+	dir := testutil.Dir(t)
+	vault := &testutil.Vault{}
+	store := store2.Store{Dir: dir, Vault: vault}
+	tokens := pairing.Tokens{Dir: dir, Vault: vault}
+	token, err := tokens.Pair(context.Background(), false, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	settings := serve.Settings{Store: store, Tokens: tokens, Config: config.File{Path: filepath.Join(dir, "config.json")}, Now: func() time.Time { return now }}
+	start := func() *serve.Handler {
+		h, err := serve.New(settings)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return h
+	}
+	profile := func(h *serve.Handler) string {
+		r := httptest.NewRequest(http.MethodGet, "/v2/status", nil)
+		r.Header.Set("Authorization", "Bearer "+token.Value)
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		var body struct {
+			Server struct {
+				ProfileID json.RawMessage `json:"profile_id"`
+			} `json:"server"`
+		}
+		if w.Code != http.StatusOK || json.Unmarshal(w.Body.Bytes(), &body) != nil {
+			t.Fatalf("status could not be read: HTTP %d", w.Code)
+		}
+		return string(body.Server.ProfileID)
+	}
+	h := start()
+	if got := profile(h); got != "null" {
+		t.Fatal("status must report null before a cache key exists")
+	}
+	key := make([]byte, 32)
+	for i := range key {
+		key[i] = byte(i)
+	}
+	if err := vault.Set(secure.Service(dir)+".cache-key", key); err != nil {
+		t.Fatal(err)
+	}
+	const expected = `"kjhjyS3-AR6TWtOdfWOXuE"`
+	if got := profile(h); got != expected {
+		t.Fatal("the running handler did not report the new cache key's profile ID")
+	}
+	otherKey := make([]byte, 32)
+	if err := vault.Set(secure.Service(dir)+".cache-key", otherKey); err != nil {
+		t.Fatal(err)
+	}
+	if got := profile(start()); len(got) != 24 || got == expected {
+		t.Fatal("a different cache key must produce a different 22-character profile ID")
+	}
+	if err := vault.Set(secure.Service(dir)+".cache-key", key); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.Save(store2.Empty(), now); err != nil {
+		t.Fatal(err)
+	}
+	if got := profile(start()); got != expected {
+		t.Fatal("the profile ID changed after saving the store and restarting")
+	}
+}
 
 func TestHTTPMatchesCLIBuilderAndProtectsTransport(t *testing.T) {
 	t.Setenv("HOME", testutil.Dir(t))
@@ -45,7 +112,7 @@ func TestHTTPMatchesCLIBuilderAndProtectsTransport(t *testing.T) {
 	}
 	file := config.File{Path: filepath.Join(dir, "config.json")}
 	var logs bytes.Buffer
-	options := v2report.Options{Auth: v2report.Auth{Missing: []string{}}}
+	options := v2report.Options{Auth: v2report.Auth{Missing: []string{}}, Server: v2report.Server{Revision: "synthetic"}}
 	handler, err := serve.New(serve.Settings{Store: store, Config: file, Tokens: tokens, Options: func(context.Context) v2report.Options { return options }, Now: func() time.Time { return now }, Log: &logs})
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +126,13 @@ func TestHTTPMatchesCLIBuilderAndProtectsTransport(t *testing.T) {
 		handler.ServeHTTP(w, r)
 		return w
 	}
-	builder, err := v2report.New(state, now, config.Defaults(), options)
+	_, profileID, err := store.LoadWithProfile()
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedOptions := options
+	expectedOptions.Server.ProfileID = profileID
+	builder, err := v2report.New(state, now, config.Defaults(), expectedOptions)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -170,17 +243,17 @@ func TestAuthLimiterAndLoopbackOnly(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for i := 1; i <= 11; i++ {
+	for i := 1; i <= 12; i++ {
 		w := httptest.NewRecorder()
 		h.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/v2/status", nil))
 		expected := 401
-		if i == 11 {
+		if i >= 11 {
 			expected = 429
 		}
 		if w.Code != expected {
 			t.Fatalf("attempt %d: %d", i, w.Code)
 		}
-		if i == 11 && w.Header().Get("Retry-After") != "60" {
+		if i >= 11 && w.Header().Get("Retry-After") != "60" {
 			t.Fatal("missing retry header")
 		}
 	}

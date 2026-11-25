@@ -12,7 +12,7 @@ extension AppModel {
         #if DEBUG
         if let fixtureEditAPI { return fixtureEditAPI }
         #endif
-        return credentials.map { APIClient(baseURL: $0.url, token: $0.token) }
+        return credentials.map { client(for: $0) }
     }
     func replaceWorkout(id: String, date: String) {
         let route = Route.workout(id: id, date: date)

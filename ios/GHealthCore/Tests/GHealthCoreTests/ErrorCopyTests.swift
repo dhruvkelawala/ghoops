@@ -37,7 +37,7 @@ import Testing
 @Test func approvedErrorsKeepTheirCopyAndRecoverableErrorsStaySilent() {
     let clientErrors: [(ClientError, String)] = [
         (.unauthorized, "This phone is no longer paired with your Mac. Run ghoops pair on your Mac, then scan its code."),
-        (.rateLimited, "Your Mac is getting too many requests. Try again in a minute."),
+        (.rateLimited(retryAfter: 5), "Your Mac is getting too many requests. Try again in a minute."),
         (.storeUnavailable, "Your Mac can't open its saved health data. Log in on your Mac, then try again."),
         (.offline, "Can't reach your Mac over Tailscale. Is Tailscale on?"),
         (.incompatibleVersion, "Your Mac and this phone run different versions of ghoops. Update both to the same version."),
@@ -50,7 +50,6 @@ import Testing
         #expect(ErrorCopy.message(error, context: .refresh) == sentence)
     }
     let pairingErrors: [(PairingError, String)] = [
-        (.invalidLink, "Paste a valid ghoops pairing link from your Mac."),
         (.keychain(-1), "ghoops couldn't use the pairing saved on this phone. Run ghoops pair on your Mac, then scan its code."),
     ]
     for (error, sentence) in pairingErrors {

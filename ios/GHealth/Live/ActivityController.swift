@@ -6,9 +6,12 @@ import UIKit
 @MainActor @Observable final class ActivityController {
     var session: ActivitySession? { get { saved.session } set { saved.session = newValue } }
     /// Saved activities for the paired Mac. Rows for another Mac, or for no known Mac, are in `held`.
-    var local: [LocalActivity] { mac == nil ? [] : saved.local.filter { $0.mac == mac } }
+    var local: [LocalActivity] { saved.local.filter { mac?.matches($0.mac) == true } }
     /// Unsent activities for another Mac or no known Mac. They are never sent automatically.
-    var held: [LocalActivity] { saved.local.filter { $0.uploadState == .pending && $0.mac != mac } }
+    var held: [LocalActivity] { saved.local.filter { $0.uploadState == .pending && mac?.matches($0.mac) != true } }
+    var waitingForCurrentMac: Int {
+        local.count(where: { $0.uploadState != .uploaded }) + (mac?.matches(session?.mac) == true ? 1 : 0)
+    }
     private(set) var mac: PairedMac?
     var connection: HeartRateConnection = .searching
     var pickerPresented = false
@@ -22,6 +25,7 @@ import UIKit
     var onSaved: ((LocalActivity, Bool) -> Void)?
     var appActive = true
     private var canSend = false
+    var onProfileMismatch: (() -> Void)?
     var estimator = LiveEstimator(restingHR: nil, maximumHR: nil, model: nil)
     private let liveStatus = ActivityLiveStatus()
     private let store: ActivityStore
@@ -37,8 +41,8 @@ import UIKit
     private var collectorMinutes: Int?
     private var limits: EditLimits?
 
-    init(directory: URL) {
-        store = ActivityStore(directory: directory)
+    init(directory: URL, defaultsSuiteName: String? = nil) {
+        store = ActivityStore(directory: directory, defaultsSuiteName: defaultsSuiteName)
         saved = ActivityPersistence(store: store)
         source = BluetoothHeartRateSource()
         bindSource()
@@ -75,6 +79,29 @@ import UIKit
         self.mac = mac
         canSend = mac != nil && api != nil
         await store.bind(mac, api: api)
+    }
+    func clearForUnpair(discarding mac: PairedMac?) async throws {
+        try await store.deleteUploaded(now: now)
+        if let mac {
+            let discarded = session.flatMap { mac.matches($0.mac) ? $0 : nil }
+            if discarded != nil { session = nil }
+            do { try await store.discardPending(for: mac, now: now) }
+            catch {
+                if let discarded { session = discarded }
+                throw error
+            }
+            if let discarded {
+                source.stop(); livePresented = false
+                await liveStatus.end(session: discarded, estimate: estimator.estimate(discarded, now: now), now: now, saved: false)
+            }
+        }
+        saved.local = try await store.activities(now: now)
+        error = nil
+    }
+    func stampProfile(for mac: PairedMac) async throws {
+        session?.stampProfile(for: mac)
+        try await store.stampProfile(for: mac, now: now)
+        saved.local = try await store.activities(now: now)
     }
     func retrySavedData() async {
         guard !fixture, await saved.restore(now: now, protectedDataAvailable: UIApplication.shared.isProtectedDataAvailable) else { return }
@@ -130,20 +157,43 @@ import UIKit
     }
     func retryUploads() async {
         guard !fixture, canSend else { return }
+        let reportMismatch = onProfileMismatch
         do {
             let failed = try await store.retry(now: now)
             saved.local = try await store.activities(now: now)
             retryAt = failed ? now.addingTimeInterval(30) : nil
             error = nil
+        } catch ClientError.profileMismatch {
+            retryAt = nil
+            reportMismatch?()
         } catch { savedDataFailed(error); retryAt = now.addingTimeInterval(30) }
+    }
+    func adoptHeld(_ ids: Set<String>) async {
+        do {
+            try await store.adopt(ids: ids, now: now)
+            saved.local = try await store.activities(now: now)
+            error = nil
+            await retryUploads()
+        } catch { savedDataFailed(error) }
+    }
+    func discardHeld(_ ids: Set<String>) async {
+        do {
+            try await store.discard(ids: ids, now: now)
+            saved.local = try await store.activities(now: now)
+            error = nil
+        } catch { savedDataFailed(error) }
     }
     func delete(workout: Workout) async throws {
         let id = workout.id.replacingOccurrences(of: "goop-", with: "")
+        let reportMismatch = onProfileMismatch
         do {
             if !fixture {
                 guard canSend else { throw ClientError.unauthorized }
                 try await store.deleteOnMac(id: id, now: now)
             } else { try await store.delete(id: id, now: now) }
+        } catch ClientError.profileMismatch {
+            reportMismatch?()
+            throw ClientError.profileMismatch
         } catch {
             if SavedDataError.isPermissionError(error) { throw SavedDataError(error, area: .activities) }
             throw error
@@ -229,6 +279,7 @@ import UIKit
     }
     #if DEBUG
     func seedFixture(_ name: String) async {
+        if name == "held" { await seedHeldFixture(); return }
         guard let url = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: "Fixtures/live"), let data = try? Data(contentsOf: url), let seed = try? JSONDecoder().decode(LiveSeed.self, from: data) else { return }
         var s = makeSession(sport: .sport(seed.sport), start: now.addingTimeInterval(-seed.startOffset), cycleDate: day?.date)
         for (i, bpm) in seed.bpm.enumerated() { s.append(.init(t: s.start.addingTimeInterval(Double(i)), bpm: bpm)) }
@@ -242,6 +293,22 @@ import UIKit
             session = s; livePresented = true
             source.stop(); source = FixtureHeartRateSource(series: name == "no_hr" || name == "stale" ? [] : [seed.bpm.last ?? 72] + Array(seed.bpm.suffix(59))); bindSource(); source.start()
         }
+    }
+    private func seedHeldFixture() async {
+        let other = PairedMac(url: "https://mac-a.invalid", name: "Other Mac")
+        let entries: [(String, String, TimeInterval, PairedMac?)] = [
+            ("BOXING", "Fixture unsent boxing", 7200, other),
+            ("RUNNING", "Fixture unsent run", 3600, other),
+            ("WALKING", "Fixture unsent walk", 10800, nil),
+        ]
+        do {
+            for (sport, name, secondsAgo, origin) in entries {
+                let end = now.addingTimeInterval(-secondsAgo)
+                let upload = ActivityUpload(id: UUID().uuidString, exerciseType: sport, displayName: name, start: end.addingTimeInterval(-1800), end: end)
+                try await store.save(LocalActivity(upload: upload, cycleDate: day?.date, mac: origin), now: now)
+            }
+            saved.local = try await store.activities(now: now)
+        } catch { savedDataFailed(error) }
     }
     private struct LiveSeed: Decodable { var sport: String; var startOffset: Double; var bpm: [Double] }
     #endif

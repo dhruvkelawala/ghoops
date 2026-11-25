@@ -9,6 +9,7 @@ final class TwoMacs: @unchecked Sendable {
     struct Mac {
         var online = true
         var token = "token-1"
+        var status = Data()
         var snapshot = Data()
         var gated = false
         var log: [URLRequest] = []
@@ -62,6 +63,8 @@ final class TwoMacs: @unchecked Sendable {
             return .success((200, (try? JSONSerialization.data(withJSONObject: ["schema_version": 2, "kind": "activity_deleted", "id": id])) ?? Data()))
         case ("GET", "/v2/snapshot"):
             return .success((200, mac.snapshot))
+        case ("GET", "/v2/status"):
+            return .success((200, mac.status))
         default:
             return .success((404, Data()))
         }
@@ -110,7 +113,7 @@ let macB = PairedMac(url: "https://mac-b.invalid", name: "Mac B")
 func fakeMacClient(_ mac: PairedMac, token: String = "token-1") -> APIClient {
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [TwoMacStub.self]
-    return APIClient(baseURL: URL(string: mac.url)!, token: token, session: URLSession(configuration: config))
+    return APIClient(baseURL: URL(string: mac.url)!, token: token, profileId: mac.profile, session: URLSession(configuration: config))
 }
 
 private func isolationUpload(_ n: Int) throws -> ActivityUpload {
@@ -260,9 +263,9 @@ private func state(_ store: ActivityStore, _ id: String, now: Date) async throws
         await store.bind(macB, api: fakeMacClient(macB))
         var restored = try #require(try await store.restoreSession(now: start.addingTimeInterval(601)))
         #expect(restored.mac == macA)
-        #expect(restored.blocksPairing(with: macB.url))
-        #expect(!restored.blocksPairing(with: macA.url))
-        #expect(ActivitySession(sport: .all[0], now: start).blocksPairing(with: macA.url))
+        #expect(restored.blocksPairing(with: macB))
+        #expect(!restored.blocksPairing(with: macA))
+        #expect(ActivitySession(sport: .all[0], now: start).blocksPairing(with: macA))
         restored.finish(at: start.addingTimeInterval(600))
         let entry = LiveEstimator(restingHR: nil, maximumHR: nil, model: nil).localActivity(restored, now: start.addingTimeInterval(600))
         #expect(entry.mac == macA)
@@ -275,17 +278,162 @@ private func state(_ store: ActivityStore, _ id: String, now: Date) async throws
 }
 
 /// The paired URL as the App Group defaults hold it, switchable mid-test.
-private final class PairedURL: @unchecked Sendable {
+private final class PairingBinding: @unchecked Sendable {
     private let lock = NSLock()
-    private var url: String?
-    init(_ url: String?) { self.url = url }
-    var value: String? { get { lock.withLock { url } } set { lock.withLock { url = newValue } } }
+    private var url: PairedMac?
+    init(_ url: PairedMac?) { self.url = url }
+    var value: PairedMac? { get { lock.withLock { url } } set { lock.withLock { url = newValue } } }
 }
 
-private func fakeSnapshot(at time: String) throws -> Data {
+private func fakeSnapshot(at time: String, profile: String? = nil) throws -> Data {
     var body = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: fixtureRoot.appendingPathComponent("preview/snapshot_fresh.json"))) as? [String: Any])
     body["generated_at"] = time
+    if let profile {
+        let status = try #require(body["status"] as? [String: Any])
+        body["status"] = try statusWithProfile(status, profile: profile)
+    }
     return try JSONSerialization.data(withJSONObject: body)
+}
+
+private func statusWithProfile(_ body: [String: Any], profile: String) throws -> [String: Any] {
+    var status = body
+    var server = try #require(status["server"] as? [String: Any])
+    server["profile_id"] = profile
+    status["server"] = server
+    return status
+}
+
+private func fakeStatus(profile: String) throws -> Data {
+    var body = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: fixtureRoot.appendingPathComponent("status_full.json"))) as? [String: Any])
+    body.removeValue(forKey: "synthetic_fixture")
+    return try JSONSerialization.data(withJSONObject: statusWithProfile(body, profile: profile))
+}
+
+private let oldProfile = PairedMac(url: macA.url, name: macA.name, profile: "fixture-profile-a")
+private let replacementProfile = PairedMac(url: macA.url, name: macA.name, profile: "fixture-profile-b")
+private let renamedProfile = PairedMac(url: macB.url, name: macB.name, profile: "fixture-profile-a")
+
+extension PairingIsolationTests {
+    @Test func replacementProfileAtSameAddressHoldsPendingWorkout() async throws {
+        macs.reset()
+        let profile = try #require(replacementProfile.profile)
+        let status = try fakeStatus(profile: profile)
+        macs.update("mac-a.invalid") { $0.status = status }
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = ActivityStore(directory: dir)
+        let upload = try isolationUpload(1)
+        let now = upload.end
+        try await store.save(LocalActivity(upload: upload, mac: oldProfile), now: now)
+        await store.bind(replacementProfile, api: fakeMacClient(replacementProfile))
+        _ = try await store.retry(now: now)
+        #expect(try await store.held(now: now).map(\.id) == [upload.id])
+        #expect(macs.posts("mac-a.invalid").isEmpty)
+    }
+
+    @Test func renamedMacSendsItsPendingWorkout() async throws {
+        macs.reset()
+        let profile = try #require(renamedProfile.profile)
+        let status = try fakeStatus(profile: profile)
+        macs.update("mac-b.invalid") { $0.status = status }
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = ActivityStore(directory: dir)
+        let upload = try isolationUpload(1)
+        let now = upload.end
+        try await store.save(LocalActivity(upload: upload, mac: oldProfile), now: now)
+        await store.bind(renamedProfile, api: fakeMacClient(renamedProfile))
+        _ = try await store.retry(now: now)
+        #expect(macs.posts("mac-b.invalid") == [upload.id])
+        #expect(try await state(store, upload.id, now: now) == .uploaded)
+    }
+
+    @Test func firstStatusStampsLegacyPendingWorkoutAndSession() async throws {
+        macs.reset()
+        let profile = try #require(oldProfile.profile)
+        let status = try fakeStatus(profile: profile)
+        macs.update("mac-a.invalid") { $0.status = status }
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = ActivityStore(directory: dir)
+        let upload = try isolationUpload(1)
+        let now = upload.end
+        try await store.save(LocalActivity(upload: upload, mac: macA), now: now)
+        let session = ActivitySession(sport: .all[0], now: now, mac: macA)
+        try await store.saveSession(session, now: now)
+
+        let records = MemoryPairingRecords()
+        try records.save(PairingRecord(url: URL(string: macA.url)!, credential: "token-1", name: macA.name))
+        let suite = "pairing-isolation-\(UUID())"
+        defer { UserDefaults(suiteName: suite)?.removePersistentDomain(forName: suite) }
+        let pairing = PairingRepository(suiteName: suite, tokens: MemoryTokens(), records: records)
+        let prior = try #require(try await pairing.credentials())
+        let reported = try #require(try await fakeMacClient(macA).status().server.profileId)
+        let stamped = try await pairing.stampProfile(reported, for: prior)
+        try await store.stampProfile(for: stamped.mac, now: now)
+        #expect(try records.load()?.profileId == profile)
+        #expect(try await store.activities(now: now).first?.mac?.profile == profile)
+        #expect(try await store.restoreSession(now: now)?.mac?.profile == profile)
+
+        await store.bind(stamped.mac, api: fakeMacClient(stamped.mac))
+        _ = try await store.retry(now: now)
+        #expect(macs.posts("mac-a.invalid") == [upload.id])
+    }
+
+    @Test func cacheFollowsProfileAcrossRenameOnly() async throws {
+        macs.reset()
+        let body = try fakeSnapshot(at: "2026-03-10T08:00:00Z", profile: try #require(oldProfile.profile))
+        macs.update("mac-a.invalid") { $0.snapshot = body }
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let paired = PairingBinding(oldProfile)
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { paired.value })
+        _ = try await SnapshotRefresher().refresh(client: fakeMacClient(oldProfile), store: store)
+        paired.value = renamedProfile
+        #expect(try await store.load()?.meta.profileId == renamedProfile.profile)
+        paired.value = replacementProfile
+        #expect(try await store.load() == nil)
+    }
+
+    @Test func workingCredentialOnAnotherProfileCannotUpload() async throws {
+        macs.reset()
+        let profile = try #require(replacementProfile.profile)
+        let status = try fakeStatus(profile: profile)
+        macs.update("mac-a.invalid") { $0.status = status }
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = ActivityStore(directory: dir)
+        let upload = try isolationUpload(1)
+        let now = upload.end
+        let client = fakeMacClient(oldProfile)
+        try await store.save(LocalActivity(upload: upload, mac: oldProfile), now: now)
+        await store.bind(oldProfile, api: client)
+        await #expect(throws: ClientError.profileMismatch) { try await client.status() }
+        await #expect(throws: ClientError.profileMismatch) { try await store.retry(now: now) }
+        #expect(ClientError.profileMismatch.invalidatesPairing)
+        #expect(macs.posts("mac-a.invalid").isEmpty)
+        #expect(try await state(store, upload.id, now: now) == .pending)
+    }
+
+    @Test func pendingChangesFollowProfileAcrossRenameOnly() async throws {
+        let dir = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let upload = try isolationUpload(1)
+        let queue = ChangeQueue(directory: dir, serverURL: oldProfile.url)
+        let change = PendingChange(kind: .add, request: .postActivity(upload), targets: [upload.id],
+                                   cycleDates: [], name: upload.displayName, serverURL: oldProfile.url, createdAt: upload.end)
+        try await queue.load()
+        try await queue.submit(change)
+        try await queue.bind(to: oldProfile)
+
+        let renamed = ChangeQueue(directory: dir, serverURL: renamedProfile.url, profileId: renamedProfile.profile)
+        let retained = try await renamed.load()
+        #expect(retained.map(\.id) == [change.id])
+        #expect(retained.first?.serverURL == renamedProfile.url)
+
+        let replacement = ChangeQueue(directory: dir, serverURL: renamedProfile.url, profileId: replacementProfile.profile)
+        #expect(try await replacement.load().isEmpty)
+    }
 }
 
 private func isCancellation(_ error: Error) -> Bool { error is CancellationError || (error as? URLError)?.code == .cancelled }
@@ -305,12 +453,12 @@ extension PairingIsolationTests {
     @Test func lateRefreshForMacACannotFillMacBCache() async throws {
         let times = try fakeMacsWithSnapshots(); macs.gate("mac-a.invalid")
         let dir = isolationDirectory(); defer { try? FileManager.default.removeItem(at: dir) }
-        let paired = PairedURL(macA.url)
-        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedURL: { paired.value })
+        let paired = PairingBinding(macA)
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { paired.value })
         let app = SnapshotRefresher(), widget = SnapshotRefresher()
         let lateA = Task { try await app.refresh(client: fakeMacClient(macA), store: store) }
         try await macs.waitForRequests("mac-a.invalid", count: 1)
-        paired.value = macB.url
+        paired.value = macB
         let fetchedB = try await widget.refresh(client: fakeMacClient(macB), store: store)
         #expect(fetchedB.meta.serverUrl == macB.url)
         macs.release("mac-a.invalid")
@@ -325,12 +473,12 @@ extension PairingIsolationTests {
     @Test func refreshForMacBCancelsMacAFlight() async throws {
         let times = try fakeMacsWithSnapshots(); macs.gate("mac-a.invalid")
         let dir = isolationDirectory(); defer { try? FileManager.default.removeItem(at: dir) }
-        let paired = PairedURL(macA.url)
-        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedURL: { paired.value })
+        let paired = PairingBinding(macA)
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { paired.value })
         let refresher = SnapshotRefresher()
         let flightA = Task { try await refresher.refresh(client: fakeMacClient(macA), store: store) }
         try await macs.waitForRequests("mac-a.invalid", count: 1)
-        paired.value = macB.url
+        paired.value = macB
         let fetchedB = try await refresher.refresh(client: fakeMacClient(macB), store: store)
         #expect(fetchedB.snapshot.generatedAt == times.b)
         do { _ = try await flightA.value; Issue.record("B's caller joined A's flight") }
@@ -344,7 +492,7 @@ extension PairingIsolationTests {
     @Test func sameMacOfflineKeepsItsCache() async throws {
         let times = try fakeMacsWithSnapshots()
         let dir = isolationDirectory(); defer { try? FileManager.default.removeItem(at: dir) }
-        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedURL: { macA.url })
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { macA })
         let refresher = SnapshotRefresher()
         _ = try await refresher.refresh(client: fakeMacClient(macA), store: store)
         macs.update("mac-a.invalid") { $0.online = false }
@@ -362,7 +510,7 @@ extension PairingIsolationTests {
     @Test func sameMacRefreshesShareAndSurviveRotation() async throws {
         let times = try fakeMacsWithSnapshots(); macs.gate("mac-a.invalid")
         let dir = isolationDirectory(); defer { try? FileManager.default.removeItem(at: dir) }
-        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedURL: { macA.url })
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { macA })
         let refresher = SnapshotRefresher()
         async let first = refresher.refresh(client: fakeMacClient(macA), store: store)
         async let second = refresher.refresh(client: fakeMacClient(macA), store: store)
@@ -379,23 +527,42 @@ extension PairingIsolationTests {
         #expect(try await store.load()?.meta.serverUrl == macA.url)
     }
 
+    @Test func refreshedCredentialDoesNotJoinAnOlderRequestForTheSameMac() async throws {
+        _ = try fakeMacsWithSnapshots()
+        macs.gate("mac-a.invalid")
+        let directory = isolationDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = SnapshotStore(directory: directory, allowSynthetic: true, pairedMac: { macA })
+        let refresher = SnapshotRefresher()
+        let original = Task { try await refresher.refresh(client: fakeMacClient(macA), store: store) }
+        try await macs.waitForRequests("mac-a.invalid", count: 1)
+        macs.update("mac-a.invalid") { $0.token = "token-2" }
+        let replacement = Task { try await refresher.refresh(client: fakeMacClient(macA, token: "token-2"), store: store) }
+        try await macs.waitForRequests("mac-a.invalid", count: 2)
+        macs.release("mac-a.invalid")
+
+        #expect(try await replacement.value.meta.serverUrl == macA.url)
+        do { _ = try await original.value; Issue.record("The replaced request completed") }
+        catch { #expect(isCancellation(error)) }
+    }
+
     /// A8: the cache is never read or written for a Mac that is not paired.
     @Test func cacheIsOnlyReadAndWrittenForThePairedMac() async throws {
         _ = try fakeMacsWithSnapshots()
         let dir = isolationDirectory(); defer { try? FileManager.default.removeItem(at: dir) }
-        let paired = PairedURL(macA.url)
-        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedURL: { paired.value })
+        let paired = PairingBinding(macA)
+        let store = SnapshotStore(directory: dir, allowSynthetic: true, pairedMac: { paired.value })
         let body = try fakeSnapshot(at: "2026-03-10T08:00:00Z")
-        _ = try await store.save(body, serverURL: macA.url, fetchedAt: .now)
-        let file = dir.appendingPathComponent("snapshot-cache.json")
+        _ = try await store.save(body, from: macA, fetchedAt: .now)
+        let file = dir.appendingPathComponent("Cache/snapshot-cache.json")
         let before = try Data(contentsOf: file)
-        paired.value = macB.url
+        paired.value = macB
         #expect(try await store.load() == nil)
-        await #expect(throws: CancellationError.self) { try await store.save(body, serverURL: macA.url, fetchedAt: .now) }
+        await #expect(throws: CancellationError.self) { try await store.save(body, from: macA, fetchedAt: .now) }
         #expect(try Data(contentsOf: file) == before)
         paired.value = nil
         #expect(try await store.load() == nil)
-        paired.value = macA.url
+        paired.value = macA
         #expect(try await store.load()?.meta.serverUrl == macA.url)
     }
 }

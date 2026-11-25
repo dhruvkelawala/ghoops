@@ -19,12 +19,19 @@ func (a *app) schedule(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	manager := schedule.Manager{Home: home}
+	manager := schedule.Manager{Home: home, Run: a.options.Launchctl}
 	switch args[0] {
-	case "install":
-		err = manager.Install(ctx)
-	case "uninstall":
-		err = manager.Uninstall(ctx)
+	case "install", "uninstall":
+		if a.dir != defaultStateDir(home) {
+			failure := v2report.NewError("invalid_request")
+			failure.Message = "schedule manages only the default profile"
+			return failure
+		}
+		if args[0] == "install" {
+			err = manager.Install(ctx)
+		} else {
+			err = manager.Uninstall(ctx)
+		}
 	case "status":
 	default:
 		return usageError{"unknown schedule command"}
@@ -32,5 +39,5 @@ func (a *app) schedule(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	return a.emit(v2report.Schedule{Envelope: v2report.CommandEnvelope("schedule", a.now), Agents: manager.Status(ctx)})
+	return a.emit(v2report.Schedule{Envelope: v2report.CommandEnvelope("schedule", a.now), Profile: "default", Agents: manager.Status(ctx)})
 }

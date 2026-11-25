@@ -13,8 +13,8 @@ import (
 )
 
 func TestCoreImageQRRoundTrip(t *testing.T) {
-	link := "ghealth://pair?v=1&url=https%3A%2F%2Fsynthetic.ts.net%3A8787&token=ghv2_synthetic_00000000000000000000000000000000000&name=Synthetic"
-	matrix, err := pairing.Matrix(link)
+	payload := "GHOOPS1 https://mac-a.invalid:8787 " + strings.Repeat("A", 43)
+	matrix, err := pairing.Matrix(payload)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,7 +45,7 @@ print(text, terminator: "")
 	if err != nil {
 		t.Fatalf("CIDetector: %v %s", err, stderr.String())
 	}
-	if string(data) != link {
-		t.Fatalf("QR did not decode to original link: got %d bytes, stderr %q", len(data), stderr.String())
+	if string(data) != payload {
+		t.Fatalf("QR did not decode to original payload: got %d bytes, stderr %q", len(data), stderr.String())
 	}
 }

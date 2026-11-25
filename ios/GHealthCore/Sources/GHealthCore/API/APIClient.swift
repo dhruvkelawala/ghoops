@@ -4,12 +4,23 @@ import FoundationNetworking
 #endif
 
 public enum ClientError: Error, Equatable, LocalizedError, Sendable {
-    case unauthorized, rateLimited, storeUnavailable, offline, timedOut, incompatibleVersion, rejected, notFound, conflict
+    case unauthorized, profileMismatch, storeUnavailable, offline, timedOut, incompatibleVersion, rejected, notFound, conflict
+    case rateLimited(retryAfter: TimeInterval?)
     case http(Int)
+
+    public var invalidatesPairing: Bool { self == .unauthorized || self == .profileMismatch }
+
+    var rateLimitDelay: TimeInterval? {
+        switch self {
+        case .rateLimited(let retryAfter): retryAfter ?? ChangeTiming.retryInterval
+        case .http(429): ChangeTiming.retryInterval
+        default: nil
+        }
+    }
 
     public var errorDescription: String? {
         switch self {
-        case .unauthorized: "This phone is no longer paired with your Mac. Run ghoops pair on your Mac, then scan its code."
+        case .unauthorized, .profileMismatch: "This phone is no longer paired with your Mac. Run ghoops pair on your Mac, then scan its code."
         case .rateLimited: "Your Mac is getting too many requests. Try again in a minute."
         case .storeUnavailable: "Your Mac can't open its saved health data. Log in on your Mac, then try again."
         case .offline: "Can't reach your Mac over Tailscale. Is Tailscale on?"
@@ -32,6 +43,14 @@ public enum ClientError: Error, Equatable, LocalizedError, Sendable {
         default: return nil
         }
     }
+
+    static func rateLimited(from response: HTTPURLResponse) -> Self {
+        guard let value = response.value(forHTTPHeaderField: "Retry-After")?.trimmingCharacters(in: .whitespaces),
+              !value.isEmpty, value.utf8.allSatisfy({ (48...57).contains($0) }) else {
+            return .rateLimited(retryAfter: nil)
+        }
+        return .rateLimited(retryAfter: min(300, max(1, TimeInterval(value) ?? 300)))
+    }
 }
 
 public protocol ActivityAPI: Sendable {
@@ -47,14 +66,23 @@ public struct APIClient: DaysFetching, WeekFetching, ActivityAPI, EditAPI {
     private static let widgetSession = URLSession(configuration: configuration(timeout: 10))
     public let baseURL: URL
     private let token: String
+    let mac: PairedMac
+    private let onUnauthorized: (@Sendable () async -> Void)?
 
-    public init(baseURL: URL, token: String, widget: Bool = false, session: URLSession? = nil) {
+    public init(baseURL: URL, token: String, profileId: String? = nil, widget: Bool = false, session: URLSession? = nil,
+                onUnauthorized: (@Sendable () async -> Void)? = nil) {
         self.baseURL = baseURL
         self.token = token
+        self.mac = PairedMac(url: baseURL.absoluteString, name: "", profile: profileId)
         self.session = session ?? (widget ? Self.widgetSession : Self.appSession)
+        self.onUnauthorized = onUnauthorized
     }
 
-    private static func configuration(timeout: TimeInterval) -> URLSessionConfiguration {
+    func sharesSnapshotRequest(with other: Self) -> Bool {
+        token == other.token && mac.url == other.mac.url && mac.matches(other.mac)
+    }
+
+    static func configuration(timeout: TimeInterval) -> URLSessionConfiguration {
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = timeout
         config.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -65,7 +93,9 @@ public struct APIClient: DaysFetching, WeekFetching, ActivityAPI, EditAPI {
     }
 
     public func status() async throws -> Status {
-        try await read(Status.self, path: "status")
+        let status = try await read(Status.self, path: "status")
+        try mac.checkProfile(status.server.profileId)
+        return status
     }
 
     public func days(_ count: Int) async throws -> Days {
@@ -148,7 +178,7 @@ public struct APIClient: DaysFetching, WeekFetching, ActivityAPI, EditAPI {
 
     public func snapshot(into store: SnapshotStore, now: Date = .now) async throws -> CachedSnapshot {
         let data = try await snapshotData()
-        return try await store.save(data, serverURL: baseURL.absoluteString, fetchedAt: now)
+        return try await store.save(data, from: mac, fetchedAt: now)
     }
 
     public func snapshotData() async throws -> Data { try await get(path: "snapshot") }
@@ -169,6 +199,10 @@ public struct APIClient: DaysFetching, WeekFetching, ActivityAPI, EditAPI {
         try await send(path: path, query: query)
     }
     private func send(path: String, query: [URLQueryItem] = [], method: String = "GET", body: Data? = nil) async throws -> Data {
+        if method != "GET", mac.profile != nil {
+            _ = try await status()
+            try Task.checkCancellation()
+        }
         var components = URLComponents(url: baseURL.appendingPathComponent("v2/\(path)"), resolvingAgainstBaseURL: false)!
         if !query.isEmpty { components.queryItems = query }
         var request = URLRequest(url: components.url!)
@@ -177,18 +211,16 @@ public struct APIClient: DaysFetching, WeekFetching, ActivityAPI, EditAPI {
         if body != nil { request.setValue("application/json", forHTTPHeaderField: "Content-Type") }
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        let data: Data
-        let response: URLResponse
-        do { (data, response) = try await session.data(for: request) }
-        catch { throw ClientError.transportError(error) ?? error }
-        guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+        let (data, http) = try await MacTransport.response(for: request, in: session)
         switch http.statusCode {
         case 200..<300: return data
         case 400: throw ClientError.rejected
         case 404: throw ClientError.notFound
         case 409: throw ClientError.conflict
-        case 401: throw ClientError.unauthorized
-        case 429: throw ClientError.rateLimited
+        case 401:
+            await onUnauthorized?()
+            throw ClientError.unauthorized
+        case 429: throw ClientError.rateLimited(from: http)
         default:
             let body = try? JSONCoding.decoder().decode(APIError.self, from: data)
             if body?.error.code == "store_unavailable" { throw ClientError.storeUnavailable }

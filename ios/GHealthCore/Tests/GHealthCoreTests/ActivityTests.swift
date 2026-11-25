@@ -35,6 +35,17 @@ private let measurementCases: [([UInt8], Int?)] = [
     #expect(HeartRateMeasurement.parse(Data(bytes)) == expected)
 }
 
+@Test func aNewHeartRateSensorNeedsAChoice() {
+    let remembered = HeartRateDevice(id: UUID(), name: "Known monitor")
+    let first = HeartRateDevice(id: UUID(), name: "First monitor")
+    let second = HeartRateDevice(id: UUID(), name: "Second monitor")
+
+    #expect(SensorChoice.decide(remembered: remembered.id, discovered: [remembered]) == .connect(remembered.id))
+    #expect(SensorChoice.decide(remembered: nil, discovered: [first]) == .ask([first]))
+    #expect(SensorChoice.decide(remembered: remembered.id, discovered: [second, first]) == .ask([first, second]))
+    #expect(SensorChoice.decide(remembered: remembered.id, discovered: [first, remembered, second]) == .connect(remembered.id))
+}
+
 @Test func sessionTimingLimitsAndRestore() async throws {
     let now = Date(timeIntervalSince1970: 1_800_000_000)
     let limits = try reportedEditLimits()
@@ -252,8 +263,10 @@ func activityLaunchReadRecoversWithoutLosingSession(_ name: String) async throws
 
 private actor ActivityAPIStub: ActivityAPI {
     var error: ClientError?
+    private(set) var posts: [String] = []
     init(error: ClientError?) { self.error = error }
     func postActivity(_ activity: ActivityUpload) async throws -> ActivityRecord {
+        posts.append(activity.id)
         if let error { throw error }
         var body = try #require(JSONSerialization.jsonObject(with: JSONCoding.encoder().encode(activity)) as? [String: Any])
         body["created_at"] = ISO8601DateFormatter().string(from: activity.end)
@@ -262,12 +275,13 @@ private actor ActivityAPIStub: ActivityAPI {
     func deleteActivity(id: String) async throws {}
 }
 
-@Test(arguments: [nil, ClientError.http(409), .http(400), .http(403), .unauthorized, .offline, .http(503)])
+@Test(arguments: [nil, ClientError.http(409), .http(400), .http(403), .unauthorized, .offline, .http(503), .rateLimited(retryAfter: nil)])
 func activityQueuePersistsUploadResults(_ error: ClientError?) async throws {
     let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: dir) }
     let upload = try JSONCoding.decoder().decode(ActivityUpload.self, from: Data(contentsOf: fixtureRoot.appendingPathComponent("activities/valid.json")))
-    let store = ActivityStore(directory: dir)
+    let clock = QueueClock(upload.end)
+    let store = ActivityStore(directory: dir, clock: clock.now)
     let mac = PairedMac(url: "https://fixture.invalid", name: "Fixture Mac")
     try await store.save(LocalActivity(upload: upload, mac: mac), now: upload.end)
     await store.bind(mac, api: ActivityAPIStub(error: error))
@@ -278,10 +292,102 @@ func activityQueuePersistsUploadResults(_ error: ClientError?) async throws {
     #expect(failed == (expected == .pending && error != .unauthorized))
     if expected == .pending {
         await store.bind(mac, api: ActivityAPIStub(error: nil))
+        clock.advance(by: ChangeTiming.retryInterval)
         _ = try await store.retry(now: upload.end)
     }
     entries = try await store.activities(now: upload.end.addingTimeInterval(8 * 86400))
     #expect(entries.count == (expected == .rejected ? 1 : 0))
+}
+
+@Test(arguments: [TimeInterval?(5), nil])
+func activityQueueWaitsAfterRateLimit(_ retryAfter: TimeInterval?) async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let first: ActivityUpload = try fixture("activities/valid.json", as: ActivityUpload.self)
+    var second = first
+    second.id = "second"
+    let clock = QueueClock(first.end)
+    let store = ActivityStore(directory: directory, clock: clock.now)
+    let mac = PairedMac(url: "https://mac-a.invalid", name: "Mac A")
+    for upload in [first, second] { try await store.save(LocalActivity(upload: upload, mac: mac), now: clock.now()) }
+    let limited = ActivityAPIStub(error: .rateLimited(retryAfter: retryAfter))
+    await store.bind(mac, api: limited)
+    #expect(try await store.retry(now: clock.now()))
+    #expect(await limited.posts == [first.id])
+    #expect(try await store.activities(now: clock.now()).map(\.uploadState) == [.pending, .pending])
+
+    let ready = ActivityAPIStub(error: nil)
+    await store.bind(mac, api: ready)
+    clock.advance(by: (retryAfter ?? ChangeTiming.retryInterval) - 1)
+    #expect(try await store.retry(now: clock.now()))
+    #expect(await ready.posts.isEmpty)
+    clock.advance(by: 1)
+    #expect(!(try await store.retry(now: clock.now())))
+    #expect(await ready.posts == [first.id, second.id])
+    #expect(try await store.activities(now: clock.now()).map(\.uploadState) == [.uploaded, .uploaded])
+}
+
+@MainActor @Test func activityStartupResetsRejectedRowsOnce() async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let suite = "ghealth-test-\(UUID())"
+    defer { UserDefaults(suiteName: suite)?.removePersistentDomain(forName: suite) }
+    let upload: ActivityUpload = try fixture("activities/valid.json", as: ActivityUpload.self)
+    let mac = PairedMac(url: "https://mac-a.invalid", name: "Mac A")
+    let store = ActivityStore(directory: directory, defaultsSuiteName: suite)
+    try await store.save(LocalActivity(upload: upload, uploadState: .rejected, mac: mac), now: upload.end)
+    var other = upload
+    other.id = "uploaded"
+    try await store.save(LocalActivity(upload: other, uploadState: .uploaded, mac: mac), now: upload.end)
+
+    let firstLaunch = ActivityPersistence(store: store)
+    #expect(await firstLaunch.restore(now: upload.end, protectedDataAvailable: true))
+    #expect(firstLaunch.local.map(\.uploadState) == [.pending, .uploaded])
+    let invalid = ActivityAPIStub(error: .http(400))
+    await store.bind(mac, api: invalid)
+    #expect(!(try await store.retry(now: upload.end)))
+    #expect(await invalid.posts == [upload.id])
+
+    let restarted = ActivityStore(directory: directory, defaultsSuiteName: suite)
+    let secondLaunch = ActivityPersistence(store: restarted)
+    #expect(await secondLaunch.restore(now: upload.end, protectedDataAvailable: true))
+    #expect(secondLaunch.local.map(\.uploadState) == [.rejected, .uploaded])
+}
+
+@Test(arguments: [false, true]) func unpairRemovesUploadedAndKeepsOrDiscardsTheCurrentMacsWork(_ discard: Bool) async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let upload: ActivityUpload = try fixture("activities/valid.json", as: ActivityUpload.self)
+    let mac = PairedMac(url: "https://mac-a.invalid", name: "Mac A")
+    let otherMac = PairedMac(url: "https://mac-b.invalid", name: "Mac B")
+    var other = upload; other.id = "other"
+    var uploaded = upload; uploaded.id = "uploaded"
+    let legacyRows = [
+        LocalActivity(upload: upload, mac: mac),
+        LocalActivity(upload: other, mac: otherMac),
+        LocalActivity(upload: uploaded, uploadState: .uploaded, mac: mac),
+    ]
+    let localFile = directory.appendingPathComponent("activities-local.json")
+    try JSONCoding.encoder().encode(legacyRows).write(to: localFile)
+    let store = ActivityStore(directory: directory)
+    try await store.saveSession(ActivitySession(sport: .all[0], now: upload.end, mac: mac), now: upload.end)
+    #expect(try await store.activities(now: upload.end).count == 3)
+    let backing = try JSONCoding.decoder().decode([LocalActivity].self, from: Data(contentsOf: localFile))
+    #expect(Set(backing.map(\.id)) == [upload.id, other.id])
+    #expect(try directory.appendingPathComponent("Cache").resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup == true)
+
+    try await store.deleteUploaded(now: upload.end)
+    if discard { try await store.discardPending(for: mac, now: upload.end) }
+    let reopened = ActivityStore(directory: directory)
+    #expect(Set(try await reopened.held(now: upload.end).map(\.id)) == (discard ? [other.id] : [upload.id, other.id]))
+    #expect(try await reopened.restoreSession(now: upload.end)?.mac == (discard ? nil : mac))
+
+    let api = ActivityAPIStub(error: nil)
+    await reopened.bind(mac, api: api)
+    #expect(!(try await reopened.retry(now: upload.end)))
+    #expect(await api.posts == (discard ? [] : [upload.id]))
+    #expect(try await reopened.held(now: upload.end).map(\.id) == [other.id])
 }
 
 private actor DelayedActivityAPI: ActivityAPI {

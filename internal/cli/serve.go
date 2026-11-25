@@ -3,6 +3,8 @@ package cli
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/dhruvkelawala/ghoops/internal/pairing"
@@ -19,11 +21,12 @@ func (a *app) serve(ctx context.Context, args []string) error {
 	if *port < 1024 || *port > 65535 {
 		return usageError{"port must be 1024 to 65535"}
 	}
-	file, err := configFile()
+	file, err := configFile(a.dir)
 	if err != nil {
 		return err
 	}
-	handler, err := serve.New(serve.Settings{Store: store2.Store{Dir: a.dir, Vault: a.store.Vault}, Config: file, Tokens: pairing.Tokens{Dir: a.dir, Vault: a.store.Vault}, Options: a.reportOptions, Now: time.Now, Log: a.err})
+	hostname, _ := os.Hostname()
+	handler, err := serve.New(serve.Settings{Store: store2.Store{Dir: a.dir, Vault: a.store.Vault}, Config: file, Tokens: pairing.Tokens{Dir: a.dir, Vault: a.store.Vault}, Options: a.reportOptions, Now: time.Now, Log: a.err, MacName: strings.TrimSuffix(hostname, ".local")})
 	if err != nil {
 		return err
 	}

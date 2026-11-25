@@ -12,8 +12,8 @@ public struct TrendWindow: Sendable, Equatable {
     public func canPrevious(oldestDate: String?) -> Bool { oldestDate.map { prior.end >= $0 } ?? false }
     public func canNext(defaultDate: String) -> Bool { end < defaultDate }
     public func next(defaultDate: String) -> TrendWindow { TrendWindow(range: range, end: min(GoopFormat.addingDays(range.length, to: end), defaultDate)) }
-    public func summary(rows: [DayRow], metric: TrendMetricKey) -> (mean: Double?, available: Int) {
-        let values = rows.filter { $0.date >= start && $0.date <= end }.compactMap { metric.value($0) }
+    public func summary(rows: [DayRow], metric: TrendMetricKey, composite: Bool = false) -> (mean: Double?, available: Int) {
+        let values = rows.filter { $0.date >= start && $0.date <= end }.compactMap { metric.value($0, composite: composite) }
         guard !values.isEmpty else { return (nil, 0) }
         return (GoopFormat.rounded(values.reduce(0, +) / Double(values.count), decimals: metric.decimals), values.count)
     }

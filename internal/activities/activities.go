@@ -20,6 +20,14 @@ import (
 	"github.com/dhruvkelawala/ghoops/internal/secure"
 )
 
+const (
+	MaxFileBytes = 16 << 20
+	MaxReadBytes = 64 << 20
+	fileName     = "activities-v2.enc"
+	header       = "ghealth-cache-v2\n"
+	fileRole     = "activities"
+)
+
 type Pause struct {
 	Start time.Time `json:"start"`
 	End   time.Time `json:"end"`
@@ -49,6 +57,7 @@ func (e *ValidationError) Error() string { return "Invalid activity field: " + e
 
 var ErrConflict = errors.New("activity conflict")
 var ErrNotFound = errors.New("activity not found")
+var ErrCapacity = errors.New("activity file exceeds capacity")
 var uuid = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 var Sports = map[string]string{"BOXING": "Boxing", "KICKBOXING": "Kickboxing", "MARTIAL_ARTS": "Martial Arts", "WALKING": "Walking", "RUNNING": "Running", "WEIGHTLIFTING": "Weightlifting", "BIKING": "Cycling", "HIIT": "HIIT", "YOGA": "Yoga", "SWIMMING": "Swimming", "HIKING": "Hiking", "OTHER": "Other"}
 
@@ -183,43 +192,9 @@ func (s Store) List() ([]Record, error) {
 }
 func (s Store) Load() (Book, error) {
 	book := Book{Activities: []Record{}, Edits: []Edit{}, SleepEdits: []SleepEdit{}, Ratings: []Rating{}}
-	if _, err := os.Lstat(s.Dir); errors.Is(err, os.ErrNotExist) {
-		return book, nil
-	}
-	if err := secure.PrivateDir(s.Dir); err != nil {
-		return Book{}, err
-	}
-	f, err := secure.OpenPrivate(filepath.Join(s.Dir, "activities-v2.enc"), os.O_RDONLY)
-	if errors.Is(err, os.ErrNotExist) {
-		return book, nil
-	}
+	body, _, err := s.read()
 	if err != nil {
 		return Book{}, err
-	}
-	defer f.Close()
-	b, err := io.ReadAll(io.LimitReader(f, 16<<20+1))
-	if err != nil || len(b) > 16<<20 {
-		return Book{}, errors.New("cannot read activities")
-	}
-	aead, err := s.aead(false)
-	if err != nil {
-		return Book{}, err
-	}
-	const header = "ghealth-cache-v2\n"
-	n := len(header)
-	if len(b) < n+aead.NonceSize()+aead.Overhead() || string(b[:n]) != header {
-		return Book{}, errors.New("invalid activities envelope")
-	}
-	plain, err := aead.Open(nil, b[n:n+aead.NonceSize()], b[n+aead.NonceSize():], []byte(header+secure.Service(s.Dir)))
-	if err != nil {
-		return Book{}, errors.New("activities authentication failed")
-	}
-	var body struct {
-		Version int `json:"version"`
-		Book
-	}
-	if json.Unmarshal(plain, &body) != nil || body.Version != 1 {
-		return Book{}, errors.New("invalid activities schema")
 	}
 	for _, row := range body.Activities {
 		row.Upload = row.Upload.clean()
@@ -238,6 +213,47 @@ func (s Store) Load() (Book, error) {
 	sort.Slice(book.Activities, func(i, j int) bool { return book.Activities[i].Start.Before(book.Activities[j].Start) })
 	sort.Slice(book.Edits, func(i, j int) bool { return book.Edits[i].ID < book.Edits[j].ID })
 	return book, nil
+}
+func (s Store) read() (Book, int, error) {
+	if _, err := os.Lstat(s.Dir); errors.Is(err, os.ErrNotExist) {
+		return Book{}, 0, nil
+	}
+	if err := secure.PrivateDir(s.Dir); err != nil {
+		return Book{}, 0, err
+	}
+	f, err := secure.OpenPrivate(filepath.Join(s.Dir, fileName), os.O_RDONLY)
+	if errors.Is(err, os.ErrNotExist) {
+		return Book{}, 0, nil
+	}
+	if err != nil {
+		return Book{}, 0, err
+	}
+	defer f.Close()
+	b, err := io.ReadAll(io.LimitReader(f, MaxReadBytes+1))
+	if err != nil || len(b) > MaxReadBytes {
+		return Book{}, 0, errors.New("cannot read activities")
+	}
+	aead, err := s.aead(false)
+	if err != nil {
+		return Book{}, 0, err
+	}
+	n := len(header)
+	if len(b) < n+aead.NonceSize()+aead.Overhead() || string(b[:n]) != header {
+		return Book{}, 0, errors.New("invalid activities envelope")
+	}
+	plain, err := secure.OpenFileRole(aead, b[n:n+aead.NonceSize()], b[n+aead.NonceSize():],
+		header+secure.Service(s.Dir), fileRole, "activities")
+	if err != nil {
+		return Book{}, 0, errors.New("activities authentication failed")
+	}
+	var body struct {
+		Version int `json:"version"`
+		Book
+	}
+	if json.Unmarshal(plain, &body) != nil || body.Version != 1 {
+		return Book{}, 0, errors.New("invalid activities schema")
+	}
+	return body.Book, len(b), nil
 }
 func (s Store) save(book Book, now time.Time) error {
 	kept := []Record{}
@@ -264,34 +280,40 @@ func (s Store) save(book Book, now time.Time) error {
 			ratings = append(ratings, rating)
 		}
 	}
+	_, err := s.write(Book{Activities: kept, Edits: edits, SleepEdits: sleepEdits, Ratings: ratings})
+	return err
+}
+func (s Store) write(book Book) (int, error) {
 	plain, err := json.Marshal(struct {
 		Version int `json:"version"`
 		Book
-	}{1, Book{Activities: kept, Edits: edits, SleepEdits: sleepEdits, Ratings: ratings}})
+	}{1, book})
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	aead, err := s.aead(true)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	const header = "ghealth-cache-v2\n"
 	nonce := make([]byte, aead.NonceSize())
 	if _, err = rand.Read(nonce); err != nil {
-		return err
+		return 0, err
 	}
 	b := append([]byte(header), nonce...)
-	b = aead.Seal(b, nonce, plain, []byte(header+secure.Service(s.Dir)))
-	path := filepath.Join(s.Dir, "activities-v2.enc")
+	b = aead.Seal(b, nonce, plain, secure.FileRoleAAD(header+secure.Service(s.Dir), fileRole))
+	if len(b) > MaxFileBytes {
+		return 0, ErrCapacity
+	}
+	path := filepath.Join(s.Dir, fileName)
 	if info, e := os.Lstat(path); e == nil && (!info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0) {
-		return errors.New("unsafe activities file")
+		return 0, errors.New("unsafe activities file")
 	} else if e != nil && !errors.Is(e, os.ErrNotExist) {
-		return e
+		return 0, e
 	}
 	f, err := os.CreateTemp(s.Dir, ".activities-*")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer os.Remove(f.Name())
 	if _, err = f.Write(b); err == nil {
@@ -302,17 +324,20 @@ func (s Store) save(book Book, now time.Time) error {
 		err = closeErr
 	}
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if err = os.Rename(f.Name(), path); err != nil {
-		return err
+		return 0, err
 	}
 	dir, err := os.Open(s.Dir)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer dir.Close()
-	return dir.Sync()
+	if err := dir.Sync(); err != nil {
+		return 0, err
+	}
+	return len(b), nil
 }
 func (s Store) aead(create bool) (cipher.AEAD, error) {
 	key, err := secure.CacheKey(s.Dir, s.Vault, create)

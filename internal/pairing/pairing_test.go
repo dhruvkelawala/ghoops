@@ -3,7 +3,6 @@ package pairing_test
 import (
 	"context"
 	"errors"
-	"net/url"
 	"testing"
 	"time"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/dhruvkelawala/ghoops/internal/testutil"
 )
 
-func TestTokenReuseRotationRevokeAndPairLink(t *testing.T) {
+func TestTokenReuseRotationAndRevoke(t *testing.T) {
 	tokens := pairing.Tokens{Dir: testutil.Dir(t), Vault: &testutil.Vault{}}
 	now := time.Date(2026, 3, 10, 14, 30, 0, 0, time.UTC)
 	a, err := tokens.Pair(context.Background(), false, now)
@@ -26,13 +25,6 @@ func TestTokenReuseRotationRevokeAndPairLink(t *testing.T) {
 	b, err = tokens.Pair(context.Background(), true, now.Add(time.Hour))
 	if err != nil || a.Value == b.Value || len(b.Value) != 48 {
 		t.Fatal("rotation failed")
-	}
-	link, err := url.Parse(pairing.Link(pairing.Tailnet{URL: "https://synthetic.ts.net:8787", Name: "Synthetic Mac"}, b))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if link.Scheme != "ghealth" || link.Host != "pair" || link.Query().Get("token") != b.Value || link.Query().Get("name") != "Synthetic Mac" || link.Query().Get("v") != "1" {
-		t.Fatal("invalid link")
 	}
 	if err = tokens.Revoke(context.Background()); err != nil {
 		t.Fatal(err)

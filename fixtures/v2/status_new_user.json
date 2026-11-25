@@ -283,7 +283,8 @@
   "provider_timezone": null,
   "server": {
     "version": "0.2.0",
-    "revision": "synthetic"
+    "revision": "synthetic",
+    "profile_id": "ghoops-fixture-profile"
   },
   "edit_limits": {
     "sleep_min_minutes": 60,

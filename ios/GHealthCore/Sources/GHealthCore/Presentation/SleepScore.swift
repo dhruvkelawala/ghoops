@@ -5,30 +5,28 @@ public struct SleepScore: Sendable {
     private let composite: SleepComposite?
 
     public var isComposite: Bool { composite != nil }
-    public var comparisonKey: String { Self.comparisonKey(composite: isComposite) }
-
-    public init(_ day: Day, composite: Bool) {
-        self.init(day.sleep.performance, composite: day.sleep.performanceComposite, config: day.scoreConfig, enabled: composite)
+    public var comparisonKey: String {
+        isComposite ? "sleep_performance_composite" : TrendMetricKey.sleepPerformance.rawValue
     }
 
-    public init(_ sleep: Sleep, composite: Bool) {
-        self.init(sleep.performance, composite: sleep.performanceComposite, config: sleep.scoreConfig, enabled: composite)
+    public init(_ day: Day) {
+        self.init(day.sleep.performance, composite: day.sleep.performanceComposite, config: day.scoreConfig)
+    }
+
+    public init(_ sleep: Sleep) {
+        self.init(sleep.performance, composite: sleep.performanceComposite, config: sleep.scoreConfig)
     }
 
     public static func rowValue(_ row: DayRow, composite: Bool) -> Double? {
         (composite ? row.sleepPerformanceComposite : row.sleepPerformance).map(Double.init)
     }
 
-    public static func comparisonKey(composite: Bool) -> String {
-        composite ? "sleep_performance_composite" : TrendMetricKey.sleepPerformance.rawValue
-    }
-
-    public static func insight(_ sleep: Sleep, composite: Bool, pending: Bool = false) -> String {
+    static func insight(_ sleep: Sleep, pending: Bool) -> String {
         if pending {
             let hours = sleep.asleepMinutes.map { " You slept \(GoopFormat.duration($0))." } ?? ""
             return Insights.updating("Your Sleep Performance") + hours
         }
-        let score = SleepScore(sleep, composite: composite)
+        let score = SleepScore(sleep)
         let performance = score.performance
         let need = GoopFormat.duration(sleep.need.totalMinutes)
         guard let asleep = sleep.asleepMinutes, let level = SleepLevel(performance.band) else {
@@ -67,8 +65,8 @@ public struct SleepScore: Sendable {
         public let rule: String?
     }
 
-    public static func breakdown(_ sleep: Sleep, composite: Bool, pending: Bool = false) -> Breakdown? {
-        guard let night = SleepScore(sleep, composite: composite).composite else { return nil }
+    public static func breakdown(_ sleep: Sleep, pending: Bool = false) -> Breakdown? {
+        guard let night = SleepScore(sleep).composite else { return nil }
         let constants = sleep.scoreConstants?.sleep.composite
         let parts = pending ? nil : night.parts
         let weights = pending || constants == nil ? nil : night.weights
@@ -84,8 +82,8 @@ public struct SleepScore: Sendable {
         return Breakdown(lines: lines, total: total, rule: rule)
     }
 
-    private init(_ sufficiency: Performance, composite: SleepComposite?, config: ScoreConfig?, enabled: Bool) {
-        self.composite = enabled && config?.sleepScoreMode == "composite" ? composite : nil
+    private init(_ sufficiency: Performance, composite: SleepComposite?, config: ScoreConfig?) {
+        self.composite = config?.sleepScoreMode == "composite" ? composite : nil
         performance = self.composite.map { Performance(value: $0.value, band: $0.band, status: $0.status, reason: $0.reason) } ?? sufficiency
     }
 

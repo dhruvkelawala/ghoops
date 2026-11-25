@@ -31,11 +31,11 @@ func (a *app) readV2(ctx context.Context, kind string, args []string) error {
 
 // builder loads the store, config, activities and, when asked, the journal for a v2 body.
 func (a *app) builder(ctx context.Context, withJournal bool) (*v2report.Builder, error) {
-	state, err := (store2.Store{Dir: a.dir, Vault: a.store.Vault}).Load()
+	state, profileID, err := (store2.Store{Dir: a.dir, Vault: a.store.Vault}).LoadWithProfile()
 	if err != nil {
 		return nil, v2report.NewError("store_unavailable")
 	}
-	file, err := configFile()
+	file, err := configFile(a.dir)
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +44,7 @@ func (a *app) builder(ctx context.Context, withJournal bool) (*v2report.Builder,
 		return nil, err
 	}
 	options := a.reportOptions(ctx)
+	options.Server.ProfileID = profileID
 	book, err := (activities.Store{Dir: a.dir, Vault: a.store.Vault}).Load()
 	options.Activities, options.Edits, options.SleepEdits, options.Ratings = book.Activities, book.Edits, book.SleepEdits, book.Ratings
 	if err != nil {
@@ -94,10 +95,12 @@ func (a *app) reportOptions(ctx context.Context) v2report.Options {
 		auth.State = "unavailable"
 	}
 	home, _ := os.UserHomeDir()
-	installed := true
-	for _, label := range []string{"io.ghealth.collect", "io.ghealth.serve"} {
-		info, err := os.Stat(filepath.Join(home, "Library", "LaunchAgents", label+".plist"))
-		installed = installed && err == nil && info.Mode().IsRegular()
+	installed := a.dir == defaultStateDir(home)
+	if installed {
+		for _, label := range []string{"io.ghealth.collect", "io.ghealth.serve"} {
+			info, err := os.Stat(filepath.Join(home, "Library", "LaunchAgents", label+".plist"))
+			installed = installed && err == nil && info.Mode().IsRegular()
+		}
 	}
 	return v2report.Options{Auth: auth, ScheduleInstalled: installed, Server: v2report.Server{Version: a.options.Version, Revision: a.options.Revision}}
 }

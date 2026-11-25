@@ -6,10 +6,12 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/dhruvkelawala/ghoops/internal/auth"
 	"github.com/dhruvkelawala/ghoops/internal/collect"
 	"github.com/dhruvkelawala/ghoops/internal/health"
 	"github.com/dhruvkelawala/ghoops/internal/schedule"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
+	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
 
 func (a *app) collectV2(ctx context.Context, args []string) error {
@@ -45,12 +47,12 @@ func (a *app) collectV2(ctx context.Context, args []string) error {
 	if !ok {
 		return errors.New("collector client unavailable")
 	}
-	result, err := collect.Run(ctx, store2.Store{Dir: a.dir, Vault: a.store.Vault}, client, func(ctx context.Context) (string, error) {
-		if _, err := a.auth.Access(ctx, ""); err != nil {
-			return "", err
-		}
-		return a.auth.Account(ctx)
-	}, options)
+	result, err := collect.Run(ctx, store2.Store{Dir: a.dir, Vault: a.store.Vault}, client, a.auth, options)
+	if errors.Is(err, auth.ErrAccountChanged) {
+		failure := v2report.NewError("collect_failed")
+		failure.Message = auth.ErrAccountChanged.Error()
+		return failure
+	}
 	if result.Kind != "" {
 		if emitErr := a.emit(result); emitErr != nil {
 			return emitErr
