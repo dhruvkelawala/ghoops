@@ -133,7 +133,7 @@ A `GoopTaskSheet` titled `EDIT ACTIVITY`, with `xmark` on the right, large deten
    - goop: `Edits stay on your Mac.`
    - detected: `Saving adds this to ghoops on your Mac. Google Health is not changed.`
 10. **`RESTORE BAND'S VERSION`** (`GoopButton`, outline, 12 below, `edit-restore`). It shows only for recorded entries whose `edit` is non-null, which includes a notes-only edit. See §2.6.
-11. **`DELETE ACTIVITY`** (`GoopButton(role: .destructive)`, 12 below, last item, `edit-delete`). It shows for recorded and goop entries. See §2.5.
+11. **`DELETE ACTIVITY`** (`GoopButton(role: .destructive)`, after the 30pt section gap, last item, `edit-delete`). It shows for recorded and goop entries. See §2.5.
 12. **Commit**, pinned: `checkmark` symbol plus `SAVE <SPORT>`, id `edit-save`.
     - It is disabled (40 %) when the request body would equal the current state (§9.2).
     - On a detected effort with no sport chosen, it reads `SAVE ACTIVITY` and is disabled.

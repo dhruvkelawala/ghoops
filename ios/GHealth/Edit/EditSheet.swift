@@ -94,7 +94,7 @@ struct EditSheet: View {
             Text(workout.kind == "recorded" ? "Edits stay on your Mac. Google Health keeps the band's record." : workout.kind == "goop" ? "Edits stay on your Mac." : "Saving adds this to ghoops on your Mac. Google Health is not changed.")
                 .goop(.bodySmall).foregroundStyle(Goop.Color.text2).frame(maxWidth: .infinity, alignment: .leading).padding(.top, 24)
             if workout.kind == "recorded" && workout.edit != nil { GoopButton(title: "RESTORE BAND'S VERSION", identifier: "edit-restore") { restoring = true }.accessibilityLabel("Restore band's version").padding(.top, 12) }
-            if workout.kind != "detected" { GoopButton(title: "DELETE ACTIVITY", role: .destructive, identifier: "edit-delete") { deleting = true }.accessibilityLabel("Delete activity").padding(.top, 12).id("edit-delete") }
+            if workout.kind != "detected" { GoopButton(title: "DELETE ACTIVITY", role: .destructive, identifier: "edit-delete") { deleting = true }.accessibilityLabel("Delete activity").id("edit-delete") }
             Color.clear.frame(height: 20)
         }
     }

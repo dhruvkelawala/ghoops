@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dhruvkelawala/ghoops/internal/collect"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
 	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
@@ -14,7 +15,9 @@ type commandErrorBody = v2report.ErrorBody
 
 func (a *app) failV2(err error) int {
 	var response *v2report.Error
-	if !errors.As(err, &response) {
+	if errors.Is(err, secure.ErrKeychainAccess) {
+		response = v2report.StoreError(err)
+	} else if !errors.As(err, &response) {
 		code := "internal"
 		var usage usageError
 		switch {

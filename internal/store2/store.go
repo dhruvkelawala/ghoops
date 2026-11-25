@@ -40,7 +40,10 @@ func (s Store) LoadWithProfile() (State2, *string, error) {
 		return state, nil, err
 	}
 	if key == nil && s.Vault != nil {
-		key, _ = secure.CacheKey(s.Dir, s.Vault, false)
+		key, err = secure.CacheKey(s.Dir, s.Vault, false)
+		if errors.Is(err, secure.ErrKeychainAccess) {
+			return state, nil, err
+		}
 	}
 	if id := secure.ProfileID(key); id != "" {
 		return state, &id, nil

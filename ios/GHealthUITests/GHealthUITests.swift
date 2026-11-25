@@ -393,7 +393,6 @@ final class GHealthUITests: XCTestCase {
         capture("fresh-more-3", app: app)
         scrollPage(app, up: true)
         capture("fresh-more-4", app: app)
-        XCTAssertTrue(app.staticTexts["OPEN-SOURCE FONTS"].exists)
         XCTAssertTrue(app.buttons["fixture-mode"].isHittable)
         app.buttons["tab-home"].tap()
         scrollPage(app, up: false)
@@ -846,10 +845,9 @@ final class GHealthUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["BOXING"].exists)
         XCTAssertTrue(app.staticTexts["RUNNING"].exists)
         XCTAssertTrue(app.staticTexts["WALKING"].exists)
-        capture("unsent-page", app: app)
-
         let discard = app.buttons["unsent-discard"]
         reveal(discard, in: app)
+        capture("unsent-page", app: app)
         discard.tap()
         let alert = app.alerts["Discard unsent activities?"]
         XCTAssertTrue(alert.waitForExistence(timeout: 5))
@@ -927,7 +925,7 @@ final class GHealthUITests: XCTestCase {
         app.launchArguments = ["-GHealthGallery", "fresh"]
         app.launch()
         XCTAssertTrue(app.scrollViews["component-gallery"].waitForExistence(timeout: 15))
-        for index in 1...80 {
+        for index in 1...100 {
             let visible = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "gallery-heading-")).allElementsBoundByIndex.filter { $0.isHittable }.map { $0.label }
             print("GALLERY_CAPTURE \(index): " + visible.joined(separator: ", "))
             capture(String(format: "gallery-%02d", index), app: app)

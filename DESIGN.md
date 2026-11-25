@@ -573,13 +573,13 @@ The goop lint's `sofiaword` rule fails `make check` when a string literal with a
 ## Layout
 
 - **One column inside a 16pt gutter** (`screenMargin`). Home section headings sit 4pt further in (`homeTitleInset`). Full-screen states and Pairing use 24.
-- **Vertical rhythm (observed constants; not yet in `Goop.Metric`):**
+- **Vertical rhythm:**
   - 8 between banners, sheet rows and zone rows;
   - 12 between stacked cards and between an activity row and the next;
   - 22 from the dials to the monitor cards;
   - 24 above a sheet section;
   - 26 above a notched contributor card;
-  - 30 above a section heading;
+  - 30 above a section heading or destructive button;
   - 30 of bottom spacer at the end of every detail page.
 - **Internal padding:** cards 16 (charts 14 with 6 at the bottom); tiles 16 horizontal; activities card 16/13/13; rows 9–14 horizontal.
 - **Two-up grids** (monitor cards, vital tiles) are built from `GoopPair` rows with 11–13 gaps. Both cards in a row take the taller card's height, and the row collapses to one column at accessibility sizes. Rows and tiles also stack the value under the label at those sizes.
@@ -748,7 +748,7 @@ Two sheet types exist. A third presentation, the full-screen cover, is reserved 
 ### Destructive actions
 - **What exists:** DELETE ACTIVITY, UNPAIR and DISCARD ALL use `GoopButton(role: .destructive)`, a full-width `zone5` outline, 50 tall, with `labelCard`. UNPAIR is after ABOUT at the end of More, before Debug's DEVELOPER section. DISCARD ALL is last on the Unsent page under More. Its alert counts the activities it deletes from the iPhone. Delete activity, Unpair, Replace pairing and Discard unsent activities use centred system alerts with a destructive verb and Cancel. Replace pairing names the new Mac's host and port. The D8 probe could not make the destructive verb orange while preserving its system role. The owner approved iOS's own alert colours in cleanup spec §13.5; the trigger buttons remain orange.
 - **The rule:**
-  - **Trigger:** a destructive action is a full-width outline button in `zone5` (stroke and label), 50 tall with radius 12. It is the **last item** on its page or sheet, alone on its row, and only for things that can be destroyed. Red (`recoveryLow`) is never used.
+  - **Trigger:** a destructive action is a full-width outline button in `zone5` (stroke and label), 50 tall with radius 12. It is the **last item** on its page or sheet, alone on its row, and only for things that can be destroyed. Leave the 30pt section gap (`Goop.Metric.sectionGap`) above the button so it never touches the preceding row or card. Red (`recoveryLow`) is never used.
   - **Confirm:** a **system** dialog is always used, never a drawn one. Its title is a question naming the object ("Delete this activity?"). Its message says where the change applies (phone, Mac, Google Health). The buttons are a destructive verb and Cancel.
   - **Unpair with waiting workouts.** Use two verbs only when the current Mac has a waiting workout or a session in progress. Show “Unpair, keep workouts”, “Unpair, delete workouts” and “Cancel”. The message says the phone deletes its saved scores and gives the number of workouts still waiting for that Mac.
   - **The dialog is a centred system `.alert`** for every destructive action (owner decision 2026-11-12). Never `.confirmationDialog`.

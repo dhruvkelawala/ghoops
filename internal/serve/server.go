@@ -6,6 +6,7 @@ import (
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 	"github.com/dhruvkelawala/ghoops/internal/config"
 	"github.com/dhruvkelawala/ghoops/internal/journal"
 	"github.com/dhruvkelawala/ghoops/internal/pairing"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
 	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
@@ -28,7 +30,7 @@ type Settings struct {
 	Store   store2.Store
 	Config  config.File
 	Tokens  pairing.Tokens
-	Options func(context.Context) v2report.Options
+	Options func(context.Context) (v2report.Options, error)
 	Now     func() time.Time
 	Log     io.Writer
 	MacName string
@@ -225,6 +227,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	state, profileID, err := h.load()
 	if err != nil {
+		h.logKeychainError(err)
 		fail(v2report.NewError("store_unavailable"))
 		return
 	}
@@ -235,17 +238,24 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	options := v2report.Options{}
 	if h.settings.Options != nil {
-		options = h.settings.Options(r.Context())
+		options, err = h.settings.Options(r.Context())
+		if err != nil {
+			h.logKeychainError(err)
+			fail(v2report.NewError("store_unavailable"))
+			return
+		}
 	}
 	options.Server.ProfileID = profileID
 	book, err := h.loadActivities()
 	options.Activities, options.Edits, options.SleepEdits, options.Ratings = book.Activities, book.Edits, book.SleepEdits, book.Ratings
 	if err != nil {
+		h.logKeychainError(err)
 		fail(v2report.NewError("store_unavailable"))
 		return
 	}
 	if kind == "journal" || kind == "snapshot" {
 		if options.Journal, err = h.loadJournal(); err != nil {
+			h.logKeychainError(err)
 			fail(v2report.NewError("store_unavailable"))
 			return
 		}
@@ -274,6 +284,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(append(data, '\n'))
+}
+
+func (h *Handler) logKeychainError(err error) {
+	if errors.Is(err, secure.ErrKeychainAccess) {
+		h.logMu.Lock()
+		defer h.logMu.Unlock()
+		fmt.Fprintln(h.settings.Log, err)
+	}
 }
 func readKind(path string) string {
 	kind, ok := strings.CutPrefix(path, "/v2/")
@@ -313,6 +331,7 @@ func routeTemplate(path string) string {
 func (h *Handler) loadCredentials(ctx context.Context, now time.Time) error {
 	if h.readAt.IsZero() || now.Sub(h.readAt) >= 5*time.Second {
 		h.credentials, h.credentialErr = h.devices.Credentials(ctx)
+		h.logKeychainError(h.credentialErr)
 		h.readAt = now
 	}
 	return h.credentialErr

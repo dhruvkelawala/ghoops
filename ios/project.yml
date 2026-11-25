@@ -24,7 +24,6 @@ targets:
     sources:
       - path: GHealth
       - path: Shared
-        excludes: ["**/*.txt"]
     dependencies:
       - package: GHealthCore
       - target: GHealthWidgets
@@ -67,7 +66,6 @@ targets:
     sources:
       - path: GHealthWidgets
       - path: Shared
-        excludes: ["**/*.txt"]
     dependencies:
       - package: GHealthCore
     settings:

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"net/url"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/dhruvkelawala/ghoops/internal/activities"
 	"github.com/dhruvkelawala/ghoops/internal/journal"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 	"github.com/dhruvkelawala/ghoops/internal/store2"
 	"github.com/dhruvkelawala/ghoops/internal/v2report"
 )
@@ -33,7 +35,7 @@ func (a *app) readV2(ctx context.Context, kind string, args []string) error {
 func (a *app) builder(ctx context.Context, withJournal bool) (*v2report.Builder, error) {
 	state, profileID, err := (store2.Store{Dir: a.dir, Vault: a.store.Vault}).LoadWithProfile()
 	if err != nil {
-		return nil, v2report.NewError("store_unavailable")
+		return nil, v2report.StoreError(err)
 	}
 	file, err := configFile(a.dir)
 	if err != nil {
@@ -43,20 +45,24 @@ func (a *app) builder(ctx context.Context, withJournal bool) (*v2report.Builder,
 	if err != nil {
 		return nil, err
 	}
-	options := a.reportOptions(ctx)
+	options, err := a.reportOptions(ctx)
+	if err != nil {
+		return nil, err
+	}
 	options.Server.ProfileID = profileID
 	book, err := (activities.Store{Dir: a.dir, Vault: a.store.Vault}).Load()
 	options.Activities, options.Edits, options.SleepEdits, options.Ratings = book.Activities, book.Edits, book.SleepEdits, book.Ratings
 	if err != nil {
-		return nil, v2report.NewError("store_unavailable")
+		return nil, v2report.StoreError(err)
 	}
 	if withJournal {
 		if options.Journal, err = (journal.Store{Dir: a.dir, Vault: a.store.Vault}).Load(); err != nil {
-			return nil, v2report.NewError("store_unavailable")
+			return nil, v2report.StoreError(err)
 		}
 	}
 	return v2report.New(state, a.now, cfg, options)
 }
+
 func readParameters(kind string, args []string) (url.Values, error) {
 	f := flags(kind)
 	switch kind {
@@ -88,8 +94,11 @@ func readParameters(kind string, args []string) (url.Values, error) {
 	})
 	return params, nil
 }
-func (a *app) reportOptions(ctx context.Context) v2report.Options {
+func (a *app) reportOptions(ctx context.Context) (v2report.Options, error) {
 	status, err := a.auth.Status(ctx)
+	if errors.Is(err, secure.ErrKeychainAccess) {
+		return v2report.Options{}, err
+	}
 	auth := v2report.Auth{Authorized: status.Authorized, State: status.State, Refreshable: status.Refreshable, Missing: status.MissingScopes, Partial: status.PartialPermissions}
 	if err != nil {
 		auth.State = "unavailable"
@@ -102,5 +111,5 @@ func (a *app) reportOptions(ctx context.Context) v2report.Options {
 			installed = installed && err == nil && info.Mode().IsRegular()
 		}
 	}
-	return v2report.Options{Auth: auth, ScheduleInstalled: installed, Server: v2report.Server{Version: a.options.Version, Revision: a.options.Revision}}
+	return v2report.Options{Auth: auth, ScheduleInstalled: installed, Server: v2report.Server{Version: a.options.Version, Revision: a.options.Revision}}, nil
 }

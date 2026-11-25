@@ -113,7 +113,7 @@ func TestHTTPMatchesCLIBuilderAndProtectsTransport(t *testing.T) {
 	file := config.File{Path: filepath.Join(dir, "config.json")}
 	var logs bytes.Buffer
 	options := v2report.Options{Auth: v2report.Auth{Missing: []string{}}, Server: v2report.Server{Revision: "synthetic"}}
-	handler, err := serve.New(serve.Settings{Store: store, Config: file, Tokens: tokens, Options: func(context.Context) v2report.Options { return options }, Now: func() time.Time { return now }, Log: &logs})
+	handler, err := serve.New(serve.Settings{Store: store, Config: file, Tokens: tokens, Options: func(context.Context) (v2report.Options, error) { return options, nil }, Now: func() time.Time { return now }, Log: &logs})
 	if err != nil {
 		t.Fatal(err)
 	}

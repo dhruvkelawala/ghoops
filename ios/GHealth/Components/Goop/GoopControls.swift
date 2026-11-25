@@ -141,8 +141,10 @@ struct GoopButton: View {
     var identifier: String? = nil
     var action: () -> Void
     var body: some View {
-        if let identifier { button.accessibilityIdentifier(identifier) }
-        else { button }
+        Group {
+            if let identifier { button.accessibilityIdentifier(identifier) }
+            else { button }
+        }.padding(.top, role == .destructive ? Goop.Metric.sectionGap : 0)
     }
     private var ink: Color {
         role == .primary ? Goop.Color.backgroundHomeBase : role == .destructive ? Goop.Color.zone5 : Goop.Color.text1

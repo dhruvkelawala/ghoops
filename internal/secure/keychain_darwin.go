@@ -13,13 +13,10 @@ package secure
 // The stored application path is a label. Its signing requirement controls access.
 extern OSStatus SecTrustedApplicationCopyRequirement(SecTrustedApplicationRef, SecRequirementRef *) __attribute__((weak_import));
 
-static OSStatus gh_find(const char *service, UInt32 *len, void **data, SecKeychainItemRef *item) {
+static OSStatus gh_find(const char *service, SecKeychainItemRef *item) {
     OSStatus s = SecKeychainSetUserInteractionAllowed(false);
     if (s != errSecSuccess) return s;
-    return SecKeychainFindGenericPassword(NULL, (UInt32)strlen(service), service, 7, "ghealth", len, data, item);
-}
-static OSStatus gh_get(const char *service, UInt32 *len, void **data) {
-    return gh_find(service, len, data, NULL);
+    return SecKeychainFindGenericPassword(NULL, (UInt32)strlen(service), service, 7, "ghealth", NULL, NULL, item);
 }
 static OSStatus gh_copy_requirement(SecTrustedApplicationRef app, CFDataRef *data) {
     if (!SecTrustedApplicationCopyRequirement) return errSecUnimplemented;
@@ -78,22 +75,27 @@ static OSStatus gh_match_access(SecAccessRef access, const char *path, CFDataRef
     *only = found;
     return errSecSuccess;
 }
-static OSStatus gh_acl(const char *service, const char *path, Boolean *only) {
+static OSStatus gh_item_acl(SecKeychainItemRef item, const char *path, Boolean *only) {
     *only = false;
-    SecKeychainItemRef item = NULL;
-    OSStatus s = gh_find(service, NULL, NULL, &item);
-    if (s != errSecSuccess) return s;
     SecAccessRef access = NULL;
     SecTrustedApplicationRef app = NULL;
     CFDataRef expected = NULL;
-    s = SecKeychainItemCopyAccess(item, &access);
-    CFRelease(item);
+    OSStatus s = SecKeychainItemCopyAccess(item, &access);
     if (s == errSecSuccess) s = SecTrustedApplicationCreateFromPath(path, &app);
     if (s == errSecSuccess) s = gh_copy_requirement(app, &expected);
     if (s == errSecSuccess && expected) s = gh_match_access(access, path, expected, only);
     if (expected) CFRelease(expected);
     if (app) CFRelease(app);
     if (access) CFRelease(access);
+    return s;
+}
+static OSStatus gh_read(const char *service, const char *path, Boolean *only, UInt32 *len, void **data) {
+    SecKeychainItemRef item = NULL;
+    OSStatus s = gh_find(service, &item);
+    if (s != errSecSuccess) return s;
+    s = gh_item_acl(item, path, only);
+    if (s == errSecSuccess && *only && data) s = SecKeychainItemCopyContent(item, NULL, NULL, len, data);
+    CFRelease(item);
     return s;
 }
 static OSStatus gh_create(const char *service, const char *path, UInt32 len, const void *data) {
@@ -117,7 +119,7 @@ static OSStatus gh_create(const char *service, const char *path, UInt32 len, con
 }
 static OSStatus gh_set(const char *service, const char *path, UInt32 len, const void *data) {
     SecKeychainItemRef item = NULL;
-    OSStatus s = gh_find(service, NULL, NULL, &item);
+    OSStatus s = gh_find(service, &item);
     if (s == errSecItemNotFound) return gh_create(service, path, len, data);
     if (s != errSecSuccess) return s;
     s = SecKeychainItemModifyAttributesAndData(item, NULL, len, data);
@@ -126,7 +128,7 @@ static OSStatus gh_set(const char *service, const char *path, UInt32 len, const 
 }
 static OSStatus gh_delete(const char *service) {
     SecKeychainItemRef item = NULL;
-    OSStatus s = gh_find(service, NULL, NULL, &item);
+    OSStatus s = gh_find(service, &item);
     if (s != errSecSuccess) return s;
     s = SecKeychainItemDelete(item);
     CFRelease(item);
@@ -156,15 +158,14 @@ func keychainError(s C.OSStatus) error {
 }
 
 func (Keychain) Get(service string) ([]byte, error) {
-	if _, err := InstalledExecutable(); err != nil {
-		return nil, err
-	}
-	s := C.CString(service)
-	defer C.free(unsafe.Pointer(s))
 	var n C.UInt32
 	var data unsafe.Pointer
-	if err := keychainError(C.gh_get(s, &n, &data)); err != nil {
+	only, err := readKeychainItem(service, &n, &data)
+	if err != nil {
 		return nil, err
+	}
+	if !only {
+		return nil, keychainAccessError(service)
 	}
 	defer C.SecKeychainItemFreeContent(nil, data)
 	return C.GoBytes(data, C.int(n)), nil
@@ -172,6 +173,10 @@ func (Keychain) Get(service string) ([]byte, error) {
 
 // OnlyInstalledBinary checks the item's credential-access grants without reading its value.
 func (Keychain) OnlyInstalledBinary(service string) (bool, error) {
+	return readKeychainItem(service, nil, nil)
+}
+
+func readKeychainItem(service string, n *C.UInt32, data *unsafe.Pointer) (bool, error) {
 	exe, err := InstalledExecutable()
 	if err != nil {
 		return false, err
@@ -180,7 +185,7 @@ func (Keychain) OnlyInstalledBinary(service string) (bool, error) {
 	defer C.free(unsafe.Pointer(s))
 	defer C.free(unsafe.Pointer(p))
 	var only C.Boolean
-	if err := keychainError(C.gh_acl(s, p, &only)); err != nil {
+	if err := keychainError(C.gh_read(s, p, &only, n, data)); err != nil {
 		return false, err
 	}
 	return only != 0, nil

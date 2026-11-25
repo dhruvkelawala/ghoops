@@ -34,7 +34,7 @@ func EditError(err error) *Error {
 	case errors.Is(err, activities.ErrCapacity):
 		return NewError("storage_full")
 	default:
-		return NewError("store_unavailable")
+		return StoreError(err)
 	}
 }
 

@@ -49,7 +49,7 @@ func (a *app) editActivity(ctx context.Context, args []string) error {
 	}
 	state, err := (store2.Store{Dir: a.dir, Vault: a.store.Vault}).Load()
 	if err != nil {
-		return v2report.NewError("store_unavailable")
+		return v2report.StoreError(err)
 	}
 	file, err := configFile(a.dir)
 	if err != nil {
@@ -69,7 +69,7 @@ func (a *app) editActivity(ctx context.Context, args []string) error {
 		}
 		book, err := store.Load()
 		if err != nil {
-			return v2report.NewError("store_unavailable")
+			return v2report.StoreError(err)
 		}
 		engine.Activities, engine.Edits, engine.SleepEdits, engine.Ratings = book.Activities, book.Edits, book.SleepEdits, book.Ratings
 		type row struct {

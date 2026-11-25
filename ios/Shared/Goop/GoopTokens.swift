@@ -234,6 +234,7 @@ enum Goop {
     enum Metric {
         static let screenMargin: CGFloat = 16
         static let homeTitleInset: CGFloat = 4
+        static let sectionGap: CGFloat = 30
         static let radiusMonitor: CGFloat = 13
         static let radiusActivities: CGFloat = 13
         static let radiusActivityBlock: CGFloat = 8

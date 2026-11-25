@@ -47,7 +47,8 @@ struct WorkoutScreen: View {
                     }
                     footnote(workout).padding(.top, 16).padding(.horizontal, 18)
                     if saveMessage(workout) != nil {
-                        GoopButton(title: "DELETE ACTIVITY", role: .destructive, identifier: "activity-delete") { deleting = true }.padding(16)
+                        GoopButton(title: "DELETE ACTIVITY", role: .destructive, identifier: "activity-delete") { deleting = true }
+                            .padding(.horizontal, 16).padding(.bottom, 16)
                     }
                     if let deleteError { Text(deleteError).goop(.bodyMid).foregroundStyle(Goop.Color.caution).padding(16) }
                 } else {

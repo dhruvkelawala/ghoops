@@ -1,9 +1,11 @@
 package v2report
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dhruvkelawala/ghoops/internal/health"
+	"github.com/dhruvkelawala/ghoops/internal/secure"
 )
 
 type Error struct {
@@ -46,6 +48,14 @@ func NewError(code string) *Error {
 		code = "internal"
 	}
 	return &Error{Code: code, Message: message, HTTP: &status}
+}
+
+func StoreError(err error) *Error {
+	response := NewError("store_unavailable")
+	if errors.Is(err, secure.ErrKeychainAccess) {
+		response.Message = err.Error()
+	}
+	return response
 }
 
 type ErrorBody struct {

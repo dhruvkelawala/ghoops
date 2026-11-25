@@ -61,7 +61,6 @@ struct GoopMoreScreen: View {
                         GoopRow("VERSION", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")
                         caption(PairingCopy.backup)
                         caption("ghoops is not a medical device.")
-                        GoopRow("OPEN-SOURCE FONTS", value: "Sofia Sans Condensed and Nunito Sans, SIL Open Font License 1.1") // goop-lint: allow enginenumber: licence version
                     }
                     if model.errorContext == .unpair, let error = model.error { warning(error) }
                     GoopButton(title: "UNPAIR", role: .destructive) { confirmUnpair = true }

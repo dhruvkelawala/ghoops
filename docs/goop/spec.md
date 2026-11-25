@@ -65,7 +65,7 @@ Both fonts are SIL OFL 1.1; the licences ship next to the files.
 | Sofia Sans Condensed | `docs/goop/assets/fonts/SofiaSansCondensed-Variable.ttf` | `ios/Shared/Fonts/SofiaSansCondensed-Variable.ttf` | `SofiaSansCondensed-Regular` | `wght` 2003265652: 1 / 400 / 1000 |
 | Nunito Sans | `docs/goop/assets/fonts/NunitoSans-Variable.ttf` | `ios/Shared/Fonts/NunitoSans-Variable.ttf` | `NunitoSans-12ptExtraLight` | `wght` 2003265652: 200 / 200 / 1000; `wdth` 2003072104: 75 / 100 / 125; `opsz` 1869640570: 6 / 12 / 12; `YTLC` 1498696771: 440 / 500 / 540 |
 
-Also copy `OFL-SofiaSansCondensed.txt` and `OFL-NunitoSans.txt` to `ios/Shared/Fonts/`, add an "Open-source fonts" row to More → About (§8.10) and keep the files out of the app bundle's resources (they are text; exclude `*.txt` in `project.yml`).
+Copy `OFL-SofiaSansCondensed.txt` and `OFL-NunitoSans.txt` to `ios/Shared/Fonts/`. Both the app and the widget extension bundle the licence files alongside the fonts.
 
 Registration: add `UIAppFonts` = `["SofiaSansCondensed-Variable.ttf", "NunitoSans-Variable.ttf"]` to both `ios/GHealth/Info.plist` and `ios/GHealthWidgets/Info.plist`. In `project.yml`, both targets already compile `Shared`; make sure the two `.ttf` files land in each target's Copy Bundle Resources phase (XcodeGen does this for `.ttf` by default; check the generated project).
 
@@ -985,7 +985,7 @@ Content, side margins 16:
 | BAND | `S.status.device`: `scope_missing` → one row `Band details need permission: run ghoops auth login on your Mac` (`caution`); otherwise `NAME` → name or `Unavailable`; `BATTERY` → `NN% · {battery_status}` or `—`; `LAST SYNCED` → `Last synced to Fitbit {relative}` or `Band sync time unavailable`. |
 | DATA COLLECTION | `LAST COLLECTED` → relative `collected_at` or `never`; `STATUS` → `last_collect_status`; `SCHEDULE` → `Installed` / `Not installed`; `CALIBRATION` → `status.calibration.status` capitalised; missing scopes → `Run ghoops auth login on your Mac to grant: …` (`caution`). |
 | SCORES | `SCORE VERSION`, `MAX HR OVERRIDE` (`N bpm` or `Default`), `SLEEP BASE NEED` (`h:mm`), `TRIMP PROFILE`; caption `Change these with ghoops config set on your Mac`. |
-| ABOUT | `VERSION` → `CFBundleShortVersionString`. The caption says scores stay on the Mac and iPhone, and waiting workouts are part of the iPhone's backup. A second caption says ghoops is not a medical device. `OPEN-SOURCE FONTS` lists Sofia Sans Condensed and Nunito Sans under SIL Open Font License 1.1. |
+| ABOUT | `VERSION` → `CFBundleShortVersionString`. The caption says scores stay on the Mac and iPhone, and waiting workouts are part of the iPhone's backup. A second caption says ghoops is not a medical device. |
 | DEVELOPER (DEBUG only) | `FIXTURE MODE` menu listing the sets (app.md §11). |
 
 Unsent groups activities by the Mac they were saved for and shows an unknown group labelled `SAVED BEFORE THIS UPDATE`. `SEND TO <CURRENT NAME>` moves the selected group to Today's activities and tries to upload it to the paired Mac. `DISCARD ALL` asks for confirmation with the number of activities it will delete from the iPhone. When no rows remain, Unsent returns to More. [Unsent page behaviour](pairing-isolation-spec.md#35-what-the-person-sees-flag-unsentactivities-except-the-d6-sentence)

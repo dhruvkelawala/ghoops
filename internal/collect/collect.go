@@ -86,7 +86,7 @@ func Run(ctx context.Context, store store2.Store, provider *health.Client, manag
 	if authErr == nil {
 		_, authErr = access(ctx, "")
 	}
-	if errors.Is(authErr, auth.ErrAccountChanged) {
+	if errors.Is(authErr, auth.ErrAccountChanged) || errors.Is(authErr, secure.ErrKeychainAccess) {
 		return Result{}, authErr
 	}
 	if authErr != nil {
@@ -112,7 +112,7 @@ func Run(ctx context.Context, store store2.Store, provider *health.Client, manag
 	failed := []string{}
 	seenFailed := map[string]bool{}
 	for _, output := range outputs {
-		if errors.Is(output.err, auth.ErrAccountChanged) {
+		if errors.Is(output.err, auth.ErrAccountChanged) || errors.Is(output.err, secure.ErrKeychainAccess) {
 			return Result{}, output.err
 		}
 		status, code := jobStatus(output.err)

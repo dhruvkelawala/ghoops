@@ -33,6 +33,7 @@ Usage: ghoops [--json] [--state-dir PATH] COMMAND
   version                      Show version, revision and toolchain
   doctor [--offline]           Check local runtime, auth and cache readiness
   doctor --keychain [--json]    Report which Keychain items trust only the installed binary
+  doctor --keychain --repair    Remove OAuth or pairing items with unsafe access lists
   doctor --keychain-test       Scoped dummy test using fresh installed processes
   doctor --live [--days 7]     Sync and require real records for all core metrics
   auth login --client-file PATH [--no-browser]
@@ -195,9 +196,16 @@ func Run(ctx context.Context, args []string, in io.Reader, out, stderr io.Writer
 	if vault == nil {
 		vault = secure.Keychain{}
 	}
+	if options.ReadKeychainACL != nil {
+		vault = secure.WithKeychainACL(vault, options.ReadKeychainACL)
+	}
 	a.auth = options.Auth
 	if a.auth == nil {
 		a.auth = auth.New(vault, a.dir)
+	} else if options.ReadKeychainACL != nil {
+		manager := *a.auth
+		manager.Vault = secure.WithKeychainACL(manager.Vault, options.ReadKeychainACL)
+		a.auth = &manager
 	}
 	a.store = cache.Store{Dir: a.dir, Vault: vault}
 	a.fetcher = options.Fetcher
@@ -567,6 +575,7 @@ func (a *app) doctor(ctx context.Context, args []string) error {
 	f := flags("doctor")
 	offline := f.Bool("offline", false, "check runtime and cache presence without reading Keychain or health data")
 	keychainReport := f.Bool("keychain", false, "report Keychain item presence and access controls")
+	repair := f.Bool("repair", false, "remove OAuth or pairing items with unsafe access lists")
 	keychain := f.Bool("keychain-test", false, "scoped dummy fresh-process Keychain test")
 	live := f.Bool("live", false, "sync and require all core metric records")
 	days := f.Int("days", 7, "live date range")
@@ -581,6 +590,12 @@ func (a *app) doctor(ctx context.Context, args []string) error {
 	}
 	if modes > 1 {
 		return usageError{"doctor modes are mutually exclusive"}
+	}
+	if *repair {
+		if !*keychainReport {
+			return usageError{"doctor --repair requires --keychain"}
+		}
+		return a.repairKeychain(ctx)
 	}
 	if *keychainReport {
 		return a.doctorKeychain()

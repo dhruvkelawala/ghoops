@@ -12,10 +12,12 @@ struct UnsentScreen: View {
         ScrollView {
             VStack(spacing: 0) {
                 GoopDetailHeader(title: "UNSENT", back: { dismiss() })
-                VStack(alignment: .leading, spacing: 12) {
-                    if let error = model.activity.error { GoopBanner(text: error, symbol: "exclamationmark.circle") }
-                    ForEach(Array(groups(held).enumerated()), id: \.offset) { index, rows in
-                        group(rows, index: index)
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        if let error = model.activity.error { GoopBanner(text: error, symbol: "exclamationmark.circle") }
+                        ForEach(Array(groups(held).enumerated()), id: \.offset) { index, rows in
+                            group(rows, index: index)
+                        }
                     }
                     GoopButton(title: "DISCARD ALL", role: .destructive, identifier: "unsent-discard") {
                         confirmDiscard = true
